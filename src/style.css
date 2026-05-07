@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+/* В Tailwind v4 используем стандартный CSS синтаксис для базовых стилей */
+@layer base {
+  body {
+    /* Используем нативные переменные Tailwind v4 */
+    font-weight: 400; /* аналог font-light */
+    letter-spacing: 0.05em; /* аналог tracking-wide */
+    color: #5d4037;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Наследование для всех элементов ввода */
+  input,
+  button,
+  textarea,
+  select {
+    font-family: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+  }
+}
