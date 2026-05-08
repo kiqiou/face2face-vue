@@ -1,0 +1,1 @@
+export const BASE_API = 'https://face2face-backend-hib0.onrender.com/'

@@ -1,4 +1,3 @@
-<!-- components/Footer.vue -->
 <template>
   <footer class="w-full mt-20 pb-8 backdrop-blur-xl">
     <div class="container mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -35,7 +34,7 @@
         <div class="space-y-4 text-center sm:text-left">
           <h4 class="text-lg font-semibold text-black/90">Инстаграмм</h4>
           <a
-            href="https://www.instagram.com/aromashop_66/"
+            href="https://www.instagram.com/face2face.cosmetology/"
             target="_blank"
             class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
           >

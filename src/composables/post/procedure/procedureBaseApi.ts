@@ -1,1 +1,3 @@
-export const API_BASE = 'http://127.0.0.1:8000/api/procedures/';
+import { BASE_API } from "../../baseApi.js";
+
+export const API_BASE = BASE_API + 'api/procedures/';
