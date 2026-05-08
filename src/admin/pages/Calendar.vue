@@ -73,6 +73,8 @@
     error: createError,
   } = useCreateWorkDay();
 
+  const isMobile = window.innerWidth < 768;
+
   const toast = useToast();
 
   const allEvents = ref<EventInput[]>([]);
@@ -283,17 +285,33 @@
       resourceTimelinePlugin,
       interactionPlugin,
     ],
-    initialView: 'resourceTimelineDay',
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,resourceTimelineDay,resourceTimelineWeek',
-    },
+    initialView: isMobile
+    ? 'timeGridDay'
+    : 'resourceTimelineDay',
+    headerToolbar: isMobile
+    ? {
+        left: 'prev,next',
+        center: 'title',
+        right: 'timeGridDay,dayGridMonth',
+      }
+    : {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,resourceTimelineDay,resourceTimelineWeek',
+      },
     locale: 'ru',
     editable: true,
     eventResizableFromStart: true,
     eventDurationEditable: true,
+    longPressDelay: 150,
+    selectLongPressDelay: 150,
+    eventLongPressDelay: 150,
+    selectMirror: true,
+    dragScroll: true,
+    handleWindowResize: true,
+    stickyHeaderDates: true,
     selectable: true,
+    selectMinDistance: 5,
     height: '80vh',
     expandRows: true,
     events: allEvents,
@@ -630,4 +648,55 @@
   :deep(.fc-day-today) {
     background: #fff;
   }
+
+  @media (max-width: 768px) {
+  .calendar-app {
+    padding: 0;
+    overflow-x: auto;
+  }
+
+  :deep(.fc) {
+    font-size: 12px;
+  }
+
+  :deep(.fc-toolbar) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  :deep(.fc-toolbar-chunk) {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  :deep(.fc-button) {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  :deep(.fc-toolbar-title) {
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  :deep(.fc-timegrid-slot) {
+    height: 42px !important;
+  }
+
+  :deep(.fc-event) {
+    font-size: 0.7rem;
+    padding: 2px;
+  }
+
+  :deep(.fc-resourceTimelineDay-view) {
+    min-width: 900px;
+  }
+}
+
+:deep(.fc-scroller) {
+  -webkit-overflow-scrolling: touch;
+}
 </style>
