@@ -37,7 +37,7 @@
             class="text-accent hover:text-primary underline"
             >+375 44 779-93-93</a
           >
-          <a href="https://www.instagram.com/kuksar_brow_face/"
+          <a href="https://www.instagram.com/face2face.cosmetology/"
             ><span class="text-primary">@face2face</span></a
           >
         </span>
@@ -80,7 +80,7 @@
 
   const visibleLinks = computed(() => {
     if (user.value) {
-      if (user.value.role === 2) {
+      if (user.value.role === 6) {
         return [...baseLinks.value, profileLink, adminLink];
       }
       return [...baseLinks.value, profileLink, cartLink];
