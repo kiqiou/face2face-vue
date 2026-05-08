@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { API_BASE } from './workDayBaseApi.js';
+import { WORKDAY_API_BASE } from './workDayBaseApi.js';
 import { authFetch } from '../../authFetch.js';
 
 export function useUpdateWorkDay() {
@@ -21,7 +21,7 @@ export function useUpdateWorkDay() {
 
     try {
       const response = await authFetch(
-        API_BASE + `update_work_day/${workDayId}/`,
+        WORKDAY_API_BASE + `update_work_day/${workDayId}/`,
         {
           method: 'PATCH',
           headers: {

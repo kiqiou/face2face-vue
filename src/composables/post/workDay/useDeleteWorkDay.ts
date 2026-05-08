@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { API_BASE } from './workDayBaseApi.js';
+import { WORKDAY_API_BASE } from './workDayBaseApi.js';
 import { authFetch } from '../../authFetch.js';
 
 export function useDeleteWorkDay() {
@@ -14,7 +14,7 @@ export function useDeleteWorkDay() {
 
     try {
       const response = await authFetch(
-        API_BASE + `delete_work_day/${workDayId}/`,
+        WORKDAY_API_BASE + `delete_work_day/${workDayId}/`,
         {
           method: 'DELETE',
         }

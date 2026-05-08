@@ -4,6 +4,7 @@
   import GradientButton from '../components/ui/GradientButton.vue';
   import TextField from '../components/ui/TextField.vue';
   import { authService } from '../utils/auth.js';
+import { BASE_API } from '../composables/baseApi.js';
 
   const router = useRouter();
 
@@ -13,7 +14,7 @@
   const isLoading = ref(false);
   const telegramLink = ref('');
   const userExists = ref(false);
-  const API_BASE = 'http://127.0.0.1:8000/api/users/';
+  const API_BASE = BASE_API + 'api/users/';
 
   const sendPhone = async () => {
     if (!phoneNumber.value.trim()) return;

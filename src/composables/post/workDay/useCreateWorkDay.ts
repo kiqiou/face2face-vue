@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { API_BASE } from '../workDay/workDayBaseApi.js';
+import { WORKDAY_API_BASE } from '../workDay/workDayBaseApi.js';
 import { authFetch } from '../../authFetch.js';
 
 export function useCreateWorkDay() {
@@ -13,7 +13,7 @@ export function useCreateWorkDay() {
     success.value = false;
 
     try {
-      const response = await authFetch(API_BASE + 'create_work_day/', {
+      const response = await authFetch(WORKDAY_API_BASE + 'create_work_day/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
