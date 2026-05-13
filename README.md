@@ -1,38 +1,200 @@
-# lab2
+# Face2Face Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+Frontend part of a fullstack SPA application for online cosmetology booking.
 
-## Recommended IDE Setup
+The project was developed independently using Vue 3, TypeScript and Django REST API backend.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Demo
 
-## Recommended Browser Setup
+https://face2face-vue.onrender.com
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+## Backend Repository
 
-## Customize configuration
+https://github.com/kiqiou/face2face_backend
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+---
 
-## Project Setup
+# Features
 
-```sh
+## Authentication
+
+* Telegram-based authentication
+* JWT authorization
+* Role-based access
+* Persistent user session
+
+## Client functionality
+
+* Browse cosmetologists
+* Browse procedures
+* Add procedures to cart
+* Create bookings
+* View personal bookings
+* Cancel bookings
+
+## Cosmetologist functionality
+
+* Manage procedures
+* Configure work schedule
+* Create and edit work days
+* View bookings
+* Manage appointment calendar
+
+## Booking system
+
+* Dynamic free slot generation
+* Automatic duration calculation
+* Booking conflict handling
+* Time grouping by hours
+* Existing booking validation
+
+## UI/UX
+
+* SPA architecture
+* Responsive component structure
+* Reusable UI components
+* Toast notifications
+* Modal windows
+* Animated interface
+* Role-based navigation
+
+---
+
+# Tech Stack
+
+## Frontend
+
+* Vue 3
+* TypeScript
+* Vite
+* Tailwind CSS
+* Pinia
+* Vue Router
+* FullCalendar
+
+## Backend Integration
+
+* Django REST Framework
+* REST API
+* JWT Authentication
+
+## Infrastructure
+
+* Docker
+* Render
+
+---
+
+# Architecture
+
+The project uses SPA architecture with separation between:
+
+* client area;
+* admin area;
+* reusable UI components;
+* API composables;
+* centralized state management.
+
+## Project structure
+
+```bash
+src/
+├── admin/
+├── client/
+├── components/
+├── composables/
+├── models/
+├── router/
+├── stores/
+├── utils/
+└── views/
+```
+
+## State management
+
+Pinia is used for:
+
+* cart management;
+* shared application state;
+* reactive booking updates.
+
+## API layer
+
+Reusable composables are used for:
+
+* GET requests;
+* POST requests;
+* booking management;
+* procedures management;
+* workday management.
+
+---
+
+# Technical Challenges
+
+One of the most complex parts of the project was implementing dynamic booking logic:
+
+* calculating free intervals;
+* generating slots every 5 minutes;
+* validating booking duration;
+* preventing booking overlaps;
+* grouping available time slots.
+
+---
+
+# Screenshots
+
+## Main Page
+
+<img width="1641" height="895" alt="image" src="https://github.com/user-attachments/assets/fa2c5600-1b60-4f08-98a6-82106f83986f" />
+
+## Booking System
+
+<img width="641" height="469" alt="image" src="https://github.com/user-attachments/assets/9121ec5a-bfae-4379-afbe-3cef82bd9960" />
+
+
+## Calendar
+<img width="974" height="477" alt="image" src="https://github.com/user-attachments/assets/b40f05f2-76ed-49f8-9739-beab6e73aeae" />
+
+
+## Procedures Management
+
+<img width="636" height="477" alt="image" src="https://github.com/user-attachments/assets/9e5f9da8-1b22-4334-84d7-252719797b97" />
+
+
+---
+
+# Video Demo
+
+https://www.linkedin.com/services/page/540738343a68198999/
+
+---
+
+# Installation
+
+## Clone repository
+
+```bash
+git clone https://github.com/kiqiou/face2face-vue
+```
+
+## Install dependencies
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## Run development server
 
-```sh
+```bash
 npm run dev
 ```
 
-### Compile and Minify for Production
+---
 
-```sh
-npm run build
-```
+# Author
+
+Ekaterina Kuksar
+
+GitHub:
+https://github.com/kiqiou
