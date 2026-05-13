@@ -166,7 +166,7 @@ One of the most complex parts of the project was implementing dynamic booking lo
 
 # Video Demo
 
-https://www.linkedin.com/services/page/540738343a68198999/
+https://youtu.be/lD3mAK-VXSg
 
 ---
 
