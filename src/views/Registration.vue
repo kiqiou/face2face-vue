@@ -4,7 +4,7 @@
   import GradientButton from '../components/ui/GradientButton.vue';
   import TextField from '../components/ui/TextField.vue';
   import { authService } from '../utils/auth.js';
-import { BASE_API } from '../composables/baseApi.js';
+  import { BASE_API } from '../composables/baseApi.js';
 
   const router = useRouter();
 
@@ -30,11 +30,17 @@ import { BASE_API } from '../composables/baseApi.js';
 
       const data = await res.json();
 
+      const tgWindow = window.open('', '_blank');
+
       if (res.ok) {
         telegramLink.value = data.telegram_link;
         isCodeSent.value = true;
 
-        window.open(data.telegram_link, '_blank');
+        if (tgWindow) {
+          tgWindow.location.href = data.telegram_link;
+        } else {
+          window.location.href = data.telegram_link;
+        }
       } else {
         alert(data.error || 'Ошибка');
       }

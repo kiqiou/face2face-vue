@@ -6,7 +6,7 @@
   import { useCartStore } from '../../stores/cart.js';
   import { useToast } from 'vue-toastification';
   import { Procedure } from '../../models/procedure.js';
-import { Cosmetologist } from '../../models/cosmetologist.js';
+  import { Cosmetologist } from '../../models/cosmetologist.js';
 
   const { procedures, load, loading, error } = useProcedures();
 

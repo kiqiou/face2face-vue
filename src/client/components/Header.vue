@@ -46,7 +46,11 @@
               :key="link.name"
               class="text-3xl font-semibold"
             >
-              <RouterLink @click="isOpen = false" :to="link.link"  class="text-black/80 hover:text-black/60 transition duration-300">
+              <RouterLink
+                @click="isOpen = false"
+                :to="link.link"
+                class="text-black/80 hover:text-black/60 transition duration-300"
+              >
                 {{ link.name }}
               </RouterLink>
             </li>
@@ -60,9 +64,7 @@
             Face2face.cosmetology
           </p>
 
-          <p class="text-black/80">
-            Кальварийская, 21, 157
-          </p>
+          <p class="text-black/80">Кальварийская, 21, 157</p>
 
           <a
             href="tel:+375447799393"
@@ -108,13 +110,9 @@
         </ul>
       </nav>
 
-      <div
-        class="dub_headr text-sm lg:text-base text-right text-gray-700"
-      >
+      <div class="dub_headr text-sm lg:text-base text-right text-gray-700">
         <p class="leading-tight">
-          <span class="font-semibold">
-            Face2face.cosmetology
-          </span>
+          <span class="font-semibold"> Face2face.cosmetology </span>
           <br />
 
           <span>Кальварийская, 21, 157</span>
@@ -129,9 +127,7 @@
             </a>
 
             <a href="https://www.instagram.com/face2face.cosmetology/">
-              <span class="text-primary">
-                @face2face
-              </span>
+              <span class="text-primary"> @face2face </span>
             </a>
           </span>
         </p>
@@ -141,92 +137,87 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { RouterLink } from 'vue-router';
-import { authService } from '../../utils/auth.js';
+  import { ref, computed } from 'vue';
+  import { RouterLink } from 'vue-router';
+  import { authService } from '../../utils/auth.js';
 
-const isOpen = ref(false);
+  const isOpen = ref(false);
 
-const baseLinks = ref([
-  { id: '1', name: 'Главная', link: '/' },
-  { id: '2', name: 'Услуги', link: '/procedures' },
-  { id: '3', name: 'Наши мастера', link: '/about' },
-  { id: '4', name: 'Контакты', link: '/contacts' },
-]);
+  const baseLinks = ref([
+    { id: '1', name: 'Главная', link: '/' },
+    { id: '2', name: 'Услуги', link: '/procedures' },
+    { id: '3', name: 'Наши мастера', link: '/about' },
+    { id: '4', name: 'Контакты', link: '/contacts' },
+  ]);
 
-const profileLink = {
-  id: '5',
-  name: 'Личный кабинет',
-  link: '/user-profile',
-};
+  const profileLink = {
+    id: '5',
+    name: 'Личный кабинет',
+    link: '/user-profile',
+  };
 
-const cartLink = {
-  id: '8',
-  name: 'Добавленные услуги',
-  link: '/user-cart',
-};
+  const cartLink = {
+    id: '8',
+    name: 'Добавленные услуги',
+    link: '/user-cart',
+  };
 
-const adminLink = {
-  id: '7',
-  name: 'График',
-  link: '/calendar',
-};
+  const adminLink = {
+    id: '7',
+    name: 'График',
+    link: '/calendar',
+  };
 
-const user = authService.currentUser;
+  const user = authService.currentUser;
 
-const visibleLinks = computed(() => {
-  if (user.value) {
-    if (user.value.role === 6) {
-      return [...baseLinks.value, profileLink, adminLink];
+  const visibleLinks = computed(() => {
+    if (user.value) {
+      if (user.value.role === 6) {
+        return [...baseLinks.value, profileLink, adminLink];
+      }
+
+      return [...baseLinks.value, profileLink, cartLink];
     }
 
-    return [...baseLinks.value, profileLink, cartLink];
-  }
-
-  return [
-    ...baseLinks.value,
-    {
-      id: '6',
-      name: 'Регистрация/вход',
-      link: '/registration',
-    },
-  ];
-});
+    return [
+      ...baseLinks.value,
+      {
+        id: '6',
+        name: 'Регистрация/вход',
+        link: '/registration',
+      },
+    ];
+  });
 </script>
 
 <style scoped>
-.nav-link {
-  position: relative;
-}
+  .nav-link {
+    position: relative;
+  }
 
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(
-    90deg,
-    white 0%,
-    #faee9e 50%,
-    #fed9b7 100%
-  );
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 1px;
-}
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, white 0%, #faee9e 50%, #fed9b7 100%);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 1px;
+  }
 
-.nav-link:hover::after {
-  width: 100%;
-}
+  .nav-link:hover::after {
+    width: 100%;
+  }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.3s ease;
+  }
 
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
 </style>

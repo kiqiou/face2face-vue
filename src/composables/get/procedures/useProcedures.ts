@@ -18,29 +18,29 @@ export function useProcedures() {
       const data = await apiGet(API_BASE + 'get_procedures/');
 
       procedures.value = data.map((item: any) => {
-      const cosmetolog = item.cosmetologist;
+        const cosmetolog = item.cosmetologist;
 
-      const cosmetologist = new Cosmetologist(
-        cosmetolog.id,
-        new User(
-          cosmetolog.user.id,
-          cosmetolog.user.username,
-          cosmetolog.user.phone,
-          cosmetolog.user.role
-        ),
-        cosmetolog.bio,
-        cosmetolog.specializations, 
-        cosmetolog.avatar_url     
-      );
+        const cosmetologist = new Cosmetologist(
+          cosmetolog.id,
+          new User(
+            cosmetolog.user.id,
+            cosmetolog.user.username,
+            cosmetolog.user.phone,
+            cosmetolog.user.role
+          ),
+          cosmetolog.bio,
+          cosmetolog.specializations,
+          cosmetolog.avatar_url
+        );
 
-      return new Procedure(
-        item.id,
-        item.name,
-        item.price,
-        item.duration,
-        cosmetologist
-      );
-  });
+        return new Procedure(
+          item.id,
+          item.name,
+          item.price,
+          item.duration,
+          cosmetologist
+        );
+      });
     } catch (err: any) {
       error.value = err.message;
     } finally {

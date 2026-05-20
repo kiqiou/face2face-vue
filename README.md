@@ -18,45 +18,45 @@ https://github.com/kiqiou/face2face_backend
 
 ## Authentication
 
-* Telegram-based authentication
-* JWT authorization
-* Role-based access
-* Persistent user session
+- Telegram-based authentication
+- JWT authorization
+- Role-based access
+- Persistent user session
 
 ## Client functionality
 
-* Browse cosmetologists
-* Browse procedures
-* Add procedures to cart
-* Create bookings
-* View personal bookings
-* Cancel bookings
+- Browse cosmetologists
+- Browse procedures
+- Add procedures to cart
+- Create bookings
+- View personal bookings
+- Cancel bookings
 
 ## Cosmetologist functionality
 
-* Manage procedures
-* Configure work schedule
-* Create and edit work days
-* View bookings
-* Manage appointment calendar
+- Manage procedures
+- Configure work schedule
+- Create and edit work days
+- View bookings
+- Manage appointment calendar
 
 ## Booking system
 
-* Dynamic free slot generation
-* Automatic duration calculation
-* Booking conflict handling
-* Time grouping by hours
-* Existing booking validation
+- Dynamic free slot generation
+- Automatic duration calculation
+- Booking conflict handling
+- Time grouping by hours
+- Existing booking validation
 
 ## UI/UX
 
-* SPA architecture
-* Responsive component structure
-* Reusable UI components
-* Toast notifications
-* Modal windows
-* Animated interface
-* Role-based navigation
+- SPA architecture
+- Responsive component structure
+- Reusable UI components
+- Toast notifications
+- Modal windows
+- Animated interface
+- Role-based navigation
 
 ---
 
@@ -64,24 +64,24 @@ https://github.com/kiqiou/face2face_backend
 
 ## Frontend
 
-* Vue 3
-* TypeScript
-* Vite
-* Tailwind CSS
-* Pinia
-* Vue Router
-* FullCalendar
+- Vue 3
+- TypeScript
+- Vite
+- Tailwind CSS
+- Pinia
+- Vue Router
+- FullCalendar
 
 ## Backend Integration
 
-* Django REST Framework
-* REST API
-* JWT Authentication
+- Django REST Framework
+- REST API
+- JWT Authentication
 
 ## Infrastructure
 
-* Docker
-* Render
+- Docker
+- Render
 
 ---
 
@@ -89,11 +89,11 @@ https://github.com/kiqiou/face2face_backend
 
 The project uses SPA architecture with separation between:
 
-* client area;
-* admin area;
-* reusable UI components;
-* API composables;
-* centralized state management.
+- client area;
+- admin area;
+- reusable UI components;
+- API composables;
+- centralized state management.
 
 ## Project structure
 
@@ -114,19 +114,19 @@ src/
 
 Pinia is used for:
 
-* cart management;
-* shared application state;
-* reactive booking updates.
+- cart management;
+- shared application state;
+- reactive booking updates.
 
 ## API layer
 
 Reusable composables are used for:
 
-* GET requests;
-* POST requests;
-* booking management;
-* procedures management;
-* workday management.
+- GET requests;
+- POST requests;
+- booking management;
+- procedures management;
+- workday management.
 
 ---
 
@@ -134,11 +134,11 @@ Reusable composables are used for:
 
 One of the most complex parts of the project was implementing dynamic booking logic:
 
-* calculating free intervals;
-* generating slots every 5 minutes;
-* validating booking duration;
-* preventing booking overlaps;
-* grouping available time slots.
+- calculating free intervals;
+- generating slots every 5 minutes;
+- validating booking duration;
+- preventing booking overlaps;
+- grouping available time slots.
 
 ---
 
@@ -152,15 +152,13 @@ One of the most complex parts of the project was implementing dynamic booking lo
 
 <img width="641" height="469" alt="image" src="https://github.com/user-attachments/assets/9121ec5a-bfae-4379-afbe-3cef82bd9960" />
 
-
 ## Calendar
-<img width="974" height="477" alt="image" src="https://github.com/user-attachments/assets/b40f05f2-76ed-49f8-9739-beab6e73aeae" />
 
+<img width="974" height="477" alt="image" src="https://github.com/user-attachments/assets/b40f05f2-76ed-49f8-9739-beab6e73aeae" />
 
 ## Procedures Management
 
 <img width="636" height="477" alt="image" src="https://github.com/user-attachments/assets/9e5f9da8-1b22-4334-84d7-252719797b97" />
-
 
 ---
 
