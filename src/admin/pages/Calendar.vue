@@ -285,16 +285,9 @@
       resourceTimelinePlugin,
       interactionPlugin,
     ],
-    initialView: isMobile
-    ? 'timeGridDay'
-    : 'resourceTimelineDay',
-    headerToolbar: isMobile
-    ? {
-        left: 'prev,next',
-        center: 'title',
-        right: 'timeGridDay,dayGridMonth',
-      }
-    : {
+    initialView: 'resourceTimelineDay',
+    headerToolbar:
+     {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,resourceTimelineDay,resourceTimelineWeek',
@@ -686,6 +679,10 @@
     height: 42px !important;
   }
 
+  :deep(.fc-timeline-slot) {
+    width: 60px !important;
+  }
+
   :deep(.fc-event) {
     font-size: 0.7rem;
     padding: 2px;
@@ -693,6 +690,10 @@
 
   :deep(.fc-resourceTimelineDay-view) {
     min-width: 900px;
+  }
+
+  :deep(.fc-resourceTimelineWeek-view) {
+    min-width: 1200px;
   }
 }
 
