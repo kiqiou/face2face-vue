@@ -97,7 +97,7 @@ import { BASE_API } from '../composables/baseApi.js';
 
         <TextField
           v-if="isCodeSent"
-          placeholder="Код из SMS"
+          placeholder="Код из Telegram"
           v-model="code"
           type="number"
           maxlength="6"
