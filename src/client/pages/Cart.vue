@@ -2,8 +2,6 @@
   import router from '../../router/index.js';
   import GradientButton from '../../components/ui/GradientButton.vue';
   import { computed, onMounted, ref, watch } from 'vue';
-  import { Cosmetologist } from '../../models/cosmetologist.js';
-  import { Procedure } from '../../models/procedure.js';
   import { useCartStore } from '../../stores/cart.js';
   import { useCreateBooking } from '../../composables/post/bookings/useCreateBooking.js';
   import { useWorkDaysByCosmetologist } from '../../composables/get//workday/useWorkDayByCosmetologist.js';
@@ -262,7 +260,7 @@
     </div>
 
     <div v-else class="flex justify-center text-black/70 text-2xl">
-      Корзина пуста
+      Вы еще не добавили услуги
     </div>
   </div>
 </template>

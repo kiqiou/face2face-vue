@@ -32,7 +32,7 @@
 
     <GradientButton
       v-if="showButton"
-      button-name="Записаться"
+      button-name="Добавить услугу"
       @click="$emit('click', procedure)"
     />
   </div>
