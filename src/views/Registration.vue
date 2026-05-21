@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import GradientButton from '../components/ui/GradientButton.vue';
   import TextField from '../components/ui/TextField.vue';
@@ -8,13 +8,14 @@
 
   const router = useRouter();
 
-  const phoneNumber = ref('');
+  const API_BASE = BASE_API + 'api/users/';
   const code = ref('');
   const isCodeSent = ref(false);
   const isLoading = ref(false);
   const telegramLink = ref('');
   const userExists = ref(false);
-  const API_BASE = BASE_API + 'api/users/';
+  const phoneNumber = ref(""); 
+
 
   const sendPhone = async () => {
     if (!phoneNumber.value.trim()) return;
