@@ -2,7 +2,7 @@
   <div
     class="flex flex-col max-w-auto min-h-screen py-12 bg-gradient-to-br from-[#E5A663]/90 to-bl-[#FAEE9E] to-[#FAEE9E] overflow-x-hidden"
   >
-    <div class="mx-auto w-full max-w-7xl px-4">
+    <div class="mx-auto w-full max-w-[1400px] px-4">
       <Header />
     </div>
     <main class="flex flex-1 flex-col">
