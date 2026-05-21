@@ -13,6 +13,7 @@ export function useUpdateProcedure() {
       name?: string;
       price?: number;
       duration?: string;
+      description?: string;
     }
   ) => {
     loading.value = true;

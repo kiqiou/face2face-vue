@@ -1,9 +1,9 @@
-export async function apiGet(url: string, token?: string) {
+export async function apiGet(url: string,) {
   const response = await fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...({}),
     },
   });
 

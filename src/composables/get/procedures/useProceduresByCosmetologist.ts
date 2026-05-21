@@ -24,6 +24,7 @@ export function useProceduresByCosmetologist() {
             item.name,
             item.price,
             item.duration,
+            item.description,
             item.cosmetologist
           )
       );

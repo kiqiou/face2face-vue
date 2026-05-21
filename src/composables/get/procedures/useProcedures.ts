@@ -38,6 +38,7 @@ export function useProcedures() {
           item.name,
           item.price,
           item.duration,
+          item.description,
           cosmetologist
         );
       });

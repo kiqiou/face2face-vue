@@ -201,6 +201,18 @@
           </div>
         </div>
 
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2"
+            >Описание процедуры</label
+          >
+          <textarea
+            v-model="form.description"
+            rows="4"
+            class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#E5A663] focus:border-transparent transition-all"
+            placeholder="Например: Глубокая очистка кожи лица с использованием профессиональных средств."
+          ></textarea>
+        </div>
+
         <div class="flex gap-3 pt-4">
           <GradientButton
             button-name="Сохранить"
@@ -253,6 +265,7 @@
     name: '',
     price: 0,
     duration: '',
+    description: '',
   });
 
   const formHours = ref(0);
@@ -283,14 +296,14 @@
   const openCreateModal = () => {
     showModal.value = true;
     editingProcedure.value = null;
-    Object.assign(form, { name: '', price: 0, duration: '' });
+    Object.assign(form, { name: '', price: 0, duration: '', description: '' });
   };
 
   const openEditModal = (procedure: any) => {
     editingProcedure.value = procedure;
     form.name = procedure.name;
     form.price = procedure.price ?? 0;
-
+    form.description = procedure.description ?? '';
     const duration = procedure.duration;
 
     const [h, m] = duration.split(':').map(Number);
@@ -303,7 +316,7 @@
   const closeModal = () => {
     showModal.value = false;
     editingProcedure.value = null;
-    Object.assign(form, { name: '', price: 0, duration: '' });
+    Object.assign(form, { name: '', price: 0, duration: '', description: '' });
   };
 
   const createProcedureInForm = async () => {
@@ -314,7 +327,7 @@
 
     try {
       saving.value = true;
-      await createProcedure(form.name, form.price, duration);
+      await createProcedure(form.name, form.price, duration, form.description);
       await loadProceduresByCosmetologist(id);
       toast.success('Процедура добавлена');
       closeModal();
@@ -338,6 +351,7 @@
         name: form.name,
         price: form.price,
         duration,
+        description: form.description
       });
       await loadProceduresByCosmetologist(id);
       toast.success('Процедура обновлена');

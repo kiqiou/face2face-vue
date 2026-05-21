@@ -10,7 +10,8 @@ export function useCreateProcedure() {
   const createProcedure = async (
     name: string,
     price: number,
-    duration: string
+    duration: string,
+    description: string
   ) => {
     loading.value = true;
     errorCreate.value = null;
@@ -26,6 +27,7 @@ export function useCreateProcedure() {
           name,
           price,
           duration,
+          description,
         }),
       });
 

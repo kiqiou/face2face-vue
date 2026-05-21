@@ -5,6 +5,7 @@ export class Procedure {
   name: string = '';
   price: number = 0;
   duration: string = '';
+  description: string = '';
   cosmetologist: Cosmetologist;
 
   constructor(
@@ -12,12 +13,14 @@ export class Procedure {
     name: string = '',
     price: number = 0,
     duration: string = '',
+    description: string = '',
     cosmetologist: Cosmetologist
   ) {
     this.id = id;
     this.name = name;
     this.price = price;
     this.duration = duration;
+    this.description = description;
     this.cosmetologist = cosmetologist;
   }
 }
