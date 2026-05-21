@@ -7,12 +7,14 @@
   import { useToast } from 'vue-toastification';
   import { Procedure } from '../../models/procedure.js';
   import { Cosmetologist } from '../../models/cosmetologist.js';
+import { authService } from '../../utils/auth.js';
 
   const { procedures, load, loading, error } = useProcedures();
 
   const cart = useCartStore();
   const router = useRouter();
   const toast = useToast();
+  const isAuthenticated = authService.isAuthenticated();
 
   onMounted(() => {
     load();
@@ -36,6 +38,10 @@
   });
 
   const addToCart = (procedure: Procedure, cosmetologist: Cosmetologist) => {
+    if (!isAuthenticated) {
+      toast.error('Пожалуйста, войдите в систему, чтобы добавить услугу');
+      return;
+    }
     cart.addProcedure(procedure, cosmetologist);
     toast.success(`"${procedure.name}" добавлено в корзину`);
   };
