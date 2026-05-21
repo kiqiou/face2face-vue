@@ -5,6 +5,7 @@
   import TextField from '../components/ui/TextField.vue';
   import { authService } from '../utils/auth.js';
   import { BASE_API } from '../composables/baseApi.js';
+import PhoneInput from '../components/ui/PhoneInput.vue';
 
   const router = useRouter();
 
@@ -96,7 +97,7 @@
           {{ isCodeSent ? 'Введите код' : 'Регистрация/вход' }}
         </h1>
 
-        <TextField
+        <PhoneInput
           v-if="!isCodeSent"
           placeholder="Номер телефона"
           v-model="phoneNumber"
