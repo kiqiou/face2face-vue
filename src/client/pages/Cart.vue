@@ -7,6 +7,7 @@
   import { useWorkDaysByCosmetologist } from '../../composables/get//workday/useWorkDayByCosmetologist.js';
   import { WorkDay } from '../../models/workday.js';
   import { useFreeIntervals } from '../../composables/get/workday/useFreeIntervals.js';
+import ProcedureCard from '../components/ProcedureCard.vue';
 
   const cart = useCartStore();
 
@@ -127,6 +128,7 @@
 
     if (success.value) {
       router.push('/success');
+      cart.clearCart()
     } else if (error.value) {
       alert(error.value);
     }
@@ -168,32 +170,16 @@
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div
-          v-for="proc in cart.procedures"
+        <ProcedureCard 
+        v-for="proc in cart.procedures"
           :key="proc.id"
-          class="bg-white rounded-xl p-5 shadow hover:shadow-xl transition-all border border-transparent hover:border-[#E5A663]/30"
-        >
-          <div class="flex justify-between items-start mb-3">
-            <div>
-              <p class="text-lg font-semibold text-slate-800/80">
-                {{ proc.name }}
-              </p>
-              <p class="text-sm text-slate-500">{{ proc.duration }} ч</p>
-            </div>
-            <div class="flex items-center gap-1">
-              <span
-                class="text-xl font-black bg-[#E5A663] bg-clip-text text-transparent"
-              >
-                {{ proc.price }}
-              </span>
-              <span class="text-sm text-slate-400">BYN</span>
-            </div>
-          </div>
-        </div>
+          :procedure="proc"
+          :show-button="false" />
+          
       </div>
 
       <div class="mt-8 pt-6 border-t border-[#E5A663]/30 text-right">
-        <div class="text-xl text-slate-700">
+        <div class="text-xl text-black/80">
           Итого: <span class="font-black text-[#E5A663]">{{ total }}</span> BYN
         </div>
       </div>
