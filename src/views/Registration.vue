@@ -23,7 +23,7 @@ import PhoneInput from '../components/ui/PhoneInput.vue';
 
     isLoading.value = true;
 
-    try {
+      try {
       const res = await fetch(API_BASE + 'generate-auth/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -32,16 +32,13 @@ import PhoneInput from '../components/ui/PhoneInput.vue';
 
       const data = await res.json();
 
-      const tgWindow = window.open('', '_blank');
-
       if (res.ok) {
-        telegramLink.value = data.telegram_link;
         isCodeSent.value = true;
-
-        if (tgWindow) {
-          tgWindow.location.href = data.telegram_link;
-        } else {
-          window.location.href = data.telegram_link;
+        
+        const tgWindow = window.open(data.telegram_link, '_blank', 'width=600,height=700');
+        
+        if (!tgWindow) {
+          alert('Пожалуйста, разрешите всплывающие окна для этого сайта');
         }
       } else {
         alert(data.error || 'Ошибка');
