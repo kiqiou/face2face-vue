@@ -32,18 +32,13 @@ const sendPhone = async () => {
     if (res.ok) {
       isCodeSent.value = true;
 
-      // Пробуем открыть Telegram во всех случаях
       const telegramLink = data.telegram_link;
       
-      // На телефоне — открываем в том же окне (откроет приложение Telegram)
-      // На десктопе — в новом окне
       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
       
       if (isMobile) {
-        // На телефоне переходим напрямую — откроет приложение Telegram
         window.location.href = telegramLink;
       } else {
-        // На десктопе открываем в новом окне
         window.open(telegramLink, '_blank', 'width=600,height=700');
       }
     } else {

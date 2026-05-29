@@ -66,13 +66,12 @@ const close = () => {
           </div>
         </div>
 
-        <!-- Косметолог -->
         <div class="flex items-center gap-3 bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 border border-gray-100">
           <div class="w-12 h-12 bg-gradient-to-br from-[#E5A663] to-[#f4c58d] rounded-full flex items-center justify-center text-white font-bold text-lg">
             {{ procedure.cosmetologist?.user.username?.[0]?.toUpperCase() || '✦' }}
           </div>
           <div>
-            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Косметолог</p>
+            <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Косметик</p>
             <p class="text-gray-900 font-semibold">
               {{ procedure.cosmetologist?.user.username || 'Не указан' }}
             </p>
