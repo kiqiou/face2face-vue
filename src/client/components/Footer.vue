@@ -46,22 +46,11 @@
       <div class="pt-8 mt-8 border-t-2 border-black/40">
       </div>
 
-      <div class="flex flex-col">
+      <div class="flex flex-col items-center">
         <h4 class="text-lg self-center font-semibold text-black/80 mb-4 text-center sm:text-left">
           Как добраться?
         </h4>
-        <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2350.452835212944!2d27.52458837707582!3d53.90592863270666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dbcff6f3b996b1%3A0x661104811f4d513e!2zMTU3LCDRg9C7LiDQmtCw0LvRjNCy0LDRgNC40LnRgdC60LDRjyAyMSwg0JzQuNC90YHQuiwg0JzQuNC90YHQutCw0Y8g0L7QsdC70LDRgdGC0YwgMjIwMDcz!5e0!3m2!1sru!2sby!4v1780066163669!5m2!1sru!2sby"
-            width="100%"
-            height="300"
-            style="border:0;"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            class="w-full"
-          ></iframe>
-        </div>
+<iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Ad827a45a9b693fc8fcbe892131b61eef5cb535d09891f9c13504a6178d67df55&amp;source=constructor" width="100%" height="580" frameborder="0" class="rounded-xl"></iframe>
         <div class="mt-4 flex flex-col sm:flex-row gap-3 justify-around sm:justify-center">
           <a
             href="https://yandex.by/maps/?rtext=~Кальварийская%2021%20Минск"
