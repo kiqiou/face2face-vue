@@ -52,7 +52,7 @@
         </h4>
         <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-200">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2306.639487654321!2d27.5615!3d53.8985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dc18c8b8a8a8a9%3A0x1234567890abcdef!2z0JrRgNCw0YHRgtCw0Y8g0JrQvtGB0YrQsNC7LCDQoNC-0YHRgtCw0Y8sIDIxLCAyMjAwMDQsCDQo0L7RgdGC0LDRgNGC0L3QsNGPINGD0LvQuNGG0LAsINCe0LDRgNCw0YHRgtCw!5e0!3m2!1sru!2sby!4v1234567890123!5m2!1sru!2sby"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2350.452835212944!2d27.52458837707582!3d53.90592863270666!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dbcff6f3b996b1%3A0x661104811f4d513e!2zMTU3LCDRg9C7LiDQmtCw0LvRjNCy0LDRgNC40LnRgdC60LDRjyAyMSwg0JzQuNC90YHQuiwg0JzQuNC90YHQutCw0Y8g0L7QsdC70LDRgdGC0YwgMjIwMDcz!5e0!3m2!1sru!2sby!4v1780066163669!5m2!1sru!2sby"
             width="100%"
             height="300"
             style="border:0;"
