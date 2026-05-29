@@ -23,11 +23,44 @@
     </main>
     <Footer></Footer>
   </div>
+      <button
+    @click="scrollToTop"
+    v-show="showButton"
+    class="fixed bottom-8 right-8 z-50 p-3 bg-[#E5A663] border-2 border-black/50 text-black/60 font-bold rounded-full"
+    aria-label="Наверх"
+  >
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+    </svg>
+  </button>
 </template>
 
 <script setup lang="ts">
-  import Footer from '../components/Footer.vue';
+  import { onBeforeUnmount, onMounted, ref } from 'vue';
+import Footer from '../components/Footer.vue';
   import Header from '../components/Header.vue';
+
+    
+const showButton = ref(false)
+
+const handleScroll = () => {
+  showButton.value = window.scrollY > 300
+}
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>

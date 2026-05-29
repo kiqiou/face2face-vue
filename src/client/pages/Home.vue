@@ -27,14 +27,11 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onBeforeUnmount, onMounted, ref } from 'vue';
   import Procedures from './Procedures.vue';
   import About from './About.vue';
   import TextSection from '../components/home/TextSection.vue';
 
-  const windowWidth = ref(0);
 
-  const updateWidth = () => {
-    windowWidth.value = window.innerWidth;
-  };
+
 </script>
