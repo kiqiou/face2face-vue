@@ -1,79 +1,84 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue';
-  import { useRouter } from 'vue-router';
-  import GradientButton from '../components/ui/GradientButton.vue';
-  import TextField from '../components/ui/TextField.vue';
-  import { authService } from '../utils/auth.js';
-  import { BASE_API } from '../composables/baseApi.js';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import GradientButton from '../components/ui/GradientButton.vue';
+import TextField from '../components/ui/TextField.vue';
+import { authService } from '../utils/auth.js';
+import { BASE_API } from '../composables/baseApi.js';
 import PhoneInput from '../components/ui/PhoneInput.vue';
 
-  const router = useRouter();
+const router = useRouter();
 
-  const API_BASE = BASE_API + 'api/users/';
-  const code = ref('');
-  const isCodeSent = ref(false);
-  const isLoading = ref(false);
-  const telegramLink = ref('');
-  const userExists = ref(false);
-  const phoneNumber = ref(""); 
+const API_BASE = BASE_API + 'api/users/';
+const code = ref('');
+const isCodeSent = ref(false);
+const isLoading = ref(false);
+const phoneNumber = ref("");
 
+const sendPhone = async () => {
+  if (!phoneNumber.value.trim()) return;
 
-  const sendPhone = async () => {
-    if (!phoneNumber.value.trim()) return;
+  isLoading.value = true;
 
-    isLoading.value = true;
+  try {
+    const res = await fetch(API_BASE + 'generate-auth/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: phoneNumber.value.trim() }),
+    });
 
-      try {
-      const res = await fetch(API_BASE + 'generate-auth/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone: phoneNumber.value.trim() }),
-      });
+    const data = await res.json();
 
-      const data = await res.json();
+    if (res.ok) {
+      isCodeSent.value = true;
 
-      if (res.ok) {
-        isCodeSent.value = true;
-        
-        const tgWindow = window.open(data.telegram_link, '_blank', 'width=600,height=700');
-        
-        if (!tgWindow) {
-          alert('Пожалуйста, разрешите всплывающие окна для этого сайта');
-        }
+      // Пробуем открыть Telegram во всех случаях
+      const telegramLink = data.telegram_link;
+      
+      // На телефоне — открываем в том же окне (откроет приложение Telegram)
+      // На десктопе — в новом окне
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      if (isMobile) {
+        // На телефоне переходим напрямую — откроет приложение Telegram
+        window.location.href = telegramLink;
       } else {
-        alert(data.error || 'Ошибка');
+        // На десктопе открываем в новом окне
+        window.open(telegramLink, '_blank', 'width=600,height=700');
       }
-    } finally {
-      isLoading.value = false;
+    } else {
+      alert(data.error || 'Ошибка');
     }
-  };
+  } finally {
+    isLoading.value = false;
+  }
+};
 
-  const confirmCode = async () => {
-    isLoading.value = true;
+const confirmCode = async () => {
+  isLoading.value = true;
 
-    try {
-      const res = await fetch(API_BASE + 'confirm/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: phoneNumber.value.trim(),
-          code: code.value.trim(),
-        }),
-      });
+  try {
+    const res = await fetch(API_BASE + 'confirm/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: phoneNumber.value.trim(),
+        code: code.value.trim(),
+      }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (res.ok) {
-        authService.setTokens(data.access, data.refresh, data.user);
-
-        router.push('/user-profile');
-      } else {
-        alert(data.error);
-      }
-    } finally {
-      isLoading.value = false;
+    if (res.ok) {
+      authService.setTokens(data.access, data.refresh, data.user);
+      router.push('/user-profile');
+    } else {
+      alert(data.error);
     }
-  };
+  } finally {
+    isLoading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -119,6 +124,10 @@ import PhoneInput from '../components/ui/PhoneInput.vue';
           :disabled="isLoading"
           @click="isCodeSent ? confirmCode() : sendPhone()"
         />
+        
+        <p v-if="isCodeSent" class="text-sm text-gray-600 text-center">
+          Проверьте Telegram — код отправлен в чат с ботом
+        </p>
       </div>
     </div>
   </div>
