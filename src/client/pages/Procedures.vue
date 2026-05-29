@@ -1,20 +1,17 @@
 <script setup lang="ts">
   import { useRouter } from 'vue-router';
-  import { computed, onMounted } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import ProcedureCard from '../components/ProcedureCard.vue';
   import { useProcedures } from '../../composables/get/procedures/useProcedures.js';
   import { useCartStore } from '../../stores/cart.js';
-  import { useToast } from 'vue-toastification';
   import { Procedure } from '../../models/procedure.js';
   import { Cosmetologist } from '../../models/cosmetologist.js';
-import { authService } from '../../utils/auth.js';
+import ProcedureModal from '../components/ProcedureModal.vue';
 
   const { procedures, load, loading, error } = useProcedures();
 
   const cart = useCartStore();
   const router = useRouter();
-  const toast = useToast();
-  const isAuthenticated = authService.isAuthenticated();
 
   onMounted(() => {
     load();
@@ -40,9 +37,18 @@ import { authService } from '../../utils/auth.js';
   const addToCart = (procedure: Procedure, cosmetologist: Cosmetologist) => {
     cart.addProcedure(procedure, cosmetologist);
   };
+  
+  const isModalOpen = ref(false);
+  const selectedProcedure = ref<Procedure | null>(null);
 
-  const openService = (id: number) => {
-    router.push(`/procedure/${id}`);
+  const openModal = (procedure: Procedure) => {
+    selectedProcedure.value = procedure;
+    isModalOpen.value = true;
+  };
+
+  const closeModal = () => {
+    isModalOpen.value = false;
+    selectedProcedure.value = null;
   };
 </script>
 
@@ -86,9 +92,15 @@ import { authService } from '../../utils/auth.js';
           :procedure="proc"
           :show-button="true"
           @click="addToCart(proc, group.info)"
+          @open-details="openModal"
         />
       </div>
     </div>
     <router-view></router-view>
   </div>
+  <ProcedureModal
+    v-if="isModalOpen && selectedProcedure"
+    :procedure="selectedProcedure"
+    @close="closeModal"
+  />
 </template>

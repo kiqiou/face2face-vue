@@ -26,16 +26,7 @@ const routes = [
       { path: '/user-profile', component: UserProfile },
       { path: '/user-cart', component: Cart },
       { path: '/success', component: Success },
-      {
-        path: '/procedures',
-        component: Procedures,
-        children: [
-          {
-            path: ':id',
-            component: ProcedureModal,
-          },
-        ],
-      },
+      { path: '/procedures', component: Procedures },
       {
         path: '/cosmetologist/:id/procedures',
         name: 'CosmetologistProcedures',

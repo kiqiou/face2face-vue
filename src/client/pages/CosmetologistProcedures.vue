@@ -47,6 +47,7 @@
               :procedure="procedure"
               :show-button="true"
               @click="addToCart"
+              @open-details="openModal"
             />
           </div>
         </div>
@@ -54,17 +55,22 @@
       <div v-if="procedures.length === 0">Нет процедур</div>
     </div>
   </div>
+  <ProcedureModal
+    v-if="isModalOpen && selectedProcedure"
+    :procedure="selectedProcedure"
+    @close="closeModal"
+  />
 </template>
 
 <script lang="ts" setup>
-  import { onMounted } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useToast } from 'vue-toastification';
   import ProcedureCard from '../components/ProcedureCard.vue';
   import { useCosmetologistById } from '../../composables/get/user/useCosmetologistById.js';
   import { useProceduresByCosmetologist } from '../../composables/get/procedures/useProceduresByCosmetologist.js';
   import { useCartStore } from '../../stores/cart.js';
   import { Procedure } from '../../models/procedure.js';
+import ProcedureModal from '../components/ProcedureModal.vue';
 
   const route = useRoute();
   const id = Number(route.params.id);
@@ -80,13 +86,22 @@
 
   const cart = useCartStore();
 
-  const toast = useToast();
-
   const addToCart = (procedure: Procedure) => {
     if (!cosmetologist.value) return;
 
     cart.addProcedure(procedure, cosmetologist.value);
+  };
 
-    toast.success(`"${procedure.name}" добавлено в корзину`);
+  const isModalOpen = ref(false);
+  const selectedProcedure = ref<Procedure | null>(null);
+
+  const openModal = (procedure: Procedure) => {
+    selectedProcedure.value = procedure;
+    isModalOpen.value = true;
+  };
+
+  const closeModal = () => {
+    isModalOpen.value = false;
+    selectedProcedure.value = null;
   };
 </script>
