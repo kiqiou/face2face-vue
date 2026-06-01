@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group bg-white rounded-2xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#E5A663]/30"
+    class="flex flex-col justify-between group bg-white rounded-2xl p-5 gap-1 shadow-sm hover:shadow-xl transition-all duration-300 border border-transparent hover:border-[#E5A663]/30"
   >
     <div class="flex justify-between items-center">
       <div>

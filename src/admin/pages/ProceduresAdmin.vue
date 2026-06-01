@@ -1,5 +1,12 @@
 <template>
-  <HeaderAdmin></HeaderAdmin>
+  <div   class="
+    min-h-screen
+    bg-gradient-to-b
+    from-slate-50
+    via-white
+    to-slate-100
+  ">
+    <HeaderAdmin></HeaderAdmin>
   <div class="flex flex-col items-center gap-8 max-w-6xl mx-auto p-8">
     <h1 class="text-3xl font-black text-black">Управление процедурами</h1>
 
@@ -10,33 +17,58 @@
     />
 
     <div v-if="procedures.length === 0 && !loading" class="text-center py-20">
-      <div
-        class="w-24 h-24 mx-auto bg-[#E5A663]/20 rounded-2xl flex items-center justify-center mb-6"
-      >
-        <svg
-          class="w-12 h-12 text-[#E5A663]/70"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-          />
-        </svg>
-      </div>
       <h3 class="text-2xl font-black text-slate-600 mb-2">Нет процедур</h3>
       <p class="text-slate-500">Добавьте первую процедуру выше</p>
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-      <div
-        v-for="procedure in procedures"
-        :key="procedure.id"
-        class="bg-gradient-to-br from-[#E5A663]/60 to-[#FAEE9E] rounded-2xl p-6 shadow-lg hover:shadow-2xl border border-slate-100 hover:border-[#E5A663]/30 transition-all duration-300"
+    <div v-else class="flex flex-col gap-4">
+    <div
+      v-for="[categoryName, categoryProcedures] in groupedProcedures"
+      :key="categoryName"
+      class="w-full"
+    >
+      <div class="flex flex-row gap-2 items-center justify-cetner mb-4">
+        <h2 class="text-2xl font-bold text-slate-800">
+          {{ categoryName }}
+        </h2>
+          <span
+        class="
+          px-3 py-1
+          text-sm
+          font-bold
+          rounded-full
+          bg-slate-100
+          text-slate-600
+        "
       >
+        {{ categoryProcedures.length }}
+      </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          v-for="procedure in categoryProcedures"
+          :key="procedure.id"
+         
+            class="
+  relative
+  overflow-hidden
+  bg-gradient-to-b
+  from-white/90
+  to-white/5
+  backdrop-blur-sm
+  rounded-[28px]
+  p-6
+  border
+  border-white
+  shadow-xl
+  hover:shadow-2xl
+  hover:-translate-y-1
+  transition-all
+  duration-300
+"
+          
+        >
         <div class="flex items-start justify-between mb-4">
           <h3 class="text-xl font-black text-black/80 pr-4">
             {{ procedure.name }}
@@ -84,34 +116,41 @@
         </div>
 
         <div class="space-y-3 mb-6">
-          <div class="flex items-center gap-2">
-            <span
-              class="text-xl font-black bg-black/70 bg-clip-text text-transparent"
-            >
-              {{ procedure.price }} BYN
-            </span>
-          </div>
-          <div class="flex items-center gap-2 text-black/80">
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            {{ procedure.duration }} ч.
-          </div>
+          <div class="mt-6 flex justify-between items-end">
+  <div>
+    <p class="text-sm text-slate-500">
+      Стоимость
+    </p>
+
+    <p class="text-2xl font-black text-slate-900">
+      {{ procedure.price }}
+      <span class="text-lg font-medium">
+        BYN
+      </span>
+    </p>
+  </div>
+
+  <div
+    class="
+      px-4 py-2
+      rounded-2xl
+      bg-slate-100
+      text-slate-700
+      font-medium
+    "
+  >
+   Длительность: {{ procedure.duration }}
+  </div>
+</div>
         </div>
       </div>
     </div>
+    </div>
+    </div>
   </div>
 
+  </div>
+  
   <div
     v-if="showModal"
     class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
@@ -299,11 +338,35 @@
     await loadCosmetologistByUserId(user.id);
   });
 
+  const groupedProcedures = computed(() => {
+    const groups: Record<string, typeof procedures.value> = {};
+
+    procedures.value.forEach((procedure) => {
+      const categoryName =
+        procedure.category?.name || 'Без категории';
+
+      if (!groups[categoryName]) {
+        groups[categoryName] = [];
+      }
+
+      groups[categoryName].push(procedure);
+    });
+
+    return Object.entries(groups).sort(([a], [b]) => {
+      if (a === 'Акционные предложения') return -1;
+      if (b === 'Акционные предложения') return 1;
+
+      if (a === 'Без категории') return 1;
+      if (b === 'Без категории') return -1;
+
+      return a.localeCompare(b);
+    });
+  });
+
   const form = reactive({
     name: '',
     price: 0,
     duration: '',
-    isSale: false,
     category: 0,
     description: '',
   });
@@ -325,7 +388,6 @@
       duration: '',
       description: '',
       category: 0,
-      isSale: false,
     });
     formHours.value = 0;
     formMinutes.value = 0;
@@ -337,7 +399,6 @@
     form.name = procedure.name;
     form.price = procedure.price ?? 0;
     form.description = procedure.description ?? '';
-    form.isSale = procedure.isSale ?? false;
     form.category = procedure.category?.id ?? 0;
 
     const duration = procedure.duration;
@@ -358,7 +419,6 @@
       duration: '',
       description: '',
       category: 0,
-      isSale: false,
     });
     formHours.value = 0;
     formMinutes.value = 0;
@@ -377,7 +437,6 @@
         form.name,
         form.price,
         duration,
-        form.isSale,
         selectedCategory.value,
         form.description
       );
@@ -406,7 +465,6 @@
         duration,
         description: form.description,
         category: selectedCategory.value,
-        isSale: form.isSale,
       });
       await loadProceduresByCosmetologist(id);
       toast.success('Процедура обновлена');

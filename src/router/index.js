@@ -4,7 +4,6 @@ import Home from '@/client/pages/Home.vue';
 import About from '@/client/pages/About.vue';
 import Contacts from '@/client/pages/Contacts.vue';
 import Procedures from '@/client/pages/Procedures.vue';
-import ProcedureModal from '../client/components/ProcedureModal.vue';
 import Layout from '../client/layout/Layout.vue';
 import Registration from '../views/Registration.vue';
 import UserProfile from '@/client/pages/UserProfile.vue';
@@ -13,6 +12,7 @@ import CosmetologistProcedures from '../client/pages/CosmetologistProcedures.vue
 import Cart from '../client/pages/Cart.vue';
 import Success from '../client/pages/Success.vue';
 import ProceduresAdmin from '../admin/pages/ProceduresAdmin.vue';
+import CategoriesAdmin from '../admin/pages/CategoriesAdmin.vue';
 
 const routes = [
   {
@@ -36,6 +36,7 @@ const routes = [
   },
   { path: '/calendar', component: Calendar },
   { path: '/admin-procedures', component: ProceduresAdmin },
+  { path: '/admin-categories', component: CategoriesAdmin },
 ];
 
 export const router = createRouter({

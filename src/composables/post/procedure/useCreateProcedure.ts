@@ -11,7 +11,6 @@ export function useCreateProcedure() {
     name: string,
     price: number,
     duration: string,
-    isSale: boolean,
     category: number,
     description: string
   ) => {
@@ -29,7 +28,6 @@ export function useCreateProcedure() {
           name,
           price,
           duration,
-          isSale,
           category,
           description,
         }),

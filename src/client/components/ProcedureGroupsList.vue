@@ -11,21 +11,29 @@
     procedures: Procedure[];
   }>();
 
-  const groupedProcedures = computed(() => {
-    const groups: Record<number, Procedure[]> = {};
+const groupedProcedures = computed(() => {
+  const groups: Record<number, Procedure[]> = {};
 
-    props.procedures.forEach((procedure) => {
-      const categoryId = procedure.category?.id || 0;
+  props.procedures.forEach((procedure) => {
+    const categoryId = procedure.category?.id || 0;
 
-      if (!groups[categoryId]) {
-        groups[categoryId] = [];
-      }
+    if (!groups[categoryId]) {
+      groups[categoryId] = [];
+    }
 
-      groups[categoryId].push(procedure);
-    });
-
-    return groups;
+    groups[categoryId].push(procedure);
   });
+
+  return Object.entries(groups).sort(([, a], [, b]) => {
+    const aName = a[0]?.category?.name ?? '';
+    const bName = b[0]?.category?.name ?? '';
+
+    if (aName === 'Акционные предложения') return -1;
+    if (bName === 'Акционные предложения') return 1;
+
+    return 0;
+  });
+});
 
   const cart = useCartStore();
 
@@ -66,7 +74,7 @@
       </div>
     </div>
     <div
-      v-for="(categoryProcedures, categoryId) in groupedProcedures"
+      v-for="[categoryId, categoryProcedures] in groupedProcedures"
       :key="categoryId"
       class="mb-8"
     >

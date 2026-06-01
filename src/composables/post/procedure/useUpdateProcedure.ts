@@ -13,7 +13,6 @@ export function useUpdateProcedure() {
       name?: string;
       price?: number;
       duration?: string;
-      isSale?: boolean;
       category?: number;
       description?: string;
     }

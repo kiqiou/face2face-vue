@@ -8,7 +8,6 @@ export class Procedure {
   duration: string = '';
   description: string = '';
   category: Category;
-  isSale: boolean = false;
   cosmetologist: Cosmetologist;
 
   constructor(
@@ -17,7 +16,6 @@ export class Procedure {
     price: number = 0,
     duration: string = '',
     description: string = '',
-    isSale: false,
     category: Category,
     cosmetologist: Cosmetologist
   ) {
@@ -26,7 +24,6 @@ export class Procedure {
     this.price = price;
     this.duration = duration;
     this.description = description;
-    this.isSale = isSale;
     this.category = category;
     this.cosmetologist = cosmetologist;
   }

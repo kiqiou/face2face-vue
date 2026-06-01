@@ -44,7 +44,6 @@ export function useProceduresByCosmetologist() {
           item.price,
           item.duration,
           item.description,
-          item.isSale,
           category,
           cosmetologist
         );
