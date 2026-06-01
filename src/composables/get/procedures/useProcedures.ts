@@ -42,6 +42,7 @@ export function useProcedures() {
           item.price,
           item.duration,
           item.description,
+          item.buffer_time,
           category,
           cosmetologist
         );

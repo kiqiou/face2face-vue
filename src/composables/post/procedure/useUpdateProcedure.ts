@@ -14,6 +14,7 @@ export function useUpdateProcedure() {
       price?: number;
       duration?: string;
       category?: number;
+      buffer_time?: string;
       description?: string;
     }
   ) => {

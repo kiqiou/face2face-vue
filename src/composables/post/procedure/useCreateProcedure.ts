@@ -11,6 +11,7 @@ export function useCreateProcedure() {
     name: string,
     price: number,
     duration: string,
+    buffer_time: string,
     category: number,
     description: string
   ) => {
@@ -28,6 +29,7 @@ export function useCreateProcedure() {
           name,
           price,
           duration,
+          buffer_time,
           category,
           description,
         }),

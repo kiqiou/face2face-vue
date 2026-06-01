@@ -240,6 +240,20 @@
           </div>
         </div>
 
+                  <div>
+              <label class="block text-sm font-medium text-slate-700 mb-2">
+                Перерыв после процедуры(минуты)
+              </label>
+              <select
+                v-model.number="form.buffer_time"
+                class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#E5A663] focus:border-transparent transition-all"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+              </select>
+            </div>
+
         <div>
           <label class="block text-sm font-medium text-slate-700 mb-2">
             Категория
@@ -367,6 +381,7 @@
     name: '',
     price: 0,
     duration: '',
+    buffer_time: '',
     category: 0,
     description: '',
   });
@@ -376,6 +391,10 @@
     const m = String(formMinutes.value).padStart(2, '0');
     return `${h}:${m}:00`;
   });
+
+  const formatTime = (time: string) => {
+    return String(time).padStart(2, '0');
+  };
 
   const cosmetologistIdComputed = computed(() => cosmetologist.value?.id || 0);
 
@@ -388,6 +407,7 @@
       duration: '',
       description: '',
       category: 0,
+      buffer_time: 10,
     });
     formHours.value = 0;
     formMinutes.value = 0;
@@ -399,6 +419,10 @@
     form.name = procedure.name;
     form.price = procedure.price ?? 0;
     form.description = procedure.description ?? '';
+    const bufferTime = procedure.buffer_time ?? '00:05:00';
+    const [, minutes] = bufferTime.split(':').map(Number);
+
+    form.buffer_time = minutes;
     form.category = procedure.category?.id ?? 0;
 
     const duration = procedure.duration;
@@ -418,6 +442,7 @@
       price: 0,
       duration: '',
       description: '',
+      buffer_time: '',
       category: 0,
     });
     formHours.value = 0;
@@ -437,6 +462,7 @@
         form.name,
         form.price,
         duration,
+        `00:${String(form.buffer_time).padStart(2, '0')}:00`,
         selectedCategory.value,
         form.description
       );
@@ -464,6 +490,7 @@
         price: form.price,
         duration,
         description: form.description,
+        buffer_time: `00:${String(form.buffer_time).padStart(2, '0')}:00`,
         category: selectedCategory.value,
       });
       await loadProceduresByCosmetologist(id);

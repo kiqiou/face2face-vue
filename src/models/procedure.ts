@@ -7,6 +7,7 @@ export class Procedure {
   price: number = 0;
   duration: string = '';
   description: string = '';
+  buffer_time: string = '';
   category: Category;
   cosmetologist: Cosmetologist;
 
@@ -16,6 +17,7 @@ export class Procedure {
     price: number = 0,
     duration: string = '',
     description: string = '',
+    buffer_time: string = '',
     category: Category,
     cosmetologist: Cosmetologist
   ) {
@@ -24,6 +26,7 @@ export class Procedure {
     this.price = price;
     this.duration = duration;
     this.description = description;
+    this.buffer_time = buffer_time;
     this.category = category;
     this.cosmetologist = cosmetologist;
   }
