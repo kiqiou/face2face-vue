@@ -11,59 +11,55 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from "vue";
-import TextField from "./TextField.vue";
+  import { ref, nextTick } from 'vue';
+  import TextField from './TextField.vue';
 
-const PREFIX = "+375";
+  const PREFIX = '+375';
 
-const props = defineProps({
-  modelValue: {
-    type: String,
-    default: "",
-  },
-});
+  const props = defineProps({
+    modelValue: {
+      type: String,
+      default: '',
+    },
+  });
 
-const emit = defineEmits(["update:modelValue"]);
+  const emit = defineEmits(['update:modelValue']);
 
-const inputRef = ref(null);
+  const inputRef = ref(null);
 
-const onFocus = async () => {
-  if (!props.modelValue) {
-    emit("update:modelValue", PREFIX);
+  const onFocus = async () => {
+    if (!props.modelValue) {
+      emit('update:modelValue', PREFIX);
 
-    await nextTick();
+      await nextTick();
 
-    const input =
-      inputRef.value?.$el?.querySelector("input") ||
-      inputRef.value;
+      const input =
+        inputRef.value?.$el?.querySelector('input') || inputRef.value;
 
-    input?.setSelectionRange(
-      PREFIX.length,
-      PREFIX.length
-    );
-  }
-};
+      input?.setSelectionRange(PREFIX.length, PREFIX.length);
+    }
+  };
 
-const onInput = (value) => {
-  let numbers = value.replace(/\D/g, "");
+  const onInput = (value) => {
+    let numbers = value.replace(/\D/g, '');
 
-  if (numbers.startsWith("375")) {
-    numbers = numbers.slice(3);
-  }
+    if (numbers.startsWith('375')) {
+      numbers = numbers.slice(3);
+    }
 
-  numbers = numbers.slice(0, 9);
+    numbers = numbers.slice(0, 9);
 
-  emit("update:modelValue", PREFIX + numbers);
-};
+    emit('update:modelValue', PREFIX + numbers);
+  };
 
-const onKeyDown = (event) => {
-  const start = event.target.selectionStart;
+  const onKeyDown = (event) => {
+    const start = event.target.selectionStart;
 
-  if (
-    (event.key === "Backspace" && start <= PREFIX.length) ||
-    (event.key === "Delete" && start < PREFIX.length)
-  ) {
-    event.preventDefault();
-  }
-};
+    if (
+      (event.key === 'Backspace' && start <= PREFIX.length) ||
+      (event.key === 'Delete' && start < PREFIX.length)
+    ) {
+      event.preventDefault();
+    }
+  };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full max-w-6xl mx-auto">
+  <div class="flex flex-col w-full max-w-6xl mx-auto">
     <h2
       class="text-center text-3xl md:text-4xl font-black mb-12 bg-gradient-to-r from-[#E5A663] to-[#FAEE9E] bg-clip-text text-transparent"
     >
@@ -38,7 +38,7 @@
           @click="openCosmetologistProcedures(cosmetologist.id)"
         ></GradientButton>
       </div>
-      <div v-else class="text-center text-lg text-black/70 min-h-screen">
+      <div v-else class="flex self-center text-2xl text-black/70 min-h-screen">
         Загрузка косметологов...
       </div>
     </div>

@@ -1,55 +1,30 @@
 <script setup lang="ts">
-  import { useRouter } from 'vue-router';
-  import { computed, onMounted, ref } from 'vue';
-  import ProcedureCard from '../components/ProcedureCard.vue';
+  import { computed, onMounted } from 'vue';
   import { useProcedures } from '../../composables/get/procedures/useProcedures.js';
-  import { useCartStore } from '../../stores/cart.js';
   import { Procedure } from '../../models/procedure.js';
-  import { Cosmetologist } from '../../models/cosmetologist.js';
-import ProcedureModal from '../components/ProcedureModal.vue';
+  import ProcedureGroupsList from '../components/ProcedureGroupsList.vue';
 
   const { procedures, load, loading, error } = useProcedures();
-
-  const cart = useCartStore();
-  const router = useRouter();
 
   onMounted(() => {
     load();
   });
 
   const groupedProcedures = computed(() => {
-    const groups: Record<number, { info: any; items: Procedure[] }> = {};
+    const groups: Record<number, { info: any }> = {};
 
     procedures.value.forEach((procedure: Procedure) => {
       const cosmoId = procedure.cosmetologist.id;
+
       if (!groups[cosmoId]) {
         groups[cosmoId] = {
           info: procedure.cosmetologist,
-          items: [],
         };
       }
-      groups[cosmoId].items.push(procedure);
     });
 
     return groups;
   });
-
-  const addToCart = (procedure: Procedure, cosmetologist: Cosmetologist) => {
-    cart.addProcedure(procedure, cosmetologist);
-  };
-  
-  const isModalOpen = ref(false);
-  const selectedProcedure = ref<Procedure | null>(null);
-
-  const openModal = (procedure: Procedure) => {
-    selectedProcedure.value = procedure;
-    isModalOpen.value = true;
-  };
-
-  const closeModal = () => {
-    isModalOpen.value = false;
-    selectedProcedure.value = null;
-  };
 </script>
 
 <template>
@@ -59,48 +34,19 @@ import ProcedureModal from '../components/ProcedureModal.vue';
     >
       Услуги
     </h2>
-    <div v-if="loading">Загрузка...</div>
+    <div v-if="loading" class="flex self-center text-2xl">Загрузка...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else-if="!procedures.length">Нет услуг</div>
-    <div
-      v-else
-      v-for="(group, cosmoId) in groupedProcedures"
-      :key="cosmoId"
-      class="mb-16"
-    >
-      <div class="flex items-center gap-6 mb-8 p-6 rounded-3xl">
-        <img
-          :src="group.info.avatarUrl"
-          class="w-24 h-24 rounded-full object-cover"
-        />
 
-        <div>
-          <h2 class="text-2xl font-bold">
-            {{ group.info.user?.username || 'Без имени' }}
-          </h2>
-
-          <p class="text-[#E5A663]">
-            {{ group.info.specializations }}
-          </p>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <procedure-card
-          v-for="proc in group.items"
-          :key="proc.id"
-          :procedure="proc"
-          :show-button="true"
-          @click="addToCart(proc, group.info)"
-          @open-details="openModal"
-        />
-      </div>
+    <div v-else>
+      <ProcedureGroupsList
+        v-for="(group, cosmoId) in groupedProcedures"
+        :key="cosmoId"
+        :cosmetologist="group.info"
+        :procedures="
+          procedures.filter((proc) => proc.cosmetologist.id === group.info.id)
+        "
+      />
     </div>
-    <router-view></router-view>
   </div>
-  <ProcedureModal
-    v-if="isModalOpen && selectedProcedure"
-    :procedure="selectedProcedure"
-    @close="closeModal"
-  />
 </template>

@@ -202,6 +202,25 @@
         </div>
 
         <div>
+          <label class="block text-sm font-medium text-slate-700 mb-2">
+            Категория
+          </label>
+          <select
+            v-model.number="selectedCategory"
+            class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#E5A663] focus:border-transparent transition-all"
+          >
+            <option :value="0">Выберите категорию</option>
+            <option
+              v-for="category in categories"
+              :key="category.id"
+              :value="category.id"
+            >
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
+
+        <div>
           <label class="block text-sm font-medium text-slate-700 mb-2"
             >Описание процедуры</label
           >
@@ -245,6 +264,7 @@
   import { useCosmetologistByUserId } from '../../composables/get/user/useCosmetologistByUserId.js';
   import { authService } from '../../utils/auth.js';
   import HeaderAdmin from '../components/HeaderAdmin.vue';
+  import { useCategories } from '../../composables/get/category/useCategories.js';
 
   const toast = useToast();
   const user = authService.getUser();
@@ -256,26 +276,13 @@
   const { createProcedure } = useCreateProcedure();
   const { deleteProcedure } = useDeleteProcedure();
   const { updateProcedure } = useUpdateProcedure();
-
+  const { loadCategories, categories } = useCategories();
   const showModal = ref(false);
   const editingProcedure = ref<any>(null);
   const saving = ref(false);
-
-  const form = reactive({
-    name: '',
-    price: 0,
-    duration: '',
-    description: '',
-  });
-
   const formHours = ref(0);
   const formMinutes = ref(0);
-
-  const durationFormatted = computed(() => {
-    const h = String(formHours.value).padStart(2, '0');
-    const m = String(formMinutes.value).padStart(2, '0');
-    return `${h}:${m}:00`;
-  });
+  const selectedCategory = ref<number>(0);
 
   watchEffect(() => {
     if (cosmetologist.value?.id) {
@@ -284,6 +291,7 @@
   });
 
   onMounted(async () => {
+    loadCategories();
     if (!user?.id) {
       toast.error('Не удалось определить пользователя');
       return;
@@ -291,12 +299,37 @@
     await loadCosmetologistByUserId(user.id);
   });
 
+  const form = reactive({
+    name: '',
+    price: 0,
+    duration: '',
+    isSale: false,
+    category: 0,
+    description: '',
+  });
+
+  const durationFormatted = computed(() => {
+    const h = String(formHours.value).padStart(2, '0');
+    const m = String(formMinutes.value).padStart(2, '0');
+    return `${h}:${m}:00`;
+  });
+
   const cosmetologistIdComputed = computed(() => cosmetologist.value?.id || 0);
 
   const openCreateModal = () => {
     showModal.value = true;
     editingProcedure.value = null;
-    Object.assign(form, { name: '', price: 0, duration: '', description: '' });
+    Object.assign(form, {
+      name: '',
+      price: 0,
+      duration: '',
+      description: '',
+      category: 0,
+      isSale: false,
+    });
+    formHours.value = 0;
+    formMinutes.value = 0;
+    selectedCategory.value = 0;
   };
 
   const openEditModal = (procedure: any) => {
@@ -304,19 +337,32 @@
     form.name = procedure.name;
     form.price = procedure.price ?? 0;
     form.description = procedure.description ?? '';
+    form.isSale = procedure.isSale ?? false;
+    form.category = procedure.category?.id ?? 0;
+
     const duration = procedure.duration;
-
     const [h, m] = duration.split(':').map(Number);
-
     formHours.value = h || 0;
     formMinutes.value = m || 0;
+
+    selectedCategory.value = procedure.category?.id ?? 0;
     showModal.value = true;
   };
 
   const closeModal = () => {
     showModal.value = false;
     editingProcedure.value = null;
-    Object.assign(form, { name: '', price: 0, duration: '', description: '' });
+    Object.assign(form, {
+      name: '',
+      price: 0,
+      duration: '',
+      description: '',
+      category: 0,
+      isSale: false,
+    });
+    formHours.value = 0;
+    formMinutes.value = 0;
+    selectedCategory.value = 0;
   };
 
   const createProcedureInForm = async () => {
@@ -327,7 +373,14 @@
 
     try {
       saving.value = true;
-      await createProcedure(form.name, form.price, duration, form.description);
+      await createProcedure(
+        form.name,
+        form.price,
+        duration,
+        form.isSale,
+        selectedCategory.value,
+        form.description
+      );
       await loadProceduresByCosmetologist(id);
       toast.success('Процедура добавлена');
       closeModal();
@@ -351,7 +404,9 @@
         name: form.name,
         price: form.price,
         duration,
-        description: form.description
+        description: form.description,
+        category: selectedCategory.value,
+        isSale: form.isSale,
       });
       await loadProceduresByCosmetologist(id);
       toast.success('Процедура обновлена');

@@ -1,37 +1,25 @@
 import { ref } from 'vue';
-import { API_BASE } from './procedureBaseApi.js';
+import { API_BASE } from './categoryBaseApi.js';
 import { authFetch } from '../../authFetch.js';
 
-export function useCreateProcedure() {
+export function useCreateCategory() {
   const loading = ref(false);
   const errorCreate = ref<string | null>(null);
   const successCreate = ref(false);
 
-  const createProcedure = async (
-    name: string,
-    price: number,
-    duration: string,
-    isSale: boolean,
-    category: number,
-    description: string
-  ) => {
+  const createCategory = async (name: string) => {
     loading.value = true;
     errorCreate.value = null;
     successCreate.value = false;
 
     try {
-      const response = await authFetch(API_BASE + 'add_procedure/', {
+      const response = await authFetch(API_BASE + 'add_category/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           name,
-          price,
-          duration,
-          isSale,
-          category,
-          description,
         }),
       });
 
@@ -50,5 +38,5 @@ export function useCreateProcedure() {
     }
   };
 
-  return { createProcedure, loading, errorCreate, successCreate };
+  return { createCategory, loading, errorCreate, successCreate };
 }

@@ -1,21 +1,16 @@
 import { ref } from 'vue';
-import { API_BASE } from './procedureBaseApi.js';
+import { API_BASE } from './categoryBaseApi.js';
 import { authFetch } from '../../authFetch.js';
 
-export function useUpdateProcedure() {
+export function useUpdateCategory() {
   const loading = ref(false);
   const errorUpdate = ref<string | null>(null);
   const successUpdate = ref(false);
 
-  const updateProcedure = async (
-    procedureId: number,
+  const updateCategory = async (
+    categoryId: number,
     payload: {
       name?: string;
-      price?: number;
-      duration?: string;
-      isSale?: boolean;
-      category?: number;
-      description?: string;
     }
   ) => {
     loading.value = true;
@@ -24,7 +19,7 @@ export function useUpdateProcedure() {
 
     try {
       const response = await authFetch(
-        API_BASE + `update_procedure/${procedureId}/`,
+        API_BASE + `update_category/${categoryId}/`,
         {
           method: 'PATCH',
           headers: {
@@ -49,5 +44,5 @@ export function useUpdateProcedure() {
     }
   };
 
-  return { updateProcedure, loading, errorUpdate, successUpdate };
+  return { updateCategory, loading, errorUpdate, successUpdate };
 }

@@ -31,7 +31,4 @@
   import Procedures from './Procedures.vue';
   import About from './About.vue';
   import TextSection from '../components/home/TextSection.vue';
-
-
-
 </script>

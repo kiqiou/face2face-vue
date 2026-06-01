@@ -13,15 +13,11 @@
 </template>
 
 <script setup>
-defineProps({
-  modelValue: String,
-  placeholder: String,
-  maxlength: [String, Number],
-});
+  defineProps({
+    modelValue: String,
+    placeholder: String,
+    maxlength: [String, Number],
+  });
 
-defineEmits([
-  "update:modelValue",
-  "focus",
-  "keydown",
-]);
+  defineEmits(['update:modelValue', 'focus', 'keydown']);
 </script>

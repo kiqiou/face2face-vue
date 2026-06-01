@@ -26,13 +26,14 @@ export const useCartStore = defineStore('cart', {
       }
 
       if (!isAuthenticated) {
-        toast.error('Пожалуйста, войдите или зарегистрируйтесь, чтобы добавить услугу');
-        router.push('/registration')
+        toast.error(
+          'Пожалуйста, войдите или зарегистрируйтесь, чтобы добавить услугу'
+        );
+        router.push('/registration');
       } else {
         this.procedures.push(proc);
         toast.success(`"${proc.name}" добавлено в корзину`);
       }
-      
     },
 
     removeProcedure(id: number) {

@@ -1,3 +1,4 @@
+import { Category } from './category.js';
 import { Cosmetologist } from './cosmetologist.js';
 
 export class Procedure {
@@ -6,6 +7,8 @@ export class Procedure {
   price: number = 0;
   duration: string = '';
   description: string = '';
+  category: Category;
+  isSale: boolean = false;
   cosmetologist: Cosmetologist;
 
   constructor(
@@ -14,6 +17,8 @@ export class Procedure {
     price: number = 0,
     duration: string = '',
     description: string = '',
+    isSale: false,
+    category: Category,
     cosmetologist: Cosmetologist
   ) {
     this.id = id;
@@ -21,6 +26,8 @@ export class Procedure {
     this.price = price;
     this.duration = duration;
     this.description = description;
+    this.isSale = isSale;
+    this.category = category;
     this.cosmetologist = cosmetologist;
   }
 }

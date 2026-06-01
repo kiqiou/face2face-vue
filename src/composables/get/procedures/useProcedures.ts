@@ -4,6 +4,7 @@ import { apiGet } from '../apiGet.js';
 import { API_BASE } from '../baseApi.js';
 import { Cosmetologist } from '../../../models/cosmetologist.js';
 import { User } from '../../../models/user.js';
+import { Category } from '../../../models/category.js';
 
 export function useProcedures() {
   const procedures = ref<Procedure[]>([]);
@@ -33,12 +34,16 @@ export function useProcedures() {
           cosmetolog.avatar_url
         );
 
+        const category = new Category(item.category.id, item.category.name);
+
         return new Procedure(
           item.id,
           item.name,
           item.price,
           item.duration,
           item.description,
+          item.isSale,
+          category,
           cosmetologist
         );
       });
