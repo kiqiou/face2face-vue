@@ -92,7 +92,7 @@ const groupedProcedures = computed(() => {
           :key="procedure.id || index"
           :procedure="procedure"
           :show-button="true"
-          @click="(procedure) => addToCart(procedure, cosmetologist)"
+          @click="addToCart(procedure, cosmetologist)"
           @open-details="openModal"
         />
       </div>

@@ -14,11 +14,8 @@
 <script lang="ts" setup>
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import ProcedureCard from '../components/ProcedureCard.vue';
   import { useCosmetologistById } from '../../composables/get/user/useCosmetologistById.js';
   import { useProceduresByCosmetologist } from '../../composables/get/procedures/useProceduresByCosmetologist.js';
-  import { useCartStore } from '../../stores/cart.js';
-  import { Procedure } from '../../models/procedure.js';
   import ProcedureGroupsList from '../components/ProcedureGroupsList.vue';
 
   const route = useRoute();
@@ -33,24 +30,4 @@
     loadProceduresByCosmetologist(id);
   });
 
-  const cart = useCartStore();
-
-  const addToCart = (procedure: Procedure) => {
-    if (!cosmetologist.value) return;
-
-    cart.addProcedure(procedure, cosmetologist.value);
-  };
-
-  const isModalOpen = ref(false);
-  const selectedProcedure = ref<Procedure | null>(null);
-
-  const openModal = (procedure: Procedure) => {
-    selectedProcedure.value = procedure;
-    isModalOpen.value = true;
-  };
-
-  const closeModal = () => {
-    isModalOpen.value = false;
-    selectedProcedure.value = null;
-  };
 </script>
