@@ -58,14 +58,14 @@
     return `через ${diffDays} дн.`;
   };
 
-  const cancelBooking = (id: number) => {
-    cancel(id);
+  const cancelBooking = async (id: number) => {
+    await cancel(id);
 
-    if (success) {
-      load();
-      toast.success(`Запись отменена`);
+    if (success.value) {
+      await load();
+      toast.success('Запись отменена');
     } else {
-      toast.error(`Не удалось отменить запись: ${error}`);
+      toast.error(`Не удалось отменить запись: ${error.value}`);
     }
   };
 </script>

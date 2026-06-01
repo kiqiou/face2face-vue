@@ -1,18 +1,18 @@
 <template>
-  <div class="flex flex-col items-center">
+  <div class="flex flex-col items-center min-h-screen">
     <div class="rounded-3xl p-10 text-center max-w-md w-full">
       <h1
-        class="text-4xl font-black bg-[#E5A663] bg-clip-text text-transparent mb-4"
+        class="text-5xl font-black bg-[#E5A663] bg-clip-text text-transparent mb-4"
       >
         Вы записаны!
       </h1>
 
-      <p class="text-slate-600 text-lg leading-relaxed">
+      <p class="text-slate-600 text-2xl leading-relaxed">
         Вы успешно записались<br />
         Мы уже ждём вас 💛
       </p>
 
-      <div class="mt-6 text-sm text-slate-500">
+      <div class="mt-6 text-lg text-slate-500">
         Записи можно просмотреть в личном кабинете
       </div>
 

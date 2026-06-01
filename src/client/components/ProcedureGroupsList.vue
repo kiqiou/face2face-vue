@@ -38,6 +38,8 @@ const groupedProcedures = computed(() => {
   const cart = useCartStore();
 
   const addToCart = (procedure: Procedure, cosmetologist: Cosmetologist) => {
+    console.log('procedure', procedure);
+
     cart.addProcedure(procedure, cosmetologist);
   };
 
