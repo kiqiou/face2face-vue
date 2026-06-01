@@ -230,11 +230,9 @@
                 v-model.number="formMinutes"
                 class="w-full p-4 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[#E5A663] focus:border-transparent transition-all"
               >
-                <option value="0">0</option>
-                <option value="15">15</option>
-                <option value="30">30</option>
-                <option value="45">45</option>
-                <option value="60">60</option>
+              <option v-for="m in 11" :key="m * 5" :value="m * 5">
+                  {{ m * 5 }}
+                </option>
               </select>
             </div>
           </div>
