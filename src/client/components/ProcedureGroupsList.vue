@@ -93,7 +93,7 @@ const groupedProcedures = computed(() => {
           v-for="(procedure, index) in categoryProcedures"
           :key="procedure.id || index"
           :procedure="procedure"
-          :show-button="true"
+          :show-button="false"
           @click="addToCart(procedure, cosmetologist)"
           @open-details="openModal"
         />

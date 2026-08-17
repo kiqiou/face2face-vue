@@ -34,7 +34,7 @@
           {{ cosmetologist.bio }}
         </div>
         <GradientButton
-          button-name="Записаться"
+          button-name="Услуги"
           @click="openCosmetologistProcedures(cosmetologist.id)"
         ></GradientButton>
       </div>
@@ -47,9 +47,9 @@
 
 <script lang="ts" setup>
   import { onMounted } from 'vue';
-  import { useCosmetologists } from '../../composables/get/user/useCosmetologists.js';
   import GradientButton from '../../components/ui/GradientButton.vue';
   import { useRouter } from 'vue-router';
+  import { useCosmetologists } from '../../composables/user/useCosmetologists.js';
 
   const { cosmetologists, loadCosmetologists } = useCosmetologists();
 

@@ -308,14 +308,14 @@
   import { ref, onMounted, reactive, watchEffect, computed } from 'vue';
   import { useToast } from 'vue-toastification';
   import GradientButton from '../../components/ui/GradientButton.vue';
-  import { useProceduresByCosmetologist } from '../../composables/get/procedures/useProceduresByCosmetologist.js';
-  import { useCreateProcedure } from '../../composables/post/procedure/useCreateProcedure.js';
-  import { useDeleteProcedure } from '../../composables/post/procedure/useDeleteProcedure.js';
-  import { useUpdateProcedure } from '../../composables/post/procedure/useUpdateProcedure.js';
-  import { useCosmetologistByUserId } from '../../composables/get/user/useCosmetologistByUserId.js';
+  import { useProceduresByCosmetologist } from '../../composables/procedure/useProceduresByCosmetologist.js';
+  import { useCreateProcedure } from '../../composables/procedure/useCreateProcedure.js';
+  import { useDeleteProcedure } from '../../composables/procedure/useDeleteProcedure.js';
+  import { useUpdateProcedure } from '../../composables/procedure/useUpdateProcedure.js';
+  import { useCosmetologistByUserId } from '../../composables/user/useCosmetologistByUserId.js';
   import { authService } from '../../utils/auth.js';
   import HeaderAdmin from '../components/HeaderAdmin.vue';
-  import { useCategories } from '../../composables/get/category/useCategories.js';
+  import { useCategories } from '../../composables/category/useCategories.js';
 
   const toast = useToast();
   const user = authService.getUser();

@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import { computed, onMounted } from 'vue';
   import GradientButton from '../../components/ui/GradientButton.vue';
-  import { useUserBookings } from '../../composables/get/booking/useUserBookings.js';
   import router from '../../router/index.js';
   import { authService } from '../../utils/auth.js';
   import ProcedureCard from '../components/ProcedureCard.vue';
-  import { useCancelBooking } from '../../composables/post/bookings/useCancelBooking.js';
+  import { useCancelBooking } from '../../composables/bookings/useCancelBooking.js';
   import { useToast } from 'vue-toastification';
+import { useUserBookings } from '../../composables/bookings/useUserBookings.js';
 
   const { bookings, load } = useUserBookings();
   const { success, error, cancel } = useCancelBooking();

@@ -3,11 +3,11 @@
   import GradientButton from '../../components/ui/GradientButton.vue';
   import { computed, onMounted, ref, watch } from 'vue';
   import { useCartStore } from '../../stores/cart.js';
-  import { useCreateBooking } from '../../composables/post/bookings/useCreateBooking.js';
-  import { useWorkDaysByCosmetologist } from '../../composables/get//workday/useWorkDayByCosmetologist.js';
+  import { useCreateBooking } from '../../composables/bookings/useCreateBooking.js';
   import { WorkDay } from '../../models/workday.js';
-  import { useFreeIntervals } from '../../composables/get/workday/useFreeIntervals.js';
   import ProcedureCard from '../components/ProcedureCard.vue';
+import { useFreeIntervals } from '../../composables/workDay/useFreeIntervals.js';
+import { useWorkDaysByCosmetologist } from '../../composables/workDay/useWorkDayByCosmetologist.js';
 
   const cart = useCartStore();
 

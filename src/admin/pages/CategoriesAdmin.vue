@@ -5,10 +5,10 @@ import { useToast } from 'vue-toastification';
 import HeaderAdmin from '../components/HeaderAdmin.vue';
 import GradientButton from '../../components/ui/GradientButton.vue';
 
-import { useCategories } from '../../composables/get/category/useCategories.js';
-import { useCreateCategory } from '../../composables/post/category/useCreateCategory.js';
-import { useUpdateCategory } from '../../composables/post/category/useUpdateCategory.js';
-import { useDeleteCategory } from '../../composables/post/category/useDeleteCategory.js';
+import { useCategories } from '../../composables/category/useCategories.js';
+import { useCreateCategory } from '../../composables/category/useCreateCategory.js';
+import { useUpdateCategory } from '../../composables/category/useUpdateCategory.js';
+import { useDeleteCategory } from '../../composables/category/useDeleteCategory.js';
 
 const toast = useToast();
 

@@ -173,7 +173,7 @@
   const visibleLinks = computed(() => {
     if (user.value) {
       if (user.value.role === 6) {
-        return [...baseLinks.value, profileLink, adminLink];
+        return [...baseLinks.value, profileLink];
       }
 
       return [...baseLinks.value, profileLink, cartLink];

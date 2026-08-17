@@ -36,16 +36,16 @@
   import { WorkDay } from '../../models/workday.js';
   import { EventInput } from '@fullcalendar/core/index.js';
   import HeaderAdmin from '../components/HeaderAdmin.vue';
-  import { useCosmetologists } from '../../composables/get/user/useCosmetologists.js';
-  import { useCreateWorkDay } from '../../composables/post/workDay/useCreateWorkDay.js';
-  import { useWorkDays } from '../../composables/get/workday/useWorkDays.js';
-  import { useBookingByCosmetologist } from '../../composables/get/booking/useBookingByCosmetologist.js';
+  import { useCosmetologists } from '../../composables/user/useCosmetologists.js';
+  import { useCreateWorkDay } from '../../composables/workDay/useCreateWorkDay.js';
   import { Booking } from '../../models/booking.js';
-  import { useCancelBooking } from '../../composables/post/bookings/useCancelBooking.js';
+  import { useCancelBooking } from '../../composables/bookings/useCancelBooking.js';
   import { useToast } from 'vue-toastification';
-  import { useUpdateBooking } from '../../composables/post/bookings/useUpdateBooking.js';
-  import { useDeleteWorkDay } from '../../composables/post/workDay/useDeleteWorkDay.js';
-  import { useUpdateWorkDay } from '../../composables/post/workDay/useUpdateWorkDay.js';
+  import { useUpdateBooking } from '../../composables/bookings/useUpdateBooking.js';
+  import { useDeleteWorkDay } from '../../composables/workDay/useDeleteWorkDay.js';
+  import { useUpdateWorkDay } from '../../composables/workDay/useUpdateWorkDay.js';
+import { useBookingByCosmetologist } from '../../composables/bookings/useBookingByCosmetologist.js';
+import { useWorkDays } from '../../composables/workDay/useWorkDays.js';
 
   const { cosmetologists, loadCosmetologists } = useCosmetologists();
   const { workDays, loadWorkDays } = useWorkDays();

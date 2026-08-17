@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
   import { onMounted } from 'vue';
-  import { useCosmetologists } from '../../composables/get/user/useCosmetologists.js';
+  import { useCosmetologists } from '../../composables/user/useCosmetologists.js';
 
   const { cosmetologists, loadCosmetologists } = useCosmetologists();
 

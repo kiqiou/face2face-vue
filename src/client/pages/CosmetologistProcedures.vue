@@ -14,9 +14,9 @@
 <script lang="ts" setup>
   import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
-  import { useCosmetologistById } from '../../composables/get/user/useCosmetologistById.js';
-  import { useProceduresByCosmetologist } from '../../composables/get/procedures/useProceduresByCosmetologist.js';
+  import { useCosmetologistById } from '../../composables/user/useCosmetologistById.js';
   import ProcedureGroupsList from '../components/ProcedureGroupsList.vue';
+import { useProceduresByCosmetologist } from '../../composables/procedure/useProceduresByCosmetologist.js';
 
   const route = useRoute();
   const id = Number(route.params.id);

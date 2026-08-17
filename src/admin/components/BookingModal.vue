@@ -112,8 +112,7 @@
   import { Booking } from '../../models/booking.js';
   import { WorkDay } from '../../models/workday.js';
   import { Procedure } from '../../models/procedure.js';
-  import { useFreeIntervals } from '../../composables/get/workday/useFreeIntervals.js';
-  import { useWorkDaysByCosmetologist } from '../../composables/get/workday/useWorkDayByCosmetologist.js';
+  import { useFreeIntervals } from '../../composables/workDay/useFreeIntervals.js';
 
   const { freeIntervals, loadFreeIntervals } = useFreeIntervals();
 
