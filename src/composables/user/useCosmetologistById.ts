@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { apiGet } from '../apiGet.js';
+import { apiGet } from '../../utils/apiGet.js';
 import { Cosmetologist } from '../../models/cosmetologist.js';
 import { API_BASE } from './cosmetologistBaseApi.js';
 

@@ -2,14 +2,14 @@
   import router from '../../router/index.js';
   import GradientButton from '../../components/ui/GradientButton.vue';
   import { computed, onMounted, ref, watch } from 'vue';
-  import { useCartStore } from '../../stores/cart.js';
+  import { useProceduresCartStore } from '../../stores/proceduresCart.js';
   import { useCreateBooking } from '../../composables/bookings/useCreateBooking.js';
   import { WorkDay } from '../../models/workday.js';
   import ProcedureCard from '../components/ProcedureCard.vue';
-import { useFreeIntervals } from '../../composables/workDay/useFreeIntervals.js';
-import { useWorkDaysByCosmetologist } from '../../composables/workDay/useWorkDayByCosmetologist.js';
+  import { useFreeIntervals } from '../../composables/workDay/useFreeIntervals.js';
+  import { useWorkDaysByCosmetologist } from '../../composables/workDay/useWorkDayByCosmetologist.js';
 
-  const cart = useCartStore();
+  const cart = useProceduresCartStore();
 
   const { booking, createBooking, success, error } = useCreateBooking();
   const { workDays, loadWorkDayByCosmetologist } = useWorkDaysByCosmetologist();

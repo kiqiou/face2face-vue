@@ -8,7 +8,7 @@ import { authService } from '../utils/auth.js';
 const toast = useToast();
 const isAuthenticated = authService.isAuthenticated();
 
-export const useCartStore = defineStore('cart', {
+export const useProceduresCartStore = defineStore('cart', {
   state: () => ({
     procedures: [] as Procedure[],
     cosmetologist: null as Cosmetologist | null,

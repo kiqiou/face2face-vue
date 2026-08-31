@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { API_BASE } from './categoryBaseApi.js';
-import { authFetch } from '../authFetch.js';
+import { authFetch } from '../../utils/authFetch.js';
 
 export function useDeleteCategory() {
   const loading = ref(false);

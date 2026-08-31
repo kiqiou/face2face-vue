@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { API_BASE } from '../bookings/bookingBaseApi.js';
-import { apiGet } from '../apiGet.js';
+import { apiGet } from '../../utils/apiGet.js';
 
 export function useWorkDays() {
   const workDays = ref([]);

@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col w-full max-w-6xl mx-auto">
+  <div class="flex flex-col w-full max-w-6xl mx-auto gap-8 ">
     <h2
-      class="text-center text-3xl md:text-4xl font-black mb-12 bg-gradient-to-r from-[#E5A663] to-[#FAEE9E] bg-clip-text text-transparent"
+      class="text-4xl self-center md:text-5xl tracking-[0.01em] font-bold mb-6 bg-[#E5A663] bg-clip-text text-transparent"
     >
       Наши мастера
     </h2>

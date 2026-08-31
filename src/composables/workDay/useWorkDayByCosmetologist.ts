@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { WorkDay } from '../../models/workday.js';
-import { apiGet } from '../apiGet.js';
 import { API_BASE } from '../bookings/bookingBaseApi.js';
+import { apiGet } from '../../utils/apiGet.js';
 
 export function useWorkDaysByCosmetologist() {
   const workDays = ref<WorkDay[]>([]);

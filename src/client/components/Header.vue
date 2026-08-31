@@ -101,7 +101,7 @@
           <li
             v-for="link in visibleLinks"
             :key="link.name"
-            class="nav-link font-sans text-[15px] lg:text-[20px] font-medium"
+            class="nav-link font-sans text-[15px] lg:text-[17px] font-medium"
           >
             <RouterLink :to="link.link">
               {{ link.name }}
@@ -147,7 +147,6 @@
     { id: '1', name: 'Главная', link: '/' },
     { id: '2', name: 'Услуги', link: '/procedures' },
     { id: '3', name: 'Наши мастера', link: '/about' },
-    { id: '4', name: 'Контакты', link: '/contacts' },
   ]);
 
   const profileLink = {
@@ -156,27 +155,39 @@
     link: '/user-profile',
   };
 
-  const cartLink = {
+  const proceduresCartLink = {
     id: '8',
     name: 'Добавленные услуги',
-    link: '/user-cart',
+    link: '/user-procedures-cart',
+  };
+
+  const productsCartLink = {
+    id: '9',
+    name: 'Корзина',
+    link: '/user-products-cart',
+  };
+
+  const productsLink = {
+    id: '10',
+    name: 'Каталог товаров',
+    link: '/products',
   };
 
   const adminLink = {
     id: '7',
-    name: 'График',
-    link: '/calendar',
+    name: 'Админка',
+    link: '/admin-orders',
   };
 
   const user = authService.currentUser;
 
   const visibleLinks = computed(() => {
     if (user.value) {
-      if (user.value.role === 6) {
-        return [...baseLinks.value, profileLink];
+      if (user.value.role === 2) {
+        return [...baseLinks.value, profileLink, adminLink, productsCartLink, productsLink];
       }
 
-      return [...baseLinks.value, profileLink, cartLink];
+      return [...baseLinks.value, profileLink, productsCartLink, productsLink];
     }
 
     return [

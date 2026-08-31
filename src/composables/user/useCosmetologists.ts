@@ -1,7 +1,7 @@
 import { ref } from 'vue';
-import { apiGet } from '../apiGet.js';
 import { API_BASE } from './cosmetologistBaseApi.js';
 import { Cosmetologist } from '../../models/cosmetologist.js';
+import { apiGet } from '../../utils/apiGet.js';
 
 export function useCosmetologists() {
   const cosmetologists = ref<Cosmetologist[]>([]);

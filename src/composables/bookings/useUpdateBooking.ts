@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import { authFetch } from '../authFetch.js';
+import { authFetch } from '../../utils/authFetch.js';
 import { API_BASE } from './bookingBaseApi.js';
 
 export function useUpdateBooking() {

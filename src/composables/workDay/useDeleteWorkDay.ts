@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import { WORKDAY_API_BASE } from './workDayBaseApi.js';
-import { authFetch } from '../authFetch.js';
+import { authFetch } from '../../utils/authFetch.js';
+
 
 export function useDeleteWorkDay() {
   const loading = ref(false);

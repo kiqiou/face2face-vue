@@ -20,9 +20,10 @@
 
   const baseLinks = ref([
     { id: '1', name: 'Главная', link: '/' },
-    { id: '2', name: 'Процедуры', link: '/admin-procedures' },
+    { id: '5', name: 'Товары', link: '/admin-products' },
+    { id: '4', name: 'Заказы', link: '/admin-orders'},
+    { id: '2', name: 'Производители', link: '/admin-manufacturers' },
     { id: '3', name: 'Категории', link: '/admin-categories' },
-    { id: '6', name: 'График', link: '/calendar' },
   ]);
 </script>
 

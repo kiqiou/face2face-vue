@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { API_BASE } from './bookingBaseApi.js';
-import { authFetch } from '../authFetch.js';
 import { Booking } from '../../models/booking.js';
+import { authFetch } from '../../utils/authFetch.js';
 
 export function useBookingByCosmetologist() {
   const bookings = ref<Booking[]>([]);

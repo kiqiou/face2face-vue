@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { API_BASE } from './bookingBaseApi.js';
-import { authFetch } from '../authFetch.js';
+import { authFetch } from '../../utils/authFetch.js';
 
 export function useCancelBooking() {
   const loading = ref(false);

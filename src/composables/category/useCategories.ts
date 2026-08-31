@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 import { Category } from '../../models/category.js';
 import { API_BASE } from './categoryBaseApi.js';
-import { apiGet } from '../apiGet.js';
+import { apiGet } from '../../utils/apiGet.js';
 
 export function useCategories() {
   const categories = ref<Category[]>([]);

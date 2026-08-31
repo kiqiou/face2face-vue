@@ -3,7 +3,7 @@ import { Procedure } from '../../models/procedure.js';
 import { Cosmetologist } from '../../models/cosmetologist.js';
 import { User } from '../../models/user.js';
 import { Category } from '../../models/category.js';
-import { apiGet } from '../apiGet.js';
+import { apiGet } from '../../utils/apiGet.js';
 import { API_BASE } from './procedureBaseApi.js';
 
 export function useProceduresByCosmetologist() {

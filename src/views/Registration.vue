@@ -39,7 +39,7 @@
         if (isMobile) {
           window.location.href = telegramLink;
         } else {
-          window.open(telegramLink, '_blank', 'width=600,height=700');
+          window.open(telegramLink, 'width=600,height=700');
         }
       } else {
         alert(data.error || 'Ошибка');
