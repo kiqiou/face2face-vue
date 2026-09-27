@@ -1,5 +1,7 @@
 import { Product } from './product.js';
+import { User } from './user.js';
 
+export type ApprovementMethod = 'call' | 'message';
 export type PaymentMethod = 'cash' | 'card';
 export type OrderStatus = 'new' | 'confirmed' | 'done' | 'cancelled';
 
@@ -8,19 +10,21 @@ export class OrderItem {
   product: Product;
   quantity: number = 1;
   priceAtOrder: number = 0;
+  costPriceAtOrder: number | null = null;
 
-  constructor(id: number = 0, product: Product, quantity: number = 1, priceAtOrder: number = 0) {
+  constructor(id: number = 0, product: Product, quantity: number = 1, priceAtOrder: number = 0, costPriceAtOrder: number | null = null) {
     this.id = id;
     this.product = product;
     this.quantity = quantity;
     this.priceAtOrder = priceAtOrder;
+    this.costPriceAtOrder = costPriceAtOrder;
   }
 }
 
 export class Order {
   id: number = 0;
-  name: string = '';
-  phone: string = '';
+  user: User;
+  approvementMethod: ApprovementMethod = 'call';
   paymentMethod: PaymentMethod = 'cash';
   comment: string = '';
   status: OrderStatus = 'new';
@@ -29,8 +33,8 @@ export class Order {
 
   constructor(
     id: number = 0,
-    name: string = '',
-    phone: string = '',
+    user: User,
+    approvementMethod: ApprovementMethod = 'call',
     paymentMethod: PaymentMethod = 'cash',
     comment: string = '',
     status: OrderStatus = 'new',
@@ -38,8 +42,8 @@ export class Order {
     items: OrderItem[] = []
   ) {
     this.id = id;
-    this.name = name;
-    this.phone = phone;
+    this.user = user;
+    this.approvementMethod = approvementMethod;
     this.paymentMethod = paymentMethod;
     this.comment = comment;
     this.status = status;

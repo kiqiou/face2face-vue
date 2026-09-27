@@ -66,13 +66,6 @@
     <div class="mx-auto w-full max-w-4xl px-4 py-12 sm:px-6">
       <TextSection />
     </div>
-
-    <div class="mt-16">
-      <About></About>
-    </div>
-    <div class="mt-16">
-      <Procedures></Procedures>
-    </div>
   </div>
 </template>
 

@@ -1,71 +1,82 @@
 <script setup lang="ts">
-  import { onMounted, ref, computed } from 'vue';
-  import { useRouter } from 'vue-router';
-  import { useProducts } from '../../composables/product/useProducts.js';
-  import { useManufacturers } from '../../composables/product/manufacturer/useManufacturers.js';
-  import { usePurposes } from '../../composables/product/purposes/usePurposes.js';
-  import { useCollections } from '../../composables/product/collection/useCollections.js';
-  import { useSkinTypes } from '../../composables/product/skinTypes/useSkinTypes.js';
-  import ProductCard from '../components/ProductCard.vue';
+import { onMounted, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useProducts } from '../../composables/product/useProducts.js';
+import { useManufacturers } from '../../composables/product/manufacturer/useManufacturers.js';
+import { usePurposes } from '../../composables/product/purposes/usePurposes.js';
+import { useCollections } from '../../composables/product/collection/useCollections.js';
+import { useSkinTypes } from '../../composables/product/skinTypes/useSkinTypes.js';
+import ProductCard from '../components/ProductCard.vue';
 import { useProductsCartStore } from '../../stores/productsCart.js';
 import { Product } from '../../models/product.js';
 
-  const router = useRouter();
+const router = useRouter();
 
-  const { products, loading, error, load } = useProducts();
-  const { manufacturers, load: loadManufacturers } = useManufacturers();
-  const { purposes, load: loadPurposes } = usePurposes();
-  const { collections, load: loadCollections } = useCollections();
-  const { skinTypes, load: loadSkinTypes } = useSkinTypes();
-  
-  const productsCartStore = useProductsCartStore();
-  const selectedManufacturer = ref<number | null>(null);
-  const selectedPurpose = ref<number | null>(null);
-  const selectedCollection = ref<number | null>(null);
-  const selectedSkinType = ref<number | null>(null);
-  const ordering = ref<'price_amount' | '-price_amount' | ''>('');
-  const onlyInStock = ref(false);
+const { products, loading, error, load } = useProducts();
+const { manufacturers, load: loadManufacturers } = useManufacturers();
+const { purposes, load: loadPurposes } = usePurposes();
+const { collections, load: loadCollections } = useCollections();
+const { skinTypes, load: loadSkinTypes } = useSkinTypes();
 
-  const applyFilters = () => {
-    load({
-      manufacturer: selectedManufacturer.value ?? undefined,
-      purpose: selectedPurpose.value ?? undefined,
-      collection: selectedCollection.value ?? undefined,
-      skinType: selectedSkinType.value ?? undefined,
-      ordering: ordering.value || undefined,
-      inStock: onlyInStock.value ? true : undefined,
-    });
-  };
+const productsCartStore = useProductsCartStore();
 
-  const resetFilters = () => {
-    selectedManufacturer.value = null;
-    selectedPurpose.value = null;
-    selectedCollection.value = null;
-    selectedSkinType.value = null;
-    ordering.value = '';
-    onlyInStock.value = false;
-    load();
-  };
+// теперь массивы вместо одиночных значений
+const selectedManufacturers = ref<number[]>([]);
+const selectedPurposes = ref<number[]>([]);
+const selectedCollections = ref<number[]>([]);
+const selectedSkinTypes = ref<number[]>([]);
+const ordering = ref<'price_amount' | '-price_amount' | ''>('');
+const onlyInStock = ref(false);
 
-  const addToCart = (product: Product) =>{
-    productsCartStore.addProduct(product)
-  }
-
-  const hasProducts = computed(
-    () => !loading.value && products.value.length > 0
-  );
-
-  const goToProduct = (id: number) => {
-    router.push(`/products/${id}`);
-  };
-
-  onMounted(() => {
-    load();
-    loadManufacturers();
-    loadPurposes();
-    loadCollections();
-    loadSkinTypes();
+const applyFilters = () => {
+  load({
+    manufacturer: selectedManufacturers.value.length ? selectedManufacturers.value : undefined,
+    purpose: selectedPurposes.value.length ? selectedPurposes.value : undefined,
+    collection: selectedCollections.value.length ? selectedCollections.value : undefined,
+    skinType: selectedSkinTypes.value.length ? selectedSkinTypes.value : undefined,
+    ordering: ordering.value || undefined,
+    inStock: onlyInStock.value ? true : undefined,
   });
+};
+
+const resetFilters = () => {
+  selectedManufacturers.value = [];
+  selectedPurposes.value = [];
+  selectedCollections.value = [];
+  selectedSkinTypes.value = [];
+  ordering.value = '';
+  onlyInStock.value = false;
+  load();
+};
+
+const addToCart = (product: Product) => {
+  productsCartStore.addProduct(product);
+};
+
+const hasProducts = computed(
+  () => !loading.value && products.value.length > 0
+);
+
+const goToProduct = (id: number) => {
+  router.push(`/products/${id}`);
+};
+
+const activeFiltersCount = computed(
+  () =>
+    selectedManufacturers.value.length +
+    selectedPurposes.value.length +
+    selectedCollections.value.length +
+    selectedSkinTypes.value.length +
+    (onlyInStock.value ? 1 : 0)
+);
+
+onMounted(() => {
+  load();
+  loadManufacturers();
+  loadPurposes();
+  loadCollections();
+  loadSkinTypes();
+});
 </script>
 
 <template>
@@ -92,16 +103,22 @@ import { Product } from '../../models/product.js';
             >
               Производитель
             </label>
-            <select
-              v-model="selectedManufacturer"
-              @change="applyFilters"
-              class="w-full border border-line bg-paper px-3 py-2 text-sm text-ink transition-colors focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
-            >
-              <option :value="null">Все</option>
-              <option v-for="m in manufacturers" :key="m.id" :value="m.id">
+            <div class="space-y-1.5">
+              <label
+                v-for="m in manufacturers"
+                :key="m.id"
+                class="flex items-center gap-2 text-sm text-ink"
+              >
+                <input
+                  type="checkbox"
+                  :value="m.id"
+                  v-model="selectedManufacturers"
+                  @change="applyFilters"
+                  class="h-4 w-4 border-line text-moss focus:ring-moss/30"
+                />
                 {{ m.name }}
-              </option>
-            </select>
+              </label>
+            </div>
           </div>
 
           <div class="pt-6">
@@ -110,16 +127,22 @@ import { Product } from '../../models/product.js';
             >
               Назначение
             </label>
-            <select
-              v-model="selectedPurpose"
-              @change="applyFilters"
-              class="w-full border border-line bg-paper px-3 py-2 text-sm text-ink transition-colors focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
-            >
-              <option :value="null">Все</option>
-              <option v-for="p in purposes" :key="p.id" :value="p.id">
+            <div class="space-y-1.5">
+              <label
+                v-for="p in purposes"
+                :key="p.id"
+                class="flex items-center gap-2 text-sm text-ink"
+              >
+                <input
+                  type="checkbox"
+                  :value="p.id"
+                  v-model="selectedPurposes"
+                  @change="applyFilters"
+                  class="h-4 w-4 border-line text-moss focus:ring-moss/30"
+                />
                 {{ p.name }}
-              </option>
-            </select>
+              </label>
+            </div>
           </div>
 
           <div class="pt-6">
@@ -128,16 +151,22 @@ import { Product } from '../../models/product.js';
             >
               Подборка
             </label>
-            <select
-              v-model="selectedCollection"
-              @change="applyFilters"
-              class="w-full border border-line bg-paper px-3 py-2 text-sm text-ink transition-colors focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
-            >
-              <option :value="null">Все</option>
-              <option v-for="c in collections" :key="c.id" :value="c.id">
+            <div class="space-y-1.5">
+              <label
+                v-for="c in collections"
+                :key="c.id"
+                class="flex items-center gap-2 text-sm text-ink"
+              >
+                <input
+                  type="checkbox"
+                  :value="c.id"
+                  v-model="selectedCollections"
+                  @change="applyFilters"
+                  class="h-4 w-4 border-line text-moss focus:ring-moss/30"
+                />
                 {{ c.name }}
-              </option>
-            </select>
+              </label>
+            </div>
           </div>
 
           <div class="pt-6">
@@ -146,16 +175,22 @@ import { Product } from '../../models/product.js';
             >
               Тип кожи
             </label>
-            <select
-              v-model="selectedSkinType"
-              @change="applyFilters"
-              class="w-full border border-line bg-paper px-3 py-2 text-sm text-ink transition-colors focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
-            >
-              <option :value="null">Все</option>
-              <option v-for="st in skinTypes" :key="st.id" :value="st.id">
+            <div class="space-y-1.5">
+              <label
+                v-for="st in skinTypes"
+                :key="st.id"
+                class="flex items-center gap-2 text-sm text-ink"
+              >
+                <input
+                  type="checkbox"
+                  :value="st.id"
+                  v-model="selectedSkinTypes"
+                  @change="applyFilters"
+                  class="h-4 w-4 border-line text-moss focus:ring-moss/30"
+                />
                 {{ st.name }}
-              </option>
-            </select>
+              </label>
+            </div>
           </div>
 
           <div class="pt-6">
@@ -188,7 +223,10 @@ import { Product } from '../../models/product.js';
             >
           </div>
 
-          <div class="pt-6">
+          <div class="flex items-center justify-between pt-6">
+            <span class="text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+              Активно: {{ activeFiltersCount }}
+            </span>
             <button
               @click="resetFilters"
               class="text-[11px] uppercase tracking-[0.15em] text-clay underline decoration-clay/40 underline-offset-4 transition-colors hover:text-ink"
@@ -215,13 +253,12 @@ import { Product } from '../../models/product.js';
 
           <div
             v-if="hasProducts"
-            class="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-3 xl:grid-cols-4"
+            class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
           >
             <div
               v-for="product in products"
               :key="product.id"
-              class="group cursor-pointer"
-              @click="goToProduct(product.id)"
+              class="group h-full cursor-pointer"
             >
               <ProductCard
                 :product="product"

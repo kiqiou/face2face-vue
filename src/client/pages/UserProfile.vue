@@ -1,10 +1,13 @@
 <script setup lang="ts">
-  import { computed, onMounted } from 'vue';
+  import { computed, onMounted, ref } from 'vue';
   import GradientButton from '../../components/ui/GradientButton.vue';
   import router from '../../router/index.js';
   import { authService } from '../../utils/auth.js';
-  import { ORDER_STATUS_LABELS } from '../../models/order.js';
+  import { ORDER_STATUS_LABELS, OrderStatus } from '../../models/order.js';
 import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
+import { Product } from '../../models/product.js';
+import { useProductsCartStore } from '../../stores/productsCart.js';
+import { useToast } from 'vue-toastification';
 
   // --- логика записей (закомментировано, не удалено) ---
   // import ProcedureCard from '../components/ProcedureCard.vue';
@@ -61,13 +64,17 @@ import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
   // --- конец логики записей ---
 
   const { orders, loading: ordersLoading, loadAll: loadOrders } = useGetUserOrders();
-
+  const productsCartStore = useProductsCartStore();
+  const toast = useToast();
+    
   onMounted(() => {
     // load(); // загрузка записей — закомментировано вместе с блоком выше
     loadOrders();
   });
 
   const user = authService.getUser();
+
+  const coverImage = (product: Product) => product.media[0]?.url || product.imageUrl || '';
 
   const logout = () => {
     authService.logout();
@@ -90,6 +97,42 @@ import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
       year: 'numeric',
     });
   };
+
+  type StatusTab = 'all' | OrderStatus;
+
+  const statusTabs: { value: StatusTab; label: string }[] = [
+    { value: 'all', label: 'Все' },
+    { value: 'new', label: 'Новые' },
+    { value: 'confirmed', label: 'Подтверждённые' },
+    { value: 'done', label: 'Выполненные' },
+    { value: 'cancelled', label: 'Отменённые' },
+  ];
+
+  const activeStatusTab = ref<StatusTab>('all');
+
+  const filteredOrders = computed(() => {
+    if (activeStatusTab.value === 'all') return orders.value;
+    return orders.value.filter((order) => order.status === activeStatusTab.value);
+  });
+
+  const sortedFilteredOrders = computed(() =>
+    [...filteredOrders.value].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+  );
+
+    const repeatOrder = (order: (typeof orders.value)[number]) => {
+    order.items.forEach((item) => {
+      if (!item.product) return;
+      for (let i = 0; i < item.quantity; i++) {
+        productsCartStore.addProduct(item.product);
+      }
+    });
+
+    toast.success('Товары из заказа добавлены в корзину');
+    router.push('/user-products-cart');
+  };
+
 </script>
 
 <template>
@@ -114,7 +157,6 @@ import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
       <GradientButton button-name="Выйти из аккаунта" @click="logout()" />
     </div>
 
-    <!-- Мои заказы -->
     <div class="w-full max-w-3xl mx-auto mt-16">
       <div class="flex items-center gap-3 mb-6">
         <div class="w-10 h-10 rounded-xl bg-[#E5A663]/15 flex items-center justify-center">
@@ -124,6 +166,23 @@ import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
           </svg>
         </div>
         <h2 class="text-2xl font-black text-slate-800">Мои заказы</h2>
+      </div>
+
+      <!-- Табы фильтра по статусу -->
+      <div class="flex flex-wrap gap-2 mb-8">
+        <button
+          v-for="tab in statusTabs"
+          :key="tab.value"
+          @click="activeStatusTab = tab.value"
+          class="px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border"
+          :class="
+            activeStatusTab === tab.value
+              ? 'bg-[#E5A663] text-white border-[#E5A663]'
+              : 'bg-white/70 text-black/60 border-[#E5A663]/20 hover:border-[#E5A663]/50'
+          "
+        >
+          {{ tab.label }}
+        </button>
       </div>
 
       <div v-if="ordersLoading" class="text-center py-10 text-black/50">
@@ -137,9 +196,16 @@ import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
         </router-link>
       </div>
 
+      <div
+        v-else-if="sortedFilteredOrders.length === 0"
+        class="bg-white/70 rounded-3xl p-10 text-center"
+      >
+        <p class="text-black/60">Нет заказов с выбранным статусом</p>
+      </div>
+
       <div v-else class="flex flex-col gap-4">
         <div
-          v-for="order in orders"
+          v-for="order in sortedFilteredOrders"
           :key="order.id"
           class="bg-white/90 backdrop-blur-sm rounded-2xl p-6 border border-[#E5A663]/20 hover:border-[#E5A663]/40 hover:shadow-lg transition-all duration-300"
         >
@@ -165,23 +231,40 @@ import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
             <div
               v-for="item in order.items"
               :key="item.id"
-              class="flex justify-between text-sm text-black/70"
+              class="flex items-center justify-between text-sm text-black/70 gap-3"
             >
-              <span>{{ item.product?.name }} × {{ item.quantity }}</span>
-              <span class="font-semibold text-black/90">{{ item.priceAtOrder * item.quantity }} BYN</span>
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="h-10 w-10 shrink-0 overflow-hidden rounded bg-petal-soft/40">
+                  <img
+                    v-if="coverImage(item.product)"
+                    :src="coverImage(item.product)"
+                    :alt="item.product.name"
+                    class="h-full w-full object-cover"
+                  />
+                </div>
+                <span class="truncate">{{ item.product?.name }} × {{ item.quantity }}</span>
+              </div>
+              <span class="font-semibold text-black/90 shrink-0">{{ item.priceAtOrder * item.quantity }} BYN</span>
             </div>
           </div>
 
-          <div class="flex justify-between items-center pt-4 border-t border-[#E5A663]/15">
+          <div class="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-[#E5A663]/15">
             <span class="text-sm text-black/50">{{ paymentLabel(order.paymentMethod) }}</span>
-            <span class="text-xl font-black text-[#E5A663]">{{ orderTotal(order) }} BYN</span>
+            <div class="flex items-center gap-4">
+              <button
+                @click="repeatOrder(order)"
+                class="text-sm font-semibold text-[#E5A663] hover:underline"
+              >
+                Повторить заказ
+              </button>
+              <span class="text-xl font-black text-[#E5A663]">{{ orderTotal(order) }} BYN</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ==================== -->
-    <!-- Мои записи (закомментировано, не удалено) -->
     <!--
     <div class="max-w-2xl">
       <div class="max-w-4xl mx-auto mt-16 mb-20">

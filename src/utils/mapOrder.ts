@@ -1,4 +1,5 @@
 import { Order, OrderItem } from '../models/order.js';
+import { User } from '../models/user.js';
 import { mapProduct } from './mapProduct.js';
 
 export function mapOrder(item: any): Order {
@@ -8,9 +9,14 @@ export function mapOrder(item: any): Order {
 
   return new Order(
     item.id,
-    item.name,
-    item.phone,
+    new User(
+      item.user.id,
+      item.user.username,
+      item.user.phone,
+      item.user.role
+    ),
     item.payment_method,
+    item.approvement_method,
     item.comment,
     item.status,
     item.created_at,

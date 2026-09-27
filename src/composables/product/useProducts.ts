@@ -1,15 +1,16 @@
 import { ref } from 'vue';
-import { authPostForm, authPatchForm, authDelete } from '../../utils/apiAuthHelpers.js';
+import { authPostForm, authPatchForm, authDelete, authFetchJson } from '../../utils/apiAuthHelpers.js';
 import { Product } from '../../models/product.js';
 import { apiGet } from '../../utils/apiGet.js';
 import { API_BASE } from './productBaseApi.js';
 import { mapProduct } from '../../utils/mapProduct.js';
+import { authFetch } from '../../utils/authFetch.js';
 
 interface ProductFilters {
-  manufacturer?: number;
-  skinType?: number;
-  purpose?: number;
-  collection?: number;
+  manufacturer?: number | number[];
+  skinType?: number | number[];
+  purpose?: number | number[];
+  collection?: number | number[];
   inStock?: boolean;
   ordering?: 'price_amount' | '-price_amount';
 }
@@ -26,6 +27,20 @@ interface ProductInput {
   inStock: boolean;
   media?: File[];
   mediaIdsToDelete?: number[];
+  costPrice?: number | null;
+  netAmount?: number | null;
+  netAmountUnit?: 'ml' | 'l' | 'g' | 'kg' | 'pcs' | '';
+  ingredients?: string;
+  shelfLifeMonths?: number | null;
+  storageConditions?: string;
+  precautions?: string;
+  usageInstructions?: string;
+  isForChildren?: boolean;
+  colorShade?: string;
+  fluorideContent?: string;
+  batchNumber?: string;
+  conformityDocumentNumber?: string;
+  conformityDocumentValidUntil?: string | null;
 }
 
 function buildFormData(input: Partial<ProductInput>): FormData {
@@ -35,13 +50,56 @@ function buildFormData(input: Partial<ProductInput>): FormData {
   if (input.priceAmount !== undefined) formData.append('price_amount', String(input.priceAmount));
   if (input.priceCurrency !== undefined) formData.append('price_currency', input.priceCurrency);
   if (input.manufacturerId !== undefined) formData.append('manufacturer', String(input.manufacturerId));
+  if (input.costPrice !== undefined && input.costPrice !== null) {
+    formData.append('cost_price', String(input.costPrice));
+  }
   if (input.inStock !== undefined) formData.append('in_stock', String(input.inStock));
   input.skinTypeIds?.forEach((id) => formData.append('skin_types', String(id)));
   input.purposeIds?.forEach((id) => formData.append('purposes', String(id)));
   input.collectionIds?.forEach((id) => formData.append('collections', String(id)));
   input.media?.forEach((file) => formData.append('media', file));
   input.mediaIdsToDelete?.forEach((id) => formData.append('media_ids_to_delete', String(id)));
+
+  // новые поля
+  if (input.netAmount !== undefined && input.netAmount !== null) {
+    formData.append('net_amount', String(input.netAmount));
+  }
+  if (input.netAmountUnit) formData.append('net_amount_unit', input.netAmountUnit);
+  if (input.ingredients !== undefined) formData.append('ingredients', input.ingredients);
+  if (input.shelfLifeMonths !== undefined && input.shelfLifeMonths !== null) {
+    formData.append('shelf_life_months', String(input.shelfLifeMonths));
+  }
+  if (input.storageConditions !== undefined) formData.append('storage_conditions', input.storageConditions);
+  if (input.precautions !== undefined) formData.append('precautions', input.precautions);
+  if (input.usageInstructions !== undefined) formData.append('usage_instructions', input.usageInstructions);
+  if (input.isForChildren !== undefined) formData.append('is_for_children', String(input.isForChildren));
+  if (input.colorShade !== undefined) formData.append('color_shade', input.colorShade);
+  if (input.fluorideContent !== undefined) formData.append('fluoride_content', input.fluorideContent);
+  if (input.batchNumber !== undefined) formData.append('batch_number', input.batchNumber);
+  if (input.conformityDocumentNumber !== undefined) {
+    formData.append('conformity_document_number', input.conformityDocumentNumber);
+  }
+  if (input.conformityDocumentValidUntil) {
+    formData.append('conformity_document_valid_until', input.conformityDocumentValidUntil);
+  }
+
   return formData;
+}
+
+// Добавляет один или несколько значений в query-параметры.
+// Для массива — несколько одинаковых ключей: ?purpose=1&purpose=2
+function appendFilterValue(
+  params: URLSearchParams,
+  key: string,
+  value: number | number[] | undefined
+) {
+  if (value === undefined || value === null) return;
+  if (Array.isArray(value)) {
+    if (value.length === 0) return;
+    value.forEach((v) => params.append(key, String(v)));
+  } else {
+    params.append(key, String(value));
+  }
 }
 
 export function useProducts() {
@@ -49,20 +107,22 @@ export function useProducts() {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  const load = async (filters: ProductFilters = {}) => {
+  const load = async (filters: ProductFilters = {}, withAuth: boolean = false) => {
     loading.value = true;
     error.value = null;
     try {
       const params = new URLSearchParams();
-      if (filters.manufacturer) params.set('manufacturer', String(filters.manufacturer));
-      if (filters.skinType) params.set('skin_type', String(filters.skinType));
-      if (filters.purpose) params.set('purpose', String(filters.purpose));
-      if (filters.collection) params.set('collection', String(filters.collection));
+      appendFilterValue(params, 'manufacturer', filters.manufacturer);
+      appendFilterValue(params, 'skin_type', filters.skinType);
+      appendFilterValue(params, 'purpose', filters.purpose);
+      appendFilterValue(params, 'collection', filters.collection);
       if (filters.inStock !== undefined) params.set('in_stock', String(filters.inStock));
       if (filters.ordering) params.set('ordering', filters.ordering);
 
       const query = params.toString() ? `?${params.toString()}` : '';
-      const data = await apiGet(API_BASE + 'get_products/' + query);
+      const data = withAuth ? 
+        await apiGet(API_BASE + 'get_products/' + query) 
+        : await authFetchJson(API_BASE + 'get_products/' + query);
       products.value = data.map(mapProduct);
     } catch (err: any) {
       error.value = err.message;

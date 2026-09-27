@@ -2,6 +2,8 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { Product } from '../models/product.js';
 import { useToast } from 'vue-toastification';
+import { authService } from '../utils/auth.js';
+import router from '../router/index.js'; 
 
 interface CartItem {
   product: Product;
@@ -9,6 +11,7 @@ interface CartItem {
 }
 
 const toast = useToast();
+const isAuthenticated = authService.isAuthenticated();
 
 export const useProductsCartStore = defineStore('productsCart', () => {
   const items = ref<CartItem[]>([]);
@@ -27,6 +30,12 @@ export const useProductsCartStore = defineStore('productsCart', () => {
     items.value.find((i) => i.product.id === productId)?.quantity ?? 0;
 
   const addProduct = (product: Product) => {
+    if (!isAuthenticated) {
+      toast.error('Пожалуйста, войдите или зарегистрируйтесь');
+      router.push('/registration');
+      return;
+    }
+
     const existing = items.value.find((i) => i.product.id === product.id);
     if (existing) {
       existing.quantity++;

@@ -8,12 +8,16 @@ import { usePurposes } from '../../composables/product/purposes/usePurposes.js';
 import { useCollections } from '../../composables/product/collection/useCollections.js';
 import HeaderAdmin from '../../admin/components/HeaderAdmin.vue';
 import { ProductMedia } from '../../models/productMedia.js';
+import { useRoute, useRouter } from 'vue-router';
 
 const { products, loading, error, load, add, update, remove } = useProducts();
 const { manufacturers, load: loadManufacturers } = useManufacturers();
 const { skinTypes, load: loadSkinTypes } = useSkinTypes();
 const { purposes, load: loadPurposes } = usePurposes();
 const { collections, load: loadCollections } = useCollections();
+
+const route = useRoute();
+const router = useRouter();
 
 const isModalOpen = ref(false);
 const editingProduct = ref<Product | null>(null);
@@ -30,6 +34,20 @@ const form = reactive({
   purposeIds: [] as number[],
   collectionIds: [] as number[],
   inStock: true,
+  netAmount: null as number | null,
+  netAmountUnit: '' as 'ml' | 'l' | 'g' | 'kg' | 'pcs' | '',
+  ingredients: '',
+  shelfLifeMonths: null as number | null,
+  storageConditions: '',
+  precautions: '',
+  usageInstructions: '',
+  isForChildren: false,
+  colorShade: '',
+  fluorideContent: '',
+  batchNumber: '',
+  conformityDocumentNumber: '',
+  conformityDocumentValidUntil: '' as string | null,
+  costPrice: null as number | null,
 });
 
 const newFiles = ref<File[]>([]);
@@ -46,44 +64,73 @@ const newMediaPreviews = computed(() =>
 const coverImage = (product: Product) => product.media[0]?.url || product.imageUrl || '';
 
 const resetForm = () => {
-  form.name = '';
-  form.description = '';
-  form.priceAmount = 0;
-  form.priceCurrency = 'BYN';
-  form.manufacturerId = manufacturers.value[0]?.id ?? 0;
-  form.skinTypeIds = [];
-  form.purposeIds = [];
-  form.collectionIds = [];
-  form.inStock = true;
-  newFiles.value = [];
-  existingMedia.value = [];
-  mediaIdsToDelete.value = [];
-  formError.value = null;
-};
+    form.name = '';
+    form.description = '';
+    form.priceAmount = 0;
+    form.priceCurrency = 'BYN';
+    form.manufacturerId = manufacturers.value[0]?.id ?? 0;
+    form.skinTypeIds = [];
+    form.purposeIds = [];
+    form.collectionIds = [];
+    form.inStock = true;
+    form.netAmount = null;
+    form.netAmountUnit = '';
+    form.ingredients = '';
+    form.shelfLifeMonths = null;
+    form.storageConditions = '';
+    form.precautions = '';
+    form.usageInstructions = '';
+    form.isForChildren = false;
+    form.colorShade = '';
+    form.fluorideContent = '';
+    form.batchNumber = '';
+    form.conformityDocumentNumber = '';
+    form.conformityDocumentValidUntil = '';
+    form.costPrice = null as number | null,
+    newFiles.value = [];
+    existingMedia.value = [];
+    mediaIdsToDelete.value = [];
+    formError.value = null;
+  };
 
 const openAddModal = () => {
-  editingProduct.value = null;
-  resetForm();
-  isModalOpen.value = true;
-};
+    editingProduct.value = null;
+    resetForm();
+    isModalOpen.value = true;
+  };
 
-const openEditModal = (product: Product) => {
-  editingProduct.value = product;
-  form.name = product.name;
-  form.description = product.description;
-  form.priceAmount = product.priceAmount;
-  form.priceCurrency = product.priceCurrency;
-  form.manufacturerId = product.manufacturer.id;
-  form.skinTypeIds = product.skinTypes.map((s) => s.id);
-  form.purposeIds = product.purposes.map((p) => p.id);
-  form.collectionIds = product.collections.map((c) => c.id);
-  form.inStock = product.inStock;
-  newFiles.value = [];
-  existingMedia.value = [...product.media];
-  mediaIdsToDelete.value = [];
-  formError.value = null;
-  isModalOpen.value = true;
-};
+  const openEditModal = (product: Product) => {
+    editingProduct.value = product;
+    form.name = product.name;
+    form.description = product.description;
+    form.priceAmount = product.priceAmount;
+    form.priceCurrency = product.priceCurrency;
+    form.manufacturerId = product.manufacturer.id;
+    form.skinTypeIds = product.skinTypes.map((s) => s.id);
+    form.purposeIds = product.purposes.map((p) => p.id);
+    form.collectionIds = product.collections.map((c) => c.id);
+    form.inStock = product.inStock;
+    form.netAmount = product.netAmount;
+    form.netAmountUnit = product.netAmountUnit;
+    form.ingredients = product.ingredients;
+    form.shelfLifeMonths = product.shelfLifeMonths;
+    form.storageConditions = product.storageConditions;
+    form.precautions = product.precautions;
+    form.usageInstructions = product.usageInstructions;
+    form.isForChildren = product.isForChildren;
+    form.colorShade = product.colorShade;
+    form.fluorideContent = product.fluorideContent;
+    form.batchNumber = product.batchNumber;
+    form.conformityDocumentNumber = product.conformityDocumentNumber;
+    form.conformityDocumentValidUntil = product.conformityDocumentValidUntil;
+    form.costPrice = product.costPrice;
+    newFiles.value = [];
+    existingMedia.value = [...product.media];
+    mediaIdsToDelete.value = [];
+    formError.value = null;
+    isModalOpen.value = true;
+  };
+
 
 const closeModal = () => {
   isModalOpen.value = false;
@@ -107,32 +154,36 @@ const removeExistingMedia = (id: number) => {
 
 
 const handleSubmit = async () => {
-  submitting.value = true;
-  formError.value = null;
+    submitting.value = true;
+    formError.value = null;
 
-  const payload = {
-    ...form,
-    media: newFiles.value,
-    mediaIdsToDelete: mediaIdsToDelete.value,
-  };
+    const payload = {
+      ...form,
+      media: newFiles.value,
+      mediaIdsToDelete: mediaIdsToDelete.value,
+    };
 
-  try {
-    if (editingProduct.value) {
-      await update(editingProduct.value.id, payload);
-    } else {
-      await add(payload);
+    try {
+      if (editingProduct.value) {
+        await update(editingProduct.value.id, payload);
+      } else {
+        await add(payload);
+      }
+      closeModal();
+    } catch (err: any) {
+      formError.value = err.message ?? 'Не удалось сохранить товар';
+    } finally {
+      submitting.value = false;
     }
-    closeModal();
-  } catch (err: any) {
-    formError.value = err.message ?? 'Не удалось сохранить товар';
-  } finally {
-    submitting.value = false;
-  }
-};
+  };
 
 const handleRemove = async (id: number) => {
   if (!confirm('Удалить товар?')) return;
   await remove(id);
+};
+
+const goToProduct = (id: number) => {
+  router.push(`admin/products/${id}`);
 };
 
 onMounted(() => {
@@ -150,7 +201,6 @@ onMounted(() => {
         <HeaderAdmin />
       <div class="mb-8 flex items-center justify-between">
         <div>
-          <p class="mb-2 text-xs uppercase tracking-[0.2em] text-ink-muted">Админка</p>
           <h1 class="font-display text-3xl font-medium text-ink">Товары</h1>
         </div>
         <button
@@ -170,7 +220,7 @@ onMounted(() => {
           :key="product.id"
           class="border border-line bg-white p-4"
         >
-          <div class="mb-3 aspect-square overflow-hidden bg-petal-soft/40">
+          <div class="mb-3 aspect-square overflow-hidden bg-petal-soft/40" @click="() => goToProduct(product.id)">
             <img
               v-if="coverImage(product)"
               :src="coverImage(product)"
@@ -249,6 +299,16 @@ onMounted(() => {
                 required
                 class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
               />
+            <div>
+              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Себестоимость</label>
+              <input 
+                v-model.number="form.costPrice" 
+                type="number"
+                step="0.01"
+                required
+               class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+               />
+            </div>
             </div>
             <div>
               <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Валюта</label>
@@ -263,13 +323,33 @@ onMounted(() => {
           </div>
 
         <div>
+          <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+            Производитель
+          </label>
+          
+          <select
+            v-model="form.manufacturerId"
+            class="w-full border border-line bg-white px-3 py-2 text-sm text-ink focus:border-moss focus:outline-none"
+          >
+            <option :value="null" disabled hidden>Выберите производителя</option>
+            <option 
+              v-for="m in manufacturers" 
+              :key="m.id" 
+              :value="m.id"
+            >
+              {{ m.name }}
+            </option>
+          </select>
+        </div>
+
+        <div>
         <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Тип кожи</label>
         <div class="flex flex-wrap gap-2">
           <label
             v-for="st in skinTypes"
             :key="st.id"
             class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
-            :class="form.skinTypeIds.includes(st.id) ? 'border-moss bg-moss/10 text-moss-dark' : 'border-line text-ink-muted'"
+            :class="form.skinTypeIds.includes(st.id) ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark' : 'border-line text-ink-muted'"
           >
             <input type="checkbox" :value="st.id" v-model="form.skinTypeIds" class="hidden" />
             {{ st.name }}
@@ -284,7 +364,7 @@ onMounted(() => {
             v-for="p in purposes"
             :key="p.id"
             class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
-            :class="form.purposeIds.includes(p.id) ? 'border-moss bg-moss/10 text-moss-dark' : 'border-line text-ink-muted'"
+            :class="form.purposeIds.includes(p.id) ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark' : 'border-line text-ink-muted'"
           >
             <input type="checkbox" :value="p.id" v-model="form.purposeIds" class="hidden" />
             {{ p.name }}
@@ -299,7 +379,7 @@ onMounted(() => {
             v-for="c in collections"
             :key="c.id"
             class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
-            :class="form.collectionIds.includes(c.id) ? 'border-moss bg-moss/10 text-moss-dark' : 'border-line text-ink-muted'"
+            :class="form.collectionIds.includes(c.id) ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark' : 'border-line text-ink-muted'"
           >
             <input type="checkbox" :value="c.id" v-model="form.collectionIds" class="hidden" />
             {{ c.name }}
@@ -342,10 +422,153 @@ onMounted(() => {
       </div>
 
     
-          <div class="flex items-center gap-2">
-            <input id="in-stock" type="checkbox" v-model="form.inStock" class="h-4 w-4 border-line text-moss" />
-            <label for="in-stock" class="text-sm text-ink">В наличии</label>
-          </div>
+          <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+          Номинальное количество
+        </label>
+        <input
+          v-model.number="form.netAmount"
+          type="number"
+          step="0.01"
+          placeholder="например, 50"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Ед. измерения</label>
+        <select
+          v-model="form.netAmountUnit"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        >
+          <option value="">—</option>
+          <option value="ml">мл</option>
+          <option value="l">л</option>
+          <option value="g">г</option>
+          <option value="kg">кг</option>
+          <option value="pcs">шт</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Состав -->
+    <div>
+      <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+        Состав (INCI, по убыванию доли)
+      </label>
+      <textarea
+        v-model="form.ingredients"
+        rows="3"
+        placeholder="Aqua, Glycerin, ..."
+        class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+      ></textarea>
+    </div>
+
+    <!-- Срок годности и партия -->
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+          Срок годности (мес.)
+        </label>
+        <input
+          v-model.number="form.shelfLifeMonths"
+          type="number"
+          min="1"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Номер партии</label>
+        <input
+          v-model="form.batchNumber"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <!-- Условия хранения / меры предосторожности / способ применения -->
+    <div>
+      <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+        Условия хранения (если отличаются от стандартных)
+      </label>
+      <textarea
+        v-model="form.storageConditions"
+        rows="2"
+        class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+      ></textarea>
+    </div>
+
+    <div>
+      <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Меры предосторожности</label>
+      <textarea
+        v-model="form.precautions"
+        rows="2"
+        class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+      ></textarea>
+    </div>
+
+    <div>
+      <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Способ применения</label>
+      <textarea
+        v-model="form.usageInstructions"
+        rows="2"
+        class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+      ></textarea>
+    </div>
+
+    <!-- Тон / фторид / для детей -->
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+          Цвет/тон (декоративная косметика)
+        </label>
+        <input
+          v-model="form.colorShade"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+          Доля фторида (гигиена полости рта)
+        </label>
+        <input
+          v-model="form.fluorideContent"
+          placeholder="например, 1450 ppm"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <input id="is-for-children" type="checkbox" v-model="form.isForChildren" class="h-4 w-4 border-line text-moss" />
+      <label for="is-for-children" class="text-sm text-ink">Детская косметика</label>
+    </div>
+
+    <!-- Документ соответствия -->
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+          № декларации/регистрации ТР ТС 009/2011
+        </label>
+        <input
+          v-model="form.conformityDocumentNumber"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Действует до</label>
+        <input
+          v-model="form.conformityDocumentValidUntil"
+          type="date"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <input id="in-stock" type="checkbox" v-model="form.inStock" class="h-4 w-4 border-line text-moss" />
+      <label for="in-stock" class="text-sm text-ink">В наличии</label>
+    </div>
 
           <p v-if="formError" class="text-sm text-clay">{{ formError }}</p>
 

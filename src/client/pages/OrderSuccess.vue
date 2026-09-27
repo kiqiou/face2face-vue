@@ -6,6 +6,7 @@
   import { ORDER_STATUS_LABELS } from '../../models/order.js';
   import type { Order } from '../../models/order.js';
   import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
+import OrderInstructions from '../components/OrderInstructions.vue';
 
   const route = useRoute();
   const { loadOne } = useGetUserOrders();
@@ -63,11 +64,11 @@
         <div class="w-full border-t border-[#E5A663]/30 pt-6 flex flex-col gap-3">
           <div class="flex justify-between text-black/70">
             <span>Имя</span>
-            <span class="font-semibold text-black/90">{{ order.name }}</span>
+            <span class="font-semibold text-black/90">{{ order.user.username }}</span>
           </div>
           <div class="flex justify-between text-black/70">
             <span>Телефон</span>
-            <span class="font-semibold text-black/90">{{ order.phone }}</span>
+            <span class="font-semibold text-black/90">{{ order.user.phone }}</span>
           </div>
           <div class="flex justify-between text-black/70">
             <span>Оплата</span>
@@ -109,11 +110,13 @@
           </span>
         </div>
 
+        <OrderInstructions/>
+
         <div class="w-full flex flex-col sm:flex-row gap-3 mt-4">
-          <GradientButton button-name="Мои заказы" class="w-full" @click="router.push('/user-profile')" />
-          <GradientButton button-name="На главную" class="w-full" @click="router.push('/')" />
+            <GradientButton button-name="Мои заказы" class="w-full" @click="router.push('/user-profile')" />
+            <GradientButton button-name="На главную" class="w-full" @click="router.push('/')" />
+          </div>
         </div>
-      </div>
     </div>
   </div>
 </template>

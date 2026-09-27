@@ -11,6 +11,7 @@ interface CartLine {
 interface CreateOrderPayload {
   user: User;
   paymentMethod: 'cash' | 'card';
+  approvementMethod: 'call' | 'message';
   comment: string;
   items: CartLine[];
 }
@@ -34,6 +35,7 @@ export function useCreateOrder() {
         body: JSON.stringify({
           user: payload.user,
           payment_method: payload.paymentMethod,
+          approvement_method: payload.approvementMethod,
           comment: payload.comment,
           items: payload.items.map((i) => ({ product: i.productId, quantity: i.quantity })),
         }),

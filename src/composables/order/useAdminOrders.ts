@@ -30,7 +30,7 @@ export function useAdminOrders() {
   const loadOne = async (orderId: number) => {
     error.value = null;
     try {
-      const data = await authFetchJson(API_BASE + `get_order/${orderId}/`);
+      const data = await authFetchJson(API_BASE + `get_order_by_id/${orderId}/`);
       return mapOrder(data);
     } catch (err: any) {
       error.value = err.message;

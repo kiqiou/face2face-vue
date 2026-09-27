@@ -21,6 +21,9 @@ import ManufacturersAdmin from '@/admin/pages/AdminManufacturers.vue';
 import AdminTaxonomy from '@/admin/pages/AdminTaxonomy.vue';
 import ProductsAdmin from '@/admin/pages/ProductsAdmin.vue';
 import OrderSuccess from '../client/pages/OrderSuccess.vue';
+import OrderDetails from '../admin/pages/OrderDetails.vue';
+import AdminAnalytics from '../admin/pages/AdminAnalytics.vue';
+
 
 const routes = [
   {
@@ -43,7 +46,12 @@ const routes = [
         component: CosmetologistProcedures,
       },
       { path: '/products', name: 'Products', component: Products },
-      { path: '/products/:id', name: 'ProductDetail', component: ProductDetail },
+      { 
+        path: '/products/:id', 
+        name: 'ProductDetail', 
+        component: ProductDetail,
+        props: route => ({ id: Number(route.params.id), backRoute: '/products' }) 
+      },
     ],
   },
   { path: '/calendar', component: Calendar },
@@ -52,6 +60,18 @@ const routes = [
   { path: '/admin-products', component: ProductsAdmin },
   { path: '/admin-procedures', component: ProceduresAdmin },
   { path: '/admin-categories', component: AdminTaxonomy },
+  { path: '/admin-analytics', component: AdminAnalytics },
+  { 
+    path: '/admin/products/:id', 
+    name: 'AdminProductDetail', 
+    component: ProductDetail,
+    props: route => ({ id: Number(route.params.id), backRoute: '/admin-products' }) // Укажите ваш роут админки
+  },
+  {
+    path: '/admin/orders/:id',
+    name: 'OrderDetails',
+    component: OrderDetails,
+  }
 ];
 
 export const router = createRouter({

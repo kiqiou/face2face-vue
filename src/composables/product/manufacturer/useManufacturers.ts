@@ -22,11 +22,11 @@ export function useManufacturers() {
     }
   };
 
-  const add = async (name: string) => {
+  const add = async (name: string, address: string, country: string) => {
     error.value = null;
     try {
-      const data = await authPostJson(API_BASE + 'add_manufacturer/', { name });
-      const manufacturer = new Manufacturer(data.id, data.name);
+      const data = await authPostJson(API_BASE + 'add_manufacturer/', { name, address, country });
+      const manufacturer = new Manufacturer(data.id, data.name, data.address, data.country);
       manufacturers.value.push(manufacturer);
       return manufacturer;
     } catch (err: any) {
@@ -35,11 +35,11 @@ export function useManufacturers() {
     }
   };
 
-  const update = async (id: number, name: string) => {
+  const update = async (id: number, name: string, address: string, country: string) => {
     error.value = null;
     try {
-      const data = await authPatchJson(API_BASE + `update_manufacturer/${id}/`, { name });
-      const updated = new Manufacturer(data.id, data.name);
+      const data = await authPatchJson(API_BASE + `update_manufacturer/${id}/`, { name, address, country });
+      const updated = new Manufacturer(data.id, data.name, data.address, data.country);
       const index = manufacturers.value.findIndex((m: Manufacturer) => m.id === id);
       if (index !== -1) manufacturers.value[index] = updated;
       return updated;

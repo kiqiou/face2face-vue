@@ -147,6 +147,7 @@
     { id: '1', name: 'Главная', link: '/' },
     { id: '2', name: 'Услуги', link: '/procedures' },
     { id: '3', name: 'Наши мастера', link: '/about' },
+    { id: '10', name: 'Каталог товаров', link: '/products' },
   ]);
 
   const profileLink = {
@@ -167,12 +168,6 @@
     link: '/user-products-cart',
   };
 
-  const productsLink = {
-    id: '10',
-    name: 'Каталог товаров',
-    link: '/products',
-  };
-
   const adminLink = {
     id: '7',
     name: 'Админка',
@@ -184,10 +179,10 @@
   const visibleLinks = computed(() => {
     if (user.value) {
       if (user.value.role === 2) {
-        return [...baseLinks.value, profileLink, adminLink, productsCartLink, productsLink];
+        return [...baseLinks.value, profileLink, adminLink, productsCartLink ];
       }
 
-      return [...baseLinks.value, profileLink, productsCartLink, productsLink];
+      return [...baseLinks.value, profileLink, productsCartLink ];
     }
 
     return [
