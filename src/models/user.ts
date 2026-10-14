@@ -11,7 +11,8 @@ export class User {
     role: number = 0
   ) {
     this.id = id;
-    ((this.username = username), (this.phone = phone));
+    this.username = username;
+    this.phone = phone;
     this.role = role;
   }
 }

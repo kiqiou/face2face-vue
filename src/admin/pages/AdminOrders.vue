@@ -34,6 +34,11 @@ const calculateTotal = (items: any[]) => {
   return items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0).toFixed(2);
 };
 
+const calculateFinalTotal = (order: any) => {
+  const subtotal = order.items.reduce((sum: number, i: any) => sum + i.priceAtOrder * i.quantity, 0);
+  return (subtotal - (order.discountAmount || 0)).toFixed(2);
+};
+
 const openOrderDetails = (orderId: number) => {
   router.push(`/admin/orders/${orderId}`);
 };
@@ -123,7 +128,12 @@ onMounted(() => load());
               </td>
               
               <td class="py-4 px-6 font-semibold text-slate-900 whitespace-nowrap">
-                {{ calculateTotal(order.items) }} BYN
+                <div v-if="order.discountPercent > 0" class="flex flex-col gap-0.5">
+                  <span class="text-xs text-slate-400 line-through font-normal">{{ calculateTotal(order.items) }} BYN</span>
+                  <span class="text-emerald-600">{{ calculateFinalTotal(order) }} BYN</span>
+                  <span class="text-[10px] text-emerald-600 font-normal">−{{ order.discountPercent }}%{{ order.promoCode ? ` (${order.promoCode})` : '' }}</span>
+                </div>
+                <span v-else>{{ calculateTotal(order.items) }} BYN</span>
               </td>
               
               <td class="py-4 px-6">

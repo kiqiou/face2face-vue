@@ -130,9 +130,10 @@
 </script>
 
 <template>
-  <div class="min-h-screen bg-paper px-4 py-10 font-body text-ink">
+  <div class="min-h-screen bg-paper px-4 font-body text-ink">
+          <HeaderAdmin />
     <div class="mx-auto max-w-2xl">
-      <HeaderAdmin />
+
       <h1 class="mb-8 font-display text-3xl font-medium text-ink">
         Категории товаров
       </h1>

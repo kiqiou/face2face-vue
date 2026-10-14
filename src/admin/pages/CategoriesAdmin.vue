@@ -117,16 +117,10 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div  class="
-    min-h-screen
-    bg-gradient-to-b
-    from-slate-50
-    via-white
-    to-slate-100
-  ">
+  <div class="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
     <HeaderAdmin />
-
-  <div class="flex flex-col items-center gap-8 max-w-5xl mx-auto p-8">
+    <div class="mx-auto max-w-5xl px-4 py-10 lg:py-14">
+      
     <h1 class="text-3xl font-black text-black">
       Управление категориями
     </h1>

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Product } from '../models/product.js';
 import { useToast } from 'vue-toastification';
 import { authService } from '../utils/auth.js';
@@ -12,14 +12,40 @@ interface CartItem {
 
 const toast = useToast();
 const isAuthenticated = authService.isAuthenticated();
+const storageKey = () => `cart:${authService.getUser()?.id ?? 'guest'}`;
+
+const loadItems = (): CartItem[] => {
+  try {
+    const raw = localStorage.getItem(storageKey());
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
 
 export const useProductsCartStore = defineStore('productsCart', () => {
-  const items = ref<CartItem[]>([]);
+  const items = ref<CartItem[]>(loadItems());
+
+  watch(
+    items,
+    (value: any) => {
+      try {
+        localStorage.setItem(storageKey(), JSON.stringify(value));
+      } catch {
+        // хранилище переполнено или отключено, корзина просто не сохранится
+      }
+    },
+    { deep: true }
+  );
+
+  const reload = () => {
+    items.value = loadItems();
+  };
 
   const products = computed(() => items.value.map((i) => i.product));
 
   const total = computed(() =>
-    items.value.reduce((sum, i) => sum + i.product.priceAmount * i.quantity, 0)
+    items.value.reduce((sum, i) => sum + i.product.effectivePrice * i.quantity, 0)
   );
 
   const totalCount = computed(() =>
@@ -30,11 +56,11 @@ export const useProductsCartStore = defineStore('productsCart', () => {
     items.value.find((i) => i.product.id === productId)?.quantity ?? 0;
 
   const addProduct = (product: Product) => {
-    if (!isAuthenticated) {
+    if (!authService.isAuthenticated()) {
       toast.error('Пожалуйста, войдите или зарегистрируйтесь');
       router.push('/registration');
       return;
-    }
+  }
 
     const existing = items.value.find((i) => i.product.id === product.id);
     if (existing) {
@@ -76,5 +102,6 @@ export const useProductsCartStore = defineStore('productsCart', () => {
     decrement,
     removeProduct,
     clear,
+    reload
   };
 });

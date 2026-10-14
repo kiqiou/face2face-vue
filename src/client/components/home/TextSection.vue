@@ -12,7 +12,7 @@
       </p>
 
       <p class="text-base leading-relaxed text-stone-600 sm:text-lg">
-        Мы не обещаем волшебство «за 5 минут» и не втюхиваем дорогие процедуры.
+        Мы не обещаем волшебство «за 5 минут» и не втюхиваем дорогие средства.
         Наша цель — подобрать для вас тот самый уход, который действительно нужен вашей коже.
       </p>
 
@@ -43,7 +43,7 @@
 
     <!-- Товары -->
     <div class="border-t border-[#E5A663]/25 pt-10 sm:pt-14">
-      <div class="overflow-hidden rounded-3xl bg-gradient-to-br from-[#FAEE9E]/40 to-[#E5A663]/10 p-6 sm:p-10 lg:p-12">
+      <div class="overflow-hidden rounded-3xl bg-gradient-to-br from-[#FAEE9E] to-[#E5A663]/70 p-6 sm:p-10 lg:p-12">
         <div class="flex flex-col items-center gap-6 text-center lg:flex-row lg:items-center lg:justify-between lg:text-left">
           <div class="max-w-xl">
             <p class="text-xs font-semibold uppercase tracking-[0.35em] text-[#E5A663]">

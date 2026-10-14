@@ -23,6 +23,7 @@ import ProductsAdmin from '@/admin/pages/ProductsAdmin.vue';
 import OrderSuccess from '../client/pages/OrderSuccess.vue';
 import OrderDetails from '../admin/pages/OrderDetails.vue';
 import AdminAnalytics from '../admin/pages/AdminAnalytics.vue';
+import Privacy from '../client/pages/Privacy.vue';
 
 
 const routes = [
@@ -52,6 +53,21 @@ const routes = [
         component: ProductDetail,
         props: route => ({ id: Number(route.params.id), backRoute: '/products' }) 
       },
+      {
+        path: '/privacy-policy',
+        name: 'PrivacyPolicy',
+        component: Privacy,
+      },
+      {
+        path: '/return-policy',
+        name: 'ReturnPolicy',
+        component: () => import('../client/pages/ReturnPolicy.vue'),
+      },
+      {
+        path: '/offer',
+        name: 'Offer',
+        component: () => import('../client/pages/Offer.vue'),
+      }
     ],
   },
   { path: '/calendar', component: Calendar },
@@ -61,6 +77,8 @@ const routes = [
   { path: '/admin-procedures', component: ProceduresAdmin },
   { path: '/admin-categories', component: AdminTaxonomy },
   { path: '/admin-analytics', component: AdminAnalytics },
+  { path: '/admin-promocodes', component: () => import('../admin/pages/AdminPromoCodes.vue') },
+  { path: '/admin-clients', component: () => import('../admin/pages/AdminClients.vue') },
   { 
     path: '/admin/products/:id', 
     name: 'AdminProductDetail', 

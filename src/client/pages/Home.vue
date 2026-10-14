@@ -41,16 +41,16 @@
           </h1>
 
           <p class="mx-auto mt-6 max-w-xl text-base leading-relaxed text-stone-600 sm:text-lg lg:mx-0">
-            Заботимся о вашей коже честно и без спешки — подбираем процедуры,
+            Заботимся о вашей коже честно и без спешки — подбираем продукты,
             которые действительно работают.
           </p>
 
           <div class="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center lg:justify-start">
             <router-link
-              to="/procedures"
+              to="/products"
               class="rounded-full bg-[#E5A663] px-8 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-[#E5A663]/30 transition-transform hover:scale-[1.03]"
             >
-              Выбрать процедуру
+              Смотреть каталог
             </router-link>
             <router-link
               to="/contacts"

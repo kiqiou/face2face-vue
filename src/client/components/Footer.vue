@@ -32,14 +32,25 @@
         </div>
 
         <div class="space-y-4 text-center sm:text-left">
-          <h4 class="text-lg font-semibold text-black/90">Инстаграмм</h4>
-          <a
-            href="https://www.instagram.com/face2face.cosmetology/"
-            target="_blank"
+          <h4 class="text-lg font-semibold text-black/90">Политика обработки персональных данных</h4>
+          <RouterLink
+            to="/privacy-policy"
             class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
           >
-            @face2face
-          </a>
+            Политика обработки персональных данных
+          </RouterLink>
+          <RouterLink
+            to="/return-policy"
+            class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
+          >
+            Политика и условия возврата
+          </RouterLink>
+          <RouterLink
+            to="/offer"
+            class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
+          >
+            Оферта
+          </RouterLink>
         </div>
       </div>
 

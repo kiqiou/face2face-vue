@@ -24,11 +24,17 @@ const fetchOrder = async () => {
   order.value = await loadOne(id);
 };
 
-const total = computed(() => {
+const subTotal = computed(() => {
   if (!order.value) return '0.00';
   return order.value.items
     .reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0)
     .toFixed(2);
+});
+
+const finalTotal = computed(() => {
+  if (!order.value) return '0.00';
+  const sub = order.value.items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0);
+  return (sub - (order.value.discountAmount || 0)).toFixed(2);
 });
 
 const itemsCount = computed(() =>
@@ -141,7 +147,10 @@ onMounted(fetchOrder);
             </div>
             <div class="px-6 py-4">
               <p class="text-[11px] uppercase tracking-widest text-slate-400 mb-1">Сумма</p>
-              <p class="text-sm font-semibold text-slate-900">{{ total }} BYN</p>
+              <p class="text-sm font-semibold text-slate-900">{{ finalTotal }} BYN</p>
+              <p v-if="order.discountPercent > 0" class="text-xs text-emerald-600 mt-0.5">
+                −{{ order.discountPercent }}% (подытог {{ subTotal }})
+              </p>
               <p class="text-xs text-slate-500 mt-0.5">{{ itemsCount }} тов.</p>
             </div>
             <div class="px-6 py-4">
@@ -194,11 +203,23 @@ onMounted(fetchOrder);
                 </tr>
               </tbody>
               <tfoot>
+                <tr v-if="order.discountPercent > 0" class="border-t border-slate-100">
+                  <td colspan="3" class="py-2 px-6 text-right text-xs text-slate-500">
+                    Подытог
+                  </td>
+                  <td class="py-2 px-6 text-right text-slate-600">{{ subTotal }} BYN</td>
+                </tr>
+                <tr v-if="order.discountPercent > 0" class="bg-emerald-50/50">
+                  <td colspan="3" class="py-2 px-6 text-right text-xs font-semibold text-emerald-700">
+                    Скидка {{ order.discountPercent }}%{{ order.promoCode ? ` (промокод ${order.promoCode})` : '' }}
+                  </td>
+                  <td class="py-2 px-6 text-right font-semibold text-emerald-700">−{{ (order.discountAmount || 0).toFixed(2) }} BYN</td>
+                </tr>
                 <tr class="border-t border-slate-100 bg-slate-50/70">
                   <td colspan="3" class="py-3 px-6 text-right text-xs font-semibold uppercase tracking-wide text-slate-500">
                     Итого
                   </td>
-                  <td class="py-3 px-6 text-right font-bold text-slate-900">{{ total }} BYN</td>
+                  <td class="py-3 px-6 text-right font-bold text-slate-900">{{ finalTotal }} BYN</td>
                 </tr>
               </tfoot>
             </table>

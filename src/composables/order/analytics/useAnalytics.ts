@@ -25,6 +25,8 @@ interface StatusCount {
 
 interface AnalyticsData {
   summary: {
+    gross_revenue: number;
+    total_discount: number;
     revenue: number;
     cost: number;
     profit: number;

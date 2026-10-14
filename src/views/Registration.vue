@@ -12,36 +12,53 @@
   const isWaiting = ref(false); // ждём подтверждения в Telegram
   let pollTimer: ReturnType<typeof setInterval> | null = null;
   let authToken = '';
+  const consentGiven = ref(false);
 
   const stopPolling = () => {
     if (pollTimer) clearInterval(pollTimer);
     pollTimer = null;
   };
 
-  const startLogin = async () => {
-    isLoading.value = true;
+const startLogin = async () => {
+  if (!consentGiven.value) return; // на всякий случай, хотя кнопка и так задизейблена
 
-    try {
-      const res = await fetch(API_BASE + 'generate-auth/', { method: 'POST' });
-      const data = await res.json();
+  isLoading.value = true;
 
-      authToken = data.auth_token;
-      isWaiting.value = true;
+  try {
+    const res = await fetch(API_BASE + 'generate-auth/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ consent: consentGiven.value }),
+    });
 
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.location.href = data.telegram_link;
-      } else {
-        window.open(data.telegram_link, '_blank', 'width=600,height=700');
-      }
+    const data = await res.json();
 
-      pollTimer = setInterval(pollStatus, 2000);
-    } finally {
-      isLoading.value = false;
+    if (!res.ok) {
+      alert(data.error || 'Не удалось начать авторизацию');
+      return; // не запускаем поллинг с пустым токеном
     }
-  };
+
+    authToken = data.auth_token;
+    isWaiting.value = true;
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = data.telegram_link;
+    } else {
+      window.open(data.telegram_link, 'width=600,height=700');
+    }
+
+    pollTimer = setInterval(pollStatus, 2000);
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const pollStatus = async () => {
+  if (!authToken) {
+    stopPolling();
+    return;
+  }
   const res = await fetch(API_BASE + `auth-status/${authToken}/`);
   const data = await res.json();
 
@@ -73,10 +90,18 @@ const pollStatus = async () => {
           Вход выполнится автоматически.
         </p>
 
+        <label class="flex items-start gap-2 text-sm text-gray-600">
+        <input type="checkbox" v-model="consentGiven" class="mt-1" />
+          <span>
+            Я даю согласие ИП Песлякова А.А. на обработку моего имени и номера телефона для оформления заказа и связи со мной, в соответствии с
+            <router-link to="/privacy-policy" target="_blank" class="underline"> Политикой в отношении обработки персональных данных.</router-link>
+          </span>
+        </label>
+
         <GradientButton
           v-if="!isWaiting"
           :buttonName="isLoading ? 'Загрузка...' : 'Войти через Telegram'"
-          :disabled="isLoading"
+          :disabled="isLoading || !consentGiven"
           @click="startLogin"
         />
       </div>

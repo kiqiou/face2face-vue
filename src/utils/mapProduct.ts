@@ -54,6 +54,9 @@ export function mapProduct(item: any): Product {
     item.batch_number ?? '',
     item.conformity_document_number ?? '',
     item.conformity_document_valid_until ?? null,
-    item.cost_price ?? null // Поле добавлено для админов (ProductAdminSerializer)
+    item.cost_price ?? null,
+    item.sale_price !== null && item.sale_price !== undefined ? Number(item.sale_price) : null,
+    Number(item.effective_price),
+    item.is_on_sale ?? false,
   );
 }

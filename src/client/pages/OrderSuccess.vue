@@ -1,12 +1,12 @@
 <script setup lang="ts">
-  import { onMounted, ref } from 'vue';
+  import { onMounted, ref, computed } from 'vue';
   import { useRoute } from 'vue-router';
   import router from '../../router/index.js';
   import GradientButton from '../../components/ui/GradientButton.vue';
   import { ORDER_STATUS_LABELS } from '../../models/order.js';
   import type { Order } from '../../models/order.js';
   import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
-import OrderInstructions from '../components/OrderInstructions.vue';
+  import OrderInstructions from '../components/OrderInstructions.vue';
 
   const route = useRoute();
   const { loadOne } = useGetUserOrders();
@@ -33,6 +33,14 @@ import OrderInstructions from '../components/OrderInstructions.vue';
 
   const paymentLabel = (method: string) =>
     method === 'card' ? 'Картой' : 'Наличными';
+
+  const subtotal = computed(() =>
+    order.value ? order.value.items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0) : 0
+  );
+
+  const finalTotal = computed(() =>
+    subtotal.value - (order.value?.discountAmount || 0)
+  );
 </script>
 
 <template>
@@ -103,11 +111,19 @@ import OrderInstructions from '../components/OrderInstructions.vue';
           </div>
         </div>
 
-        <div class="w-full border-t border-[#E5A663]/30 pt-6 flex justify-between items-center">
-          <span class="text-xl text-black/80">Итого</span>
-          <span class="text-2xl font-black text-[#E5A663]">
-            {{ order.items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0) }} BYN
-          </span>
+        <div class="w-full border-t border-[#E5A663]/30 pt-6 flex flex-col gap-2">
+          <div v-if="order.discountPercent > 0" class="flex justify-between text-black/50">
+            <span>Подытог</span>
+            <span>{{ subtotal }} BYN</span>
+          </div>
+          <div v-if="order.discountPercent > 0" class="flex justify-between text-emerald-600 font-medium">
+            <span>Скидка {{ order.discountPercent }}%{{ order.promoCode ? ` (промокод ${order.promoCode})` : '' }}</span>
+            <span>−{{ order.discountAmount }} BYN</span>
+          </div>
+          <div class="flex justify-between items-center pt-1">
+            <span class="text-xl text-black/80">Итого</span>
+            <span class="text-2xl font-black text-[#E5A663]">{{ finalTotal }} BYN</span>
+          </div>
         </div>
 
         <OrderInstructions/>

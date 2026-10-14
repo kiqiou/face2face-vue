@@ -72,14 +72,11 @@
         {{ product.name }}
       </h3>
 
-      <div class="mt-auto flex items-baseline gap-1.5 pt-1">
-        <span class="font-display text-lg text-ink">
-          {{ formattedPrice }}&nbsp;{{ product.priceCurrency }}
-        </span>
-        <span v-if="product.priceUsd" class="text-xs text-ink-muted">
-          (~{{ product.priceUsd }} USD)
-        </span>
+      <div v-if="product.isOnSale" class="flex items-center gap-2">
+        <span class="text-sm text-black/40 line-through">{{ product.priceAmount }} BYN</span>
+        <span class="font-black text-black/80">{{ product.effectivePrice }} BYN</span>
       </div>
+      <div v-else class="font-black text-black/60">{{ product.priceAmount }} BYN</div>
 
       <!-- Кнопка снизу (всегда видна — важна для мобильных, где нет ховера) -->
       <AddToCartButton

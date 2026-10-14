@@ -36,6 +36,9 @@ export class Product {
   batchNumber: string = '';
   conformityDocumentNumber: string = '';
   conformityDocumentValidUntil: string | null = null;
+  salePrice: number | null = null;
+  effectivePrice: number = 0;
+  isOnSale: boolean = false;
 
   constructor(
     id: number = 0,
@@ -65,7 +68,10 @@ export class Product {
     batchNumber: string = '',
     conformityDocumentNumber: string = '',
     conformityDocumentValidUntil: string | null = null,
-    costPrice: number | null = null
+    costPrice: number | null = null,
+    salePrice: number | null = null,
+    effectivePrice: number = 0,
+    isOnSale: boolean = false
   ) {
     this.id = id;
     this.name = name;
@@ -95,5 +101,8 @@ export class Product {
     this.conformityDocumentNumber = conformityDocumentNumber;
     this.conformityDocumentValidUntil = conformityDocumentValidUntil;
     this.costPrice = costPrice;
+    this.salePrice = salePrice;
+    this.effectivePrice = effectivePrice;
+    this.isOnSale = isOnSale;
   }
 }

@@ -86,6 +86,12 @@ import { useToast } from 'vue-toastification';
   const orderTotal = (order: (typeof orders.value)[number]) =>
     order.items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0);
 
+  const orderSubtotal = (order: (typeof orders.value)[number]) =>
+    order.items.reduce((sum, i) => sum + i.priceAtOrder * i.quantity, 0);
+
+  const orderFinalTotal = (order: (typeof orders.value)[number]) =>
+    orderSubtotal(order) - (order.discountAmount || 0);
+
   const paymentLabel = (method: string) =>
     method === 'card' ? 'Картой' : 'Наличными';
 
@@ -248,18 +254,32 @@ import { useToast } from 'vue-toastification';
             </div>
           </div>
 
-          <div class="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-[#E5A663]/15">
-            <span class="text-sm text-black/50">{{ paymentLabel(order.paymentMethod) }}</span>
-            <div class="flex items-center gap-4">
-              <button
-                @click="repeatOrder(order)"
-                class="text-sm font-semibold text-[#E5A663] hover:underline"
-              >
-                Повторить заказ
-              </button>
-              <span class="text-xl font-black text-[#E5A663]">{{ orderTotal(order) }} BYN</span>
-            </div>
-          </div>
+          <<div class="flex flex-col gap-1 pt-4 border-t border-[#E5A663]/15">
+  <div class="flex flex-wrap justify-between items-center gap-3">
+    <span class="text-sm text-black/50">{{ paymentLabel(order.paymentMethod) }}</span>
+    <button
+      @click="repeatOrder(order)"
+      class="text-sm font-semibold text-[#E5A663] hover:underline"
+    >
+      Повторить заказ
+    </button>
+  </div>
+
+  <div v-if="order.discountPercent > 0" class="flex flex-col gap-0.5 text-sm">
+    <div class="flex justify-between text-black/50">
+      <span>Подытог</span>
+      <span>{{ orderSubtotal(order) }} BYN</span>
+    </div>
+    <div class="flex justify-between text-emerald-600 font-medium">
+      <span>Скидка {{ order.discountPercent }}%{{ order.promoCode ? ` (промокод ${order.promoCode})` : '' }}</span>
+      <span>−{{ order.discountAmount }} BYN</span>
+    </div>
+  </div>
+
+  <div class="flex justify-end">
+    <span class="text-xl font-black text-[#E5A663]">{{ orderFinalTotal(order) }} BYN</span>
+  </div>
+</div>
         </div>
       </div>
     </div>

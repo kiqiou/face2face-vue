@@ -48,6 +48,7 @@ const form = reactive({
   conformityDocumentNumber: '',
   conformityDocumentValidUntil: '' as string | null,
   costPrice: null as number | null,
+  salePrice: null as number | null, 
 });
 
 const newFiles = ref<File[]>([]);
@@ -87,6 +88,7 @@ const resetForm = () => {
     form.conformityDocumentNumber = '';
     form.conformityDocumentValidUntil = '';
     form.costPrice = null as number | null,
+    form.salePrice = null; 
     newFiles.value = [];
     existingMedia.value = [];
     mediaIdsToDelete.value = [];
@@ -124,6 +126,8 @@ const openAddModal = () => {
     form.conformityDocumentNumber = product.conformityDocumentNumber;
     form.conformityDocumentValidUntil = product.conformityDocumentValidUntil;
     form.costPrice = product.costPrice;
+    form.salePrice = product.salePrice; 
+    
     newFiles.value = [];
     existingMedia.value = [...product.media];
     mediaIdsToDelete.value = [];
@@ -196,9 +200,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-paper px-4 py-10 font-body text-ink">
+  <div class="min-h-screen bg-paper px-4 font-body text-ink">
+         <HeaderAdmin />
     <div class="mx-auto max-w-6xl">
-        <HeaderAdmin />
+   
       <div class="mb-8 flex items-center justify-between">
         <div>
           <h1 class="font-display text-3xl font-medium text-ink">Товары</h1>
@@ -289,39 +294,61 @@ onMounted(() => {
             ></textarea>
           </div>
 
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Цена</label>
-              <input
-                v-model.number="form.priceAmount"
-                type="number"
-                step="0.01"
-                required
-                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-              />
-            <div>
-              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Себестоимость</label>
-              <input 
-                v-model.number="form.costPrice" 
-                type="number"
-                step="0.01"
-                required
-               class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-               />
-            </div>
-            </div>
-            <div>
-              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Валюта</label>
-              <select
-                v-model="form.priceCurrency"
-                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-              >
-                <option value="BYN">BYN</option>
-                <option value="USD">USD</option>
-              </select>
-            </div>
-          </div>
+          <div class="grid grid-cols-3 gap-3">
+  <div>
+    <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Цена</label>
+    <input
+      v-model.number="form.priceAmount"
+      type="number"
+      step="0.01"
+      required
+      class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+    />
+  </div>
 
+  <div>
+    <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+      Акционная цена
+      <span class="normal-case text-ink-muted/60">(необязательно)</span>
+    </label>
+    <input
+      v-model.number="form.salePrice"
+      type="number"
+      step="0.01"
+      placeholder="меньше обычной цены"
+      class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+      :class="{ 'border-clay': form.salePrice !== null && form.salePrice >= form.priceAmount }"
+    />
+    <p
+      v-if="form.salePrice !== null && form.salePrice >= form.priceAmount"
+      class="mt-1 text-[11px] text-clay"
+    >
+      Должна быть меньше обычной цены
+    </p>
+  </div>
+
+  <div>
+    <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Себестоимость</label>
+    <input
+      v-model.number="form.costPrice"
+      type="number"
+      step="0.01"
+      required
+      class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+    />
+  </div>
+</div>
+
+<div>
+  <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Валюта</label>
+  <select
+    v-model="form.priceCurrency"
+    class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+  >
+    <option value="BYN">BYN</option>
+    <option value="USD">USD</option>
+  </select>
+</div>
         <div>
           <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
             Производитель

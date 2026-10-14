@@ -41,6 +41,7 @@ interface ProductInput {
   batchNumber?: string;
   conformityDocumentNumber?: string;
   conformityDocumentValidUntil?: string | null;
+  salePrice?: number | null;
 }
 
 function buildFormData(input: Partial<ProductInput>): FormData {
@@ -50,8 +51,8 @@ function buildFormData(input: Partial<ProductInput>): FormData {
   if (input.priceAmount !== undefined) formData.append('price_amount', String(input.priceAmount));
   if (input.priceCurrency !== undefined) formData.append('price_currency', input.priceCurrency);
   if (input.manufacturerId !== undefined) formData.append('manufacturer', String(input.manufacturerId));
-  if (input.costPrice !== undefined && input.costPrice !== null) {
-    formData.append('cost_price', String(input.costPrice));
+  if (input.costPrice !== undefined) {
+    formData.append('cost_price', input.costPrice === null ? '' : String(input.costPrice));
   }
   if (input.inStock !== undefined) formData.append('in_stock', String(input.inStock));
   input.skinTypeIds?.forEach((id) => formData.append('skin_types', String(id)));
@@ -82,6 +83,10 @@ function buildFormData(input: Partial<ProductInput>): FormData {
   if (input.conformityDocumentValidUntil) {
     formData.append('conformity_document_valid_until', input.conformityDocumentValidUntil);
   }
+  if (input.salePrice !== undefined) {
+    formData.append('sale_price', input.salePrice === null ? '' : String(input.salePrice));
+  }
+  
 
   return formData;
 }

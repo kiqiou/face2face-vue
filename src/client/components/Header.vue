@@ -145,8 +145,6 @@
 
   const baseLinks = ref([
     { id: '1', name: 'Главная', link: '/' },
-    { id: '2', name: 'Услуги', link: '/procedures' },
-    { id: '3', name: 'Наши мастера', link: '/about' },
     { id: '10', name: 'Каталог товаров', link: '/products' },
   ]);
 
@@ -179,7 +177,7 @@
   const visibleLinks = computed(() => {
     if (user.value) {
       if (user.value.role === 2) {
-        return [...baseLinks.value, profileLink, adminLink, productsCartLink ];
+        return [...baseLinks.value, adminLink, profileLink, productsCartLink];
       }
 
       return [...baseLinks.value, profileLink, productsCartLink ];

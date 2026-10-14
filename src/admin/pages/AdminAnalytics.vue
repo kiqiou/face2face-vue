@@ -31,7 +31,7 @@ const formatMoney = (value: number) =>
 
 const maxDailyRevenue = computed(() => {
   if (!data.value?.daily.length) return 0;
-  return Math.max(...data.value.daily.map((d) => d.revenue), 1);
+  return Math.max(...data.value.daily.map((d) => Math.max(d.revenue, 0)), 1);
 });
 
 const statusLabels: Record<string, string> = {
@@ -47,12 +47,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-paper px-4 py-10 font-body text-ink">
+  <div class="min-h-screen bg-paper px-4 font-body text-ink">
+     <HeaderAdmin />
     <div class="mx-auto max-w-6xl">
-      <HeaderAdmin />
 
       <div class="mb-8">
-        <p class="mb-2 text-xs uppercase tracking-[0.2em] text-ink-muted">Админка</p>
         <h1 class="font-display text-3xl font-medium text-ink">Аналитика продаж</h1>
       </div>
 
@@ -101,10 +100,20 @@ onMounted(() => {
             <p class="mb-1 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Выручка</p>
             <p class="font-display text-2xl text-ink">{{ formatMoney(data.summary.revenue) }} BYN</p>
           </div>
+
           <div class="border border-line bg-white p-5">
-            <p class="mb-1 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Себестоимость</p>
-            <p class="font-display text-2xl text-ink">{{ formatMoney(data.summary.cost) }} BYN</p>
+            <p class="mb-1 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Без скидок было бы</p>
+            <p class="font-display text-2xl text-ink-muted">{{ formatMoney(data.summary.gross_revenue) }} BYN</p>
           </div>
+
+          <div class="border border-line bg-white p-5">
+            <p class="mb-1 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Отдано скидками</p>
+            <p class="font-display text-2xl text-clay">−{{ formatMoney(data.summary.total_discount) }} BYN</p>
+            <p v-if="data.summary.gross_revenue" class="mt-1 text-xs text-ink-muted">
+              {{ ((data.summary.total_discount / data.summary.gross_revenue) * 100).toFixed(1) }}% от валовой выручки
+            </p>
+          </div>
+
           <div class="border border-line bg-white p-5">
             <p class="mb-1 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Прибыль</p>
             <p class="font-display text-2xl text-moss">{{ formatMoney(data.summary.profit) }} BYN</p>
@@ -124,26 +133,6 @@ onMounted(() => {
           <div class="border border-line bg-white p-5">
             <p class="mb-1 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Средний чек</p>
             <p class="font-display text-2xl text-ink">{{ formatMoney(data.summary.avg_order_value) }} BYN</p>
-          </div>
-        </div>
-
-        <!-- Выручка по дням -->
-        <div v-if="data.daily.length" class="mb-10">
-          <h2 class="mb-4 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Выручка по дням</h2>
-          <div class="flex items-end gap-1 border border-line bg-white p-4" style="height: 180px">
-            <div
-              v-for="day in data.daily"
-              :key="day.date"
-              class="group relative flex-1"
-              :style="{ height: `${(day.revenue / maxDailyRevenue) * 100}%` }"
-            >
-              <div class="h-full w-full rounded-t bg-moss/70 transition-colors group-hover:bg-moss"></div>
-              <div
-                class="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-ink px-2 py-1 text-[10px] text-white opacity-0 transition-opacity group-hover:opacity-100"
-              >
-                {{ day.date }}: {{ formatMoney(day.revenue) }} BYN
-              </div>
-            </div>
           </div>
         </div>
 

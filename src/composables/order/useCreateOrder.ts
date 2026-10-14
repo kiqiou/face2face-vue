@@ -13,6 +13,7 @@ interface CreateOrderPayload {
   paymentMethod: 'cash' | 'card';
   approvementMethod: 'call' | 'message';
   comment: string;
+  promoCode?: string;
   items: CartLine[];
 }
 
@@ -37,6 +38,7 @@ export function useCreateOrder() {
           payment_method: payload.paymentMethod,
           approvement_method: payload.approvementMethod,
           comment: payload.comment,
+          promo_code: payload.promoCode,
           items: payload.items.map((i) => ({ product: i.productId, quantity: i.quantity })),
         }),
       });

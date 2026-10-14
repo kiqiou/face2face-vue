@@ -1,37 +1,40 @@
 <template>
-  <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-md">
-    <div class="mx-auto flex max-w-6xl items-center justify-between gap-8 px-6 py-4">
-      <!-- Логотип / бренд -->
-      <RouterLink to="/" class="flex items-center gap-2 shrink-0">
-        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/80">
-          <span class="font-display text-sm font-bold text-white">A</span>
-        </div>
-        <span class="font-display text-sm font-semibold uppercase tracking-[0.15em] text-black/80">
-          Админка
-        </span>
-      </RouterLink>
+<header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-md">
+  <div class="mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-8 px-6 py-4">
+    <!-- Логотип / бренд -->
+    <RouterLink to="/" class="flex items-center gap-2 shrink-0">
+      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/80">
+        <span class="font-display text-sm font-bold text-white">A</span>
+      </div>
+      <span class="font-display text-sm font-semibold uppercase tracking-[0.15em] text-black/80">
+        Админка
+      </span>
+    </RouterLink>
 
-      <!-- Навигация -->
-      <nav>
-        <ul class="flex flex-row items-center gap-1">
-          <li v-for="link in baseLinks" :key="link.id">
-            <RouterLink
-              :to="link.link"
-              class="nav-link group relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-black/60 transition-all duration-300 hover:text-black"
-              :class="{ 'is-active': route.path === link.link }"
-              active-class="is-active"
-            >
-              <span class="relative z-10 flex items-center gap-2">
-                <component :is="link.icon" class="h-4 w-4 shrink-0" />
-                {{ link.name }}
-              </span>
-              <span class="nav-pill" aria-hidden="true" />
-            </RouterLink>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+    <!-- Навигация — по центру -->
+    <nav class="flex justify-center overflow-x-auto">
+      <ul class="flex flex-row items-center gap-1">
+        <li v-for="link in baseLinks" :key="link.id">
+          <RouterLink
+            :to="link.link"
+            class="nav-link group relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-black/60 transition-all duration-300 hover:text-black whitespace-nowrap"
+            :class="{ 'is-active': route.path === link.link }"
+            active-class="is-active"
+          >
+            <span class="relative z-10 flex items-center gap-2">
+              <component :is="link.icon" class="h-4 w-4 shrink-0" />
+              {{ link.name }}
+            </span>
+            <span class="nav-pill" aria-hidden="true" />
+          </RouterLink>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Пустая колонка справа — для баланса сетки, можно разместить сюда кнопку профиля/выхода позже -->
+    <div class="w-8"></div>
+  </div>
+</header>
 </template>
 
 <script setup lang="ts">
@@ -77,6 +80,8 @@
     { id: '5', name: 'Товары', link: '/admin-products', icon: IconBox },
     { id: '4', name: 'Заказы', link: '/admin-orders', icon: IconClipboard },
     { id: '6', name: 'Аналитика', link: '/admin-analytics', icon: IconClipboard },
+    { id: '7', name: 'Клиенты', link: '/admin-clients', icon: IconClipboard },
+    { id: '8', name: 'Промокоды', link: '/admin-promocodes', icon: IconClipboard },
     { id: '2', name: 'Производители', link: '/admin-manufacturers', icon: IconFactory },
     { id: '3', name: 'Категории', link: '/admin-categories', icon: IconTag },
   ]);

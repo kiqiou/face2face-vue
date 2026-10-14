@@ -30,6 +30,9 @@ export class Order {
   status: OrderStatus = 'new';
   createdAt: string = '';
   items: OrderItem[] = [];
+  discountPercent: number = 0;
+  discountAmount: number = 0;
+  promoCode: string | null = null;
 
   constructor(
     id: number = 0,
@@ -39,7 +42,10 @@ export class Order {
     comment: string = '',
     status: OrderStatus = 'new',
     createdAt: string = '',
-    items: OrderItem[] = []
+    items: OrderItem[] = [],
+    discountPercent: number = 0,
+    discountAmount: number = 0,
+    promoCode: string | null = null
   ) {
     this.id = id;
     this.user = user;
@@ -49,6 +55,9 @@ export class Order {
     this.status = status;
     this.createdAt = createdAt;
     this.items = items;
+    this.discountPercent = discountPercent;
+    this.discountAmount = discountAmount;
+    this.promoCode = promoCode;
   }
 }
 

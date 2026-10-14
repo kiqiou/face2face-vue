@@ -77,9 +77,9 @@ onMounted(load);
 </script>
 
 <template>
-  <div class="min-h-screen bg-paper px-4 py-10 font-body text-ink">
-    <div class="mx-auto max-w-2xl">
-        <HeaderAdmin />
+  <div class="min-h-screen bg-slate-50 font-sans text-slate-900 pb-12">
+    <HeaderAdmin />
+    <div class="mx-auto max-w-5xl px-4 py-10 lg:py-14">
       <h1 class="mb-8 font-display text-3xl font-medium text-ink">Производители</h1>
 
       <form @submit.prevent="openAddModal" class="mb-8 flex gap-3">
