@@ -126,8 +126,8 @@ export function useProducts() {
 
       const query = params.toString() ? `?${params.toString()}` : '';
       const data = withAuth ? 
-        await apiGet(API_BASE + 'get_products/' + query) 
-        : await authFetchJson(API_BASE + 'get_products/' + query);
+        await authFetchJson(API_BASE + 'get_products/' + query) 
+        : await apiGet(API_BASE + 'get_products/' + query) 
       products.value = data.map(mapProduct);
     } catch (err: any) {
       error.value = err.message;
