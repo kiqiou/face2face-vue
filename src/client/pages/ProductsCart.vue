@@ -166,20 +166,20 @@
           У вас персональная скидка {{ myDiscount.currentDiscountPercent }}%
         </div>
 
-        <div class="flex gap-2 max-w-sm ml-auto">
-          <input
-            v-model="promoInput"
-            type="text"
-            placeholder="Промокод"
-            aria-label="Промокод"
-            class="flex-1 rounded-xl border border-black/10 px-4 py-2.5 outline-none focus:border-[#E5A663]"
-          />
-          <button
-            type="button"
-            class="px-4 rounded-xl border border-[#E5A663] text-[#E5A663] font-semibold hover:bg-[#E5A663]/10 disabled:opacity-50"
-            :disabled="isChecking"
-            @click="applyPromo"
-          >
+        <div class="flex flex-col sm:flex-row gap-2 w-full sm:max-w-sm sm:ml-auto">
+           <input
+              v-model="promoInput"
+              type="text"
+              placeholder="Промокод"
+              aria-label="Промокод"
+              class="flex-1 min-w-0 rounded-xl border border-black/10 px-4 py-2.5 outline-none focus:border-[#E5A663]"
+            />
+           <button
+              type="button"
+              class="shrink-0 px-4 py-2.5 rounded-xl border border-[#E5A663] text-[#E5A663] font-semibold hover:bg-[#E5A663]/10 disabled:opacity-50"
+              :disabled="isChecking"
+              @click="applyPromo"
+            >
             {{ isChecking ? '...' : 'Применить' }}
           </button>
         </div>

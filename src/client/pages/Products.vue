@@ -91,7 +91,6 @@
       (onlyInStock.value ? 1 : 0)
   );
 
-  // товары с активной (акционной) коллекцией — показываем отдельным блоком наверху
   const promoProducts = computed(() =>
     products.value.filter((p) => p.isOnSale)
   );
@@ -106,7 +105,7 @@
 </script>
 
 <template>
-  <section v-if="products.length" class="mb-12 min-w-0 max-w-full">
+  <section class="mb-12 min-w-0 max-w-full">
     <div class="min-h-screen bg-paper font-body text-ink">
       <div class="mx-auto max-w-7xl px-4 py-10 lg:py-14">
         <p class="mb-3 text-xs uppercase tracking-[0.2em] text-ink-muted">
