@@ -52,12 +52,12 @@
             >
               Смотреть каталог
             </router-link>
-            <router-link
-              to="/contacts"
+            <button
+              @click="scrollToBottom"
               class="rounded-full border border-[#E5A663]/50 px-8 py-3 text-sm font-semibold uppercase tracking-wide text-[#E5A663] transition-colors hover:bg-[#E5A663]/10"
             >
               Связаться с нами
-            </router-link>
+            </button>
           </div>
         </div>
       </div>
@@ -71,4 +71,11 @@
 
 <script setup lang="ts">
 import TextSection from '../components/home/TextSection.vue';
+
+const scrollToBottom = () => {
+  window.scrollTo({
+    top: document.documentElement.scrollHeight,
+    behavior: 'smooth',
+  });
+};
 </script>

@@ -31,27 +31,37 @@
           </div>
         </div>
 
-        <div class="space-y-4 text-center sm:text-left">
-          <h4 class="text-lg font-semibold text-black/90">Политика обработки персональных данных</h4>
+      <div class="space-y-4 text-center sm:text-left">
+        <!-- Заголовок блока -->
+          <h4 class="text-lg font-semibold text-black/90">
+            Информация
+          </h4>
+          
+          <!-- Ссылка 1 -->
           <RouterLink
             to="/privacy-policy"
-            class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
+            class="flex items-center justify-center sm:justify-start gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
           >
             Политика обработки персональных данных
           </RouterLink>
+          
+          <!-- Ссылка 2 -->
           <RouterLink
             to="/return-policy"
-            class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
+            class="flex items-center justify-center sm:justify-start gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
           >
             Политика и условия возврата
           </RouterLink>
+          
+          <!-- Ссылка 3 -->
           <RouterLink
             to="/offer"
-            class="inline-flex items-center gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
+            class="flex items-center justify-center sm:justify-start gap-2 text-black/70 font-semibold hover:scale-105 transition-all"
           >
             Оферта
           </RouterLink>
         </div>
+
       </div>
 
       <div class="pt-8 mt-8 border-t-2 border-black/40"></div>
