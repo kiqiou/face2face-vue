@@ -64,7 +64,7 @@ const resetDiscount = async (userId: number) => {
     <div v-if="loading" class="text-center py-10 text-black/50">Загружаем клиентов...</div>
 
    <template v-else>
-        <div class="hidden w-full max-w-5xl mx-auto overflow-hidden rounded-2xl border border-black/5 bg-white md:block">
+    <div class="mx-auto hidden w-full max-w-5xl overflow-hidden rounded-2xl border border-black/5 bg-white md:block">
       <table class="w-full text-sm">
         <thead class="bg-black/[0.03] text-black/50">
           <tr>
@@ -126,9 +126,9 @@ const resetDiscount = async (userId: number) => {
         </tbody>
       </table>
 
-      <div
-        class="mx-auto w-full max-w-5xl space-y-3 md:hidden"
-      >
+      </div>
+
+      <div class="mx-auto w-full max-w-5xl space-y-3 md:hidden">
         <div
           v-for="client in clients"
           :key="client.id"
@@ -221,7 +221,6 @@ const resetDiscount = async (userId: number) => {
               </button>
             </template>
           </div>
-        </div>
         </div>
         </div>
 
