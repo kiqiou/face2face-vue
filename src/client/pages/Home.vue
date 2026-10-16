@@ -73,9 +73,13 @@
 import TextSection from '../components/home/TextSection.vue';
 
 const scrollToBottom = () => {
+  const offset = 200; 
+  const targetPosition = document.documentElement.scrollHeight - window.innerHeight - offset;
+
   window.scrollTo({
-    top: document.documentElement.scrollHeight,
+    top: targetPosition,
     behavior: 'smooth',
   });
 };
+
 </script>
