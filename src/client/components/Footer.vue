@@ -19,17 +19,26 @@
           </p>
         </div>
 
-        <div class="space-y-4 text-center sm:text-left">
-          <h4 class="text-lg font-semibold text-black/90">Телефоны</h4>
-          <div class="space-y-1 text-sm">
-            <a href="tel:+375447799394" class="block text-black/70"
-              >+375 44 779-93-93 Вера</a
-            >
-            <a href="tel:+375447799394" class="block text-black/70"
-              >+375 29 178-60-34 Анастасия</a
-            >
+      <div class="space-y-4 text-center sm:text-left">
+        <h4 class="text-lg font-semibold text-black/90">Телефоны</h4>
+        <div class="space-y-2 text-sm text-black/70">
+          <!-- Телефон Веры -->
+          <div class="block sm:inline-block">
+            <a href="tel:+375447799393" class="font-semibold text-black/90 hover:underline transition-all"
+              >+375 44 779-93-93</a
+            > 
+            <span class="ml-1 text-black/60">— Вера</span>
+          </div>
+
+          <!-- Телефон Анастасии -->
+          <div class="block sm:inline-block">
+            <a href="tel:+375291786034" class="font-semibold text-black/90 hover:underline transition-all"
+              >+375 29 178-60-34</a
+            > 
+            <span class="ml-1 text-black/60">— Анастасия</span>
           </div>
         </div>
+      </div>
 
       <div class="space-y-4 text-center sm:text-left">
         <!-- Заголовок блока -->

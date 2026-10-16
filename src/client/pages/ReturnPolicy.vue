@@ -51,9 +51,10 @@
     <ul>
       <li>
         Связаться с нами по телефонам студии: 
-        <a href="tel:+375447799393" class="font-semibold text-stone-800">+375 (44) 779-93-93 (Вера)</a> или 
-        <a href="tel:+375291786034" class="font-semibold text-stone-800">+375 (29) 178-60-34 (Анастасия)</a>, либо написать на email: 
-        <a href="mailto:kuksare@gmail.com">kuksare@gmail.com</a>.
+        <a href="tel:+375447799393" class="font-semibold text-stone-800 hover:underline">+375 (44) 779-93-93</a> — Вера или 
+        <a href="tel:+375291786034" class="font-semibold text-stone-800 hover:underline">+375 (29) 178-60-34</a> — Анастасия, 
+        либо написать на email: 
+        <a href="mailto:kuksare@gmail.com" class="hover:underline">kuksare@gmail.com</a>.
       </li>
       <li>При обнаружении недостатка прикрепите к обращению четкие фотографии товара и его упаковки со сроком годности.</li>
       <li>Обратиться лично в студию по адресу <strong>ул. Кальварийская, 21, оф. 157</strong>, предоставив сам товар, его упаковку и чек.</li>
