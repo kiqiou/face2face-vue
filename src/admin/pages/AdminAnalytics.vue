@@ -138,40 +138,74 @@ onMounted(() => {
 
         <!-- Топ товаров -->
         <div v-if="data.top_products.length" class="mb-10">
-          <h2 class="mb-4 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Топ товаров по выручке</h2>
-          <table class="w-full border-collapse text-sm">
-            <thead>
-              <tr class="border-b border-line text-left text-[11px] uppercase tracking-[0.1em] text-ink-muted">
-                <th class="py-2 pr-4">Товар</th>
-                <th class="py-2 pr-4 text-right">Кол-во</th>
-                <th class="py-2 pr-4 text-right">Выручка</th>
-                <th class="py-2 pr-4 text-right">Себестоимость</th>
-                <th class="py-2 text-right">Прибыль</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="p in data.top_products" :key="p.id" class="border-b border-line">
-                <td class="py-2 pr-4 text-ink">{{ p.name }}</td>
-                <td class="py-2 pr-4 text-right text-ink-muted">{{ p.quantity }}</td>
-                <td class="py-2 pr-4 text-right text-ink">{{ formatMoney(p.revenue) }}</td>
-                <td class="py-2 pr-4 text-right text-ink-muted">{{ formatMoney(p.cost) }}</td>
-                <td class="py-2 text-right font-medium text-moss">{{ formatMoney(p.profit) }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <h2 class="mb-4 text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+            Топ товаров по выручке
+          </h2>
 
-        <!-- Заказы по статусам -->
-        <div v-if="data.status_breakdown.length">
-          <h2 class="mb-4 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Заказы по статусам</h2>
-          <div class="flex flex-wrap gap-3">
-            <span
-              v-for="s in data.status_breakdown"
-              :key="s.status"
-              class="rounded-full border border-line px-4 py-1.5 text-sm text-ink"
+          <!-- Мобильные карточки -->
+          <div class="space-y-3 md:hidden">
+            <div
+              v-for="p in data.top_products"
+              :key="p.id"
+              class="rounded-xl border border-line bg-white p-4"
             >
-              {{ statusLabels[s.status] ?? s.status }}: <span class="font-semibold">{{ s.count }}</span>
-            </span>
+              <div class="mb-3 flex items-start justify-between gap-3">
+                <h3 class="break-words text-sm font-medium text-ink">
+                  {{ p.name }}
+                </h3>
+
+                <div class="shrink-0 text-right">
+                  <p class="text-[10px] uppercase tracking-wider text-ink-muted">
+                    Прибыль
+                  </p>
+                  <p class="text-sm font-semibold text-moss">
+                    {{ formatMoney(p.profit) }}
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-3 gap-2 rounded-lg bg-petal-soft/30 p-3 text-center">
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-ink-muted">Кол-во</p>
+                  <p class="mt-0.5 text-sm text-ink">{{ p.quantity }}</p>
+                </div>
+
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-ink-muted">Выручка</p>
+                  <p class="mt-0.5 text-sm text-ink">{{ formatMoney(p.revenue) }}</p>
+                </div>
+
+                <div>
+                  <p class="text-[10px] uppercase tracking-wider text-ink-muted">Себест.</p>
+                  <p class="mt-0.5 text-sm text-ink-muted">{{ formatMoney(p.cost) }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Таблица для планшета и десктопа -->
+          <div class="hidden overflow-x-auto md:block">
+            <table class="w-full border-collapse text-sm">
+              <thead>
+                <tr class="border-b border-line text-left text-[11px] uppercase tracking-[0.1em] text-ink-muted">
+                  <th class="py-2 pr-4">Товар</th>
+                  <th class="py-2 pr-4 text-right">Кол-во</th>
+                  <th class="py-2 pr-4 text-right">Выручка</th>
+                  <th class="py-2 pr-4 text-right">Себестоимость</th>
+                  <th class="py-2 text-right">Прибыль</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr v-for="p in data.top_products" :key="p.id" class="border-b border-line">
+                  <td class="break-words py-2 pr-4 text-ink">{{ p.name }}</td>
+                  <td class="py-2 pr-4 text-right text-ink-muted">{{ p.quantity }}</td>
+                  <td class="py-2 pr-4 text-right text-ink">{{ formatMoney(p.revenue) }}</td>
+                  <td class="py-2 pr-4 text-right text-ink-muted">{{ formatMoney(p.cost) }}</td>
+                  <td class="py-2 text-right font-medium text-moss">{{ formatMoney(p.profit) }}</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </template>
