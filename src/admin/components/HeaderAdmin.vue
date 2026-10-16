@@ -1,46 +1,96 @@
 <template>
-<header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-md">
-  <div class="mx-auto grid grid-cols-[auto_1fr_auto] items-center gap-8 px-6 py-4">
-    <!-- Логотип / бренд -->
-    <RouterLink to="/" class="flex items-center gap-2 shrink-0">
-      <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/80">
-        <span class="font-display text-sm font-bold text-white">A</span>
-      </div>
-      <span class="font-display text-sm font-semibold uppercase tracking-[0.15em] text-black/80">
-        Админка
-      </span>
-    </RouterLink>
+  <header class="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur-md">
+    <div class="mx-auto flex items-center justify-between gap-4 px-4 py-3 md:grid md:grid-cols-[auto_1fr_auto] md:items-center md:gap-8 md:px-6 md:py-4">
+      <!-- Логотип -->
+      <RouterLink to="/" class="flex shrink-0 items-center gap-2">
+        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-black/80">
+          <span class="font-display text-sm font-bold text-white">A</span>
+        </div>
+        <span class="font-display text-sm font-semibold uppercase tracking-[0.15em] text-black/80">
+          Админка
+        </span>
+      </RouterLink>
 
-    <!-- Навигация — по центру -->
-    <nav class="flex justify-center overflow-x-auto">
-      <ul class="flex flex-row items-center gap-1">
-        <li v-for="link in baseLinks" :key="link.id">
-          <RouterLink
-            :to="link.link"
-            class="nav-link group relative flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-black/60 transition-all duration-300 hover:text-black whitespace-nowrap"
-            :class="{ 'is-active': route.path === link.link }"
-            active-class="is-active"
-          >
-            <span class="relative z-10 flex items-center gap-2">
-              <component :is="link.icon" class="h-4 w-4 shrink-0" />
-              {{ link.name }}
-            </span>
-            <span class="nav-pill" aria-hidden="true" />
-          </RouterLink>
-        </li>
-      </ul>
-    </nav>
+      <!-- Десктопная навигация -->
+      <nav class="hidden justify-center overflow-x-auto md:flex">
+        <ul class="flex flex-row items-center gap-1">
+          <li v-for="link in baseLinks" :key="link.id">
+            <RouterLink
+              :to="link.link"
+              class="nav-link group relative flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium text-black/60 transition-all duration-300 hover:text-black"
+              :class="{ 'is-active': route.path === link.link }"
+              active-class="is-active"
+            >
+              <span class="relative z-10 flex items-center gap-2">
+                <component :is="link.icon" class="h-4 w-4 shrink-0" />
+                {{ link.name }}
+              </span>
+              <span class="nav-pill" aria-hidden="true" />
+            </RouterLink>
+          </li>
+        </ul>
+      </nav>
 
-    <!-- Пустая колонка справа — для баланса сетки, можно разместить сюда кнопку профиля/выхода позже -->
-    <div class="w-8"></div>
-  </div>
-</header>
+      <!-- Кнопка бургер-меню -->
+      <button
+        type="button"
+        class="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 bg-white/70 text-black/70 transition hover:bg-black/5 md:hidden"
+        :aria-expanded="isMenuOpen"
+        aria-label="Открыть меню"
+        @click="isMenuOpen = !isMenuOpen"
+      >
+        <svg v-if="!isMenuOpen" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+        </svg>
+        <svg v-else class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" />
+        </svg>
+      </button>
+
+      <!-- Пустая колонка справа для десктопа -->
+      <div class="hidden w-8 md:block"></div>
+    </div>
+
+    <!-- Мобильное меню -->
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="-translate-y-2 opacity-0"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition duration-150 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="-translate-y-2 opacity-0"
+    >
+      <nav
+        v-if="isMenuOpen"
+        class="border-t border-black/5 bg-white/95 px-4 pb-4 pt-2 backdrop-blur-md md:hidden"
+      >
+        <ul class="grid grid-cols-2 gap-2">
+          <li v-for="link in baseLinks" :key="link.id">
+            <RouterLink
+              :to="link.link"
+              class="nav-link relative flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-medium text-black/70 transition"
+              :class="{ 'is-active': route.path === link.link }"
+              active-class="is-active"
+              @click="isMenuOpen = false"
+            >
+              <span class="relative z-10 flex items-center gap-2">
+                <component :is="link.icon" class="h-4 w-4 shrink-0" />
+                {{ link.name }}
+              </span>
+              <span class="nav-pill" aria-hidden="true" />
+            </RouterLink>
+          </li>
+        </ul>
+      </nav>
+    </Transition>
+  </header>
 </template>
 
 <script setup lang="ts">
   import { h, ref } from 'vue';
   import { RouterLink, useRoute } from 'vue-router';
 
+  const isMenuOpen = ref(false);
   const route = useRoute();
 
   // маленькие инлайн-иконки без внешних зависимостей
@@ -91,10 +141,10 @@
   .nav-pill {
     position: absolute;
     inset: 0;
-    border-radius: 9999px;
+    border-radius: 1rem;
     background: linear-gradient(135deg, #fed9b7 0%, #faee9e 100%);
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.95);
     transition: opacity 0.25s ease, transform 0.25s ease;
     z-index: 0;
   }
@@ -112,5 +162,11 @@
   .nav-link.is-active .nav-pill {
     opacity: 1;
     transform: scale(1);
+  }
+
+  @media (min-width: 768px) {
+    .nav-pill {
+      border-radius: 9999px;
+    }
   }
 </style>

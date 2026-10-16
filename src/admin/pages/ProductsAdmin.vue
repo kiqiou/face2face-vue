@@ -204,13 +204,14 @@ onMounted(() => {
          <HeaderAdmin />
     <div class="mx-auto max-w-6xl">
    
-      <div class="mb-8 flex items-center justify-between">
-        <div>
-          <h1 class="font-display text-3xl font-medium text-ink">Товары</h1>
-        </div>
+      <div class="mb-6 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+        <h1 class="font-display text-2xl font-medium text-ink sm:text-3xl">
+          Товары
+        </h1>
+
         <button
           @click="openAddModal"
-          class="bg-black px-5 py-2 text-sm font-medium uppercase tracking-wide text-white transition-colors hover:bg-moss-dark"
+          class="w-full bg-black px-5 py-3 text-sm font-medium uppercase tracking-wide text-white transition-colors hover:bg-moss-dark sm:w-auto sm:py-2"
         >
           + Добавить товар
         </button>
@@ -220,44 +221,52 @@ onMounted(() => {
       <p v-if="error" class="text-sm text-clay">{{ error }}</p>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div
-          v-for="product in products"
-          :key="product.id"
-          class="border border-line bg-white p-4"
-        >
-          <div class="mb-3 aspect-square overflow-hidden bg-petal-soft/40" @click="() => goToProduct(product.id)">
-            <img
-              v-if="coverImage(product)"
-              :src="coverImage(product)"
-              :alt="product.name"
-              class="h-full w-full object-cover"
-            />
-            <div v-else class="flex h-full w-full items-center justify-center text-xs uppercase tracking-widest text-ink-muted">
-              Нет фото
+    <div
+            v-for="product in products"
+            :key="product.id"
+            class="flex flex-col border border-line bg-white p-4"
+          >
+            <div class="mb-3 aspect-square overflow-hidden bg-petal-soft/40" @click="() => goToProduct(product.id)">
+              <img
+                v-if="coverImage(product)"
+                :src="coverImage(product)"
+                :alt="product.name"
+                class="h-full w-full object-cover"
+              />
+              <div v-else class="flex h-full w-full items-center justify-center text-xs uppercase tracking-widest text-ink-muted">
+                Нет фото
+              </div>
+            </div>
+
+            <h3 class="mb-1 break-words font-display text-lg text-ink">
+              {{ product.name }}
+            </h3>
+
+            <p class="mb-2 break-words text-xs uppercase tracking-widest text-ink-muted">
+              {{ product.manufacturer.name }}
+            </p>
+
+            <p class="mb-3 text-sm font-medium text-ink">
+              {{ product.priceAmount }} {{ product.priceCurrency }}
+            </p>
+
+            <span
+              v-if="!product.inStock"
+              class="mb-3 inline-block w-fit rounded-full border border-clay/40 px-2 py-0.5 text-[11px] uppercase tracking-widest text-clay"
+            >
+              Нет в наличии
+            </span>
+
+            <div class="mt-auto flex gap-4 text-xs uppercase tracking-wide">
+              <button @click="openEditModal(product)" class="text-ink-muted hover:text-moss">
+                Изменить
+              </button>
+              <button @click="handleRemove(product.id)" class="text-clay hover:text-ink">
+                Удалить
+              </button>
             </div>
           </div>
-
-          <h3 class="mb-1 font-display text-lg text-ink">{{ product.name }}</h3>
-          <p class="mb-2 text-xs uppercase tracking-widest text-ink-muted">
-            {{ product.manufacturer.name }}
-          </p>
-          <p class="mb-3 text-sm font-medium text-ink">
-            {{ product.priceAmount }} {{ product.priceCurrency }}
-          </p>
-
-          <span
-            v-if="!product.inStock"
-            class="mb-3 inline-block rounded-full border border-clay/40 px-2 py-0.5 text-[11px] uppercase tracking-widest text-clay"
-          >
-            Нет в наличии
-          </span>
-
-          <div class="flex gap-4 text-xs uppercase tracking-wide">
-            <button @click="openEditModal(product)" class="text-ink-muted hover:text-moss">Изменить</button>
-            <button @click="handleRemove(product.id)" class="text-clay hover:text-ink">Удалить</button>
-          </div>
         </div>
-      </div>
 
       <p v-if="!loading && products.length === 0" class="mt-10 text-center text-sm italic text-ink-muted">
         Товаров пока нет.
@@ -267,7 +276,7 @@ onMounted(() => {
     <!-- Modal -->
     <div
       v-if="isModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+      class="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center sm:px-4"
       @click.self="closeModal"
     >
       <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto bg-white p-6 shadow-xl">
@@ -294,61 +303,61 @@ onMounted(() => {
             ></textarea>
           </div>
 
-          <div class="grid grid-cols-3 gap-3">
-  <div>
-    <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Цена</label>
-    <input
-      v-model.number="form.priceAmount"
-      type="number"
-      step="0.01"
-      required
-      class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-    />
-  </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div>
+              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Цена</label>
+              <input
+                v-model.number="form.priceAmount"
+                type="number"
+                step="0.01"
+                required
+                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+              />
+            </div>
 
-  <div>
-    <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
-      Акционная цена
-      <span class="normal-case text-ink-muted/60">(необязательно)</span>
-    </label>
-    <input
-      v-model.number="form.salePrice"
-      type="number"
-      step="0.01"
-      placeholder="меньше обычной цены"
-      class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-      :class="{ 'border-clay': form.salePrice !== null && form.salePrice >= form.priceAmount }"
-    />
-    <p
-      v-if="form.salePrice !== null && form.salePrice >= form.priceAmount"
-      class="mt-1 text-[11px] text-clay"
-    >
-      Должна быть меньше обычной цены
-    </p>
-  </div>
+            <div>
+              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
+                Акционная цена
+                <span class="normal-case text-ink-muted/60">(необязательно)</span>
+              </label>
+              <input
+                v-model.number="form.salePrice"
+                type="number"
+                step="0.01"
+                placeholder="меньше обычной цены"
+                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+                :class="{ 'border-clay': form.salePrice !== null && form.salePrice >= form.priceAmount }"
+              />
+              <p
+                v-if="form.salePrice !== null && form.salePrice >= form.priceAmount"
+                class="mt-1 text-[11px] text-clay"
+              >
+                Должна быть меньше обычной цены
+              </p>
+            </div>
 
-  <div>
-    <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Себестоимость</label>
-    <input
-      v-model.number="form.costPrice"
-      type="number"
-      step="0.01"
-      required
-      class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-    />
-  </div>
-</div>
+            <div>
+              <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Себестоимость</label>
+              <input
+                v-model.number="form.costPrice"
+                type="number"
+                step="0.01"
+                required
+                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+              />
+            </div>
+          </div>
 
-<div>
-  <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Валюта</label>
-  <select
-    v-model="form.priceCurrency"
-    class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-  >
-    <option value="BYN">BYN</option>
-    <option value="USD">USD</option>
-  </select>
-</div>
+          <div>
+            <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">Валюта</label>
+            <select
+              v-model="form.priceCurrency"
+              class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+            >
+              <option value="BYN">BYN</option>
+              <option value="USD">USD</option>
+            </select>
+          </div>
         <div>
           <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
             Производитель
@@ -449,7 +458,7 @@ onMounted(() => {
       </div>
 
     
-          <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div>
         <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
           Номинальное количество
@@ -492,7 +501,7 @@ onMounted(() => {
     </div>
 
     <!-- Срок годности и партия -->
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div>
         <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
           Срок годности (мес.)
@@ -544,7 +553,7 @@ onMounted(() => {
     </div>
 
     <!-- Тон / фторид / для детей -->
-    <div class="grid grid-cols-2 gap-3">
+    <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div>
         <label class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted">
           Цвет/тон (декоративная косметика)
@@ -599,14 +608,19 @@ onMounted(() => {
 
           <p v-if="formError" class="text-sm text-clay">{{ formError }}</p>
 
-          <div class="flex justify-end gap-3 pt-2">
-            <button type="button" @click="closeModal" class="px-4 py-2 text-sm text-ink-muted hover:text-ink">
+          <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              @click="closeModal"
+              class="w-full border border-line px-4 py-3 text-sm text-ink-muted transition hover:text-ink sm:w-auto sm:border-0 sm:py-2"
+            >
               Отмена
             </button>
+
             <button
               type="submit"
               :disabled="submitting"
-              class="bg-moss px-5 py-2 text-sm font-medium uppercase tracking-wide text-black/70 transition-colors hover:bg-moss-dark disabled:opacity-50"
+              class="w-full bg-moss px-5 py-3 text-sm font-medium uppercase tracking-wide text-black/70 transition-colors hover:bg-moss-dark disabled:opacity-50 sm:w-auto sm:py-2"
             >
               {{ submitting ? 'Сохранение...' : 'Сохранить' }}
             </button>
