@@ -85,16 +85,34 @@ const pollStatus = async () => {
       <div class="bg-white/90 rounded-[30px] p-8 flex flex-col items-center gap-6">
         <h1 class="text-2xl text-[#5D4037]">Регистрация/вход</h1>
 
-        <p v-if="isWaiting" class="text-sm text-gray-600 text-center">
-          Подтвердите номер в открывшемся Telegram — кнопкой «Поделиться номером телефона».<br />
-          Вход выполнится автоматически.
-        </p>
+        <!-- Инструкция ДО начала авторизации -->
+        <div v-if="!isWaiting" class="text-xs text-stone-600 bg-stone-50 border border-stone-200/60 p-4 rounded-2xl w-full space-y-2">
+          <p class="font-semibold text-stone-700">Как пройти регистрацию:</p>
+          <ol class="list-decimal list-inside space-y-1.5 pl-1">
+            <li>Нажмите кнопку <span class="font-medium text-[#E5A663]">«Войти через Telegram»</span></li>
+            <li>В открывшемся боте нажмите <span class="font-medium">«Запустить» (Start)</span></li>
+            <li>Нажмите появившуюся кнопку <span class="font-medium">«Поделиться номером телефона»</span></li>
+            <li>После этого вернитесь на сайт — вход выполнится автоматически</li>
+          </ol>
+        </div>
+
+        <!-- Инструкция ВО ВРЕМЯ ожидания ответа от Telegram -->
+        <div v-if="isWaiting" class="flex flex-col items-center gap-3 text-center">
+          <!-- Пульсирующая иконка ожидания -->
+          <div class="w-8 h-8 rounded-full border-2 border-t-transparent border-[#E5A663] animate-spin"></div>
+          <p class="text-sm text-gray-700 font-medium">
+            Ждем подтверждения в Telegram...
+          </p>
+          <p class="text-xs text-gray-500 leading-relaxed">
+            Перейдите в открывшееся окно мессенджера, нажмите кнопку <strong>«Поделиться номером телефона»</strong>, а затем сразу возвращайтесь на эту страницу.
+          </p>
+        </div>
 
         <label class="flex items-start gap-2 text-sm text-gray-600">
-        <input type="checkbox" v-model="consentGiven" class="mt-1" />
+          <input type="checkbox" v-model="consentGiven" class="mt-1" />
           <span>
             Я даю согласие ИП Песлякова А.А. на обработку моего имени и номера телефона для оформления заказа и связи со мной, в соответствии с
-            <router-link to="/privacy-policy" target="_blank" class="underline"> Политикой в отношении обработки персональных данных.</router-link>
+            <router-link to="/privacy-policy" target="_blank" class="underline text-[#E5A663]">Политикой в отношении обработки персональных данных.</router-link>
           </span>
         </label>
 
