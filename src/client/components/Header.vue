@@ -176,7 +176,7 @@
 
   const visibleLinks = computed(() => {
     if (user.value) {
-      if (user.value.role === 2) {
+      if (user.value.is_staff) {
         return [...baseLinks.value, adminLink, profileLink, productsCartLink];
       }
 
