@@ -53,7 +53,7 @@
           </ul>
         </nav>
 
-        <div
+      <div
           class="border-t border-white/20 pt-6 text-sm text-white/80 leading-7"
         >
           <p class="font-semibold text-base text-black/80">
@@ -76,11 +76,12 @@
           >
             @face2face
           </a>
+
           <a
             :href="BOOKING_URL"
             target="_blank"
             rel="noopener noreferrer"
-            class="block mt-6 text-center px-4 py-3 rounded-full text-black/90 text-sm font-semibold"
+            class="block mt-6 text-center px-4 py-3 rounded-full bg-gradient-to-br from-[#E5A663] to-[#FAEE9E] text-black text-sm font-semibold hover:opacity-90 transition-opacity"
           >
             Запись на процедуры →
           </a>
@@ -114,32 +115,33 @@
         </ul>
       </nav>
 
-      <div class="dub_headr text-sm lg:text-base text-right text-gray-700">
+       <div class="dub_headr flex flex-col items-end gap-3 text-sm lg:text-base text-right text-gray-700">
         <p class="leading-tight">
-          <span class="font-semibold"> Face2face.cosmetology </span>
+          <span class="font-semibold text-black/80"> Face2face.cosmetology </span>
           <br />
 
-          <span>Кальварийская, 21, 157</span>
+          <span class="text-black/80">Кальварийская, 21, 157</span>
           <br />
 
-          <span class="flex justify-end gap-1 text-xs">
+          <span class="flex justify-end gap-1 text-xs mt-1">
             <a
               href="tel:+375447799393"
-              class="text-accent hover:text-primary underline"
+              class="text-black/80 hover:text-primary underline"
             >
               +375 44 779-93-93
             </a>
 
             <a href="https://www.instagram.com/face2face.cosmetology/">
-              <span class="text-primary"> @face2face </span>
+              <span class="text-primary text-black/80"> @face2face </span>
             </a>
           </span>
         </p>
+        
         <a
           :href="BOOKING_URL"
           target="_blank"
           rel="noopener noreferrer"
-          class="shrink-0 px-4 py-2 rounded-full bg-gradient-to-br from-[#E5A663] to-[#FAEE9E] text-black text-sm font-semibold hover:opacity-90 transition-opacity"
+          class="shrink-0 inline-block px-4 py-2 rounded-full bg-gradient-to-br from-[#E5A663]/10 to-[#FAEE9E] text-black/80 text-sm font-semibold hover:opacity-90 transition-opacity"
         >
           Запись на процедуры
         </a>
