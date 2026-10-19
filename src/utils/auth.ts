@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import { User } from '../models/user.js';
+import { BASE_API } from '../composables/baseApi.js';
 
 class AuthService {
   private ACCESS_TOKEN = 'access_token';
@@ -7,6 +8,7 @@ class AuthService {
   private USER = 'user';
 
   public currentUser = ref(this.getUser());
+  private refreshPromise: Promise<string | null> | null = null;
 
   getAccessToken(): string | null {
     return localStorage.getItem(this.ACCESS_TOKEN);
@@ -46,37 +48,46 @@ class AuthService {
     return !!this.getAccessToken();
   }
 
-  async refreshAccessToken(): Promise<string | null> {
-    const refresh = this.getRefreshToken();
+    refreshAccessToken(): Promise<string | null> {
+    if (!this.refreshPromise) {
+      this.refreshPromise = this.doRefresh().finally(() => {
+        this.refreshPromise = null;
+      });
+    }
+    return this.refreshPromise;
+  }
 
+  private async doRefresh(): Promise<string | null> {
+    const refresh = this.getRefreshToken();
     if (!refresh) {
       this.logout();
       return null;
     }
 
     try {
-      const response = await fetch(
-        'http://127.0.0.1:8000/api/users/token/refresh/',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ refresh }),
-        }
-      );
+      const response = await fetch(BASE_API + 'api/users/token/refresh/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh }),
+      });
 
-      if (!response.ok) {
+      // Сервер явно сказал "токен невалиден" — вот тогда выходим
+      if (response.status === 400 || response.status === 401) {
         this.logout();
         return null;
       }
 
+      // Сервер лёг / 5xx — не разлогиниваем, попробуем позже
+      if (!response.ok) return null;
+
       const data = await response.json();
-
       localStorage.setItem(this.ACCESS_TOKEN, data.access);
-
+      if (data.refresh) {
+        localStorage.setItem(this.REFRESH_TOKEN, data.refresh); // при ротации
+      }
       return data.access;
     } catch (err) {
-      console.error('Refresh error:', err);
-      this.logout();
+      console.error('Refresh error:', err); // сеть моргнула — сессию не трогаем
       return null;
     }
   }
