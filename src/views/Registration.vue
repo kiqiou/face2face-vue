@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, onBeforeUnmount } from 'vue';
+  import { ref, onBeforeUnmount, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import GradientButton from '../components/ui/GradientButton.vue';
   import { authService } from '../utils/auth.js';
@@ -7,72 +7,126 @@
 
   const router = useRouter();
   const API_BASE = BASE_API + 'api/users/';
+  const TOKEN_KEY = 'tg_auth_token';
+  const TOKEN_TTL = 10 * 60 * 1000; // 10 минут, подстройте под срок жизни токена на бэке
 
   const isLoading = ref(false);
-  const isWaiting = ref(false); // ждём подтверждения в Telegram
+  const isWaiting = ref(false);
+  const consentGiven = ref(false);
   let pollTimer: ReturnType<typeof setInterval> | null = null;
   let authToken = '';
-  const consentGiven = ref(false);
+
+  const saveToken = (t: string) =>
+    localStorage.setItem(TOKEN_KEY, JSON.stringify({ t, ts: Date.now() }));
+
+  const loadToken = () => {
+    try {
+      const raw = localStorage.getItem(TOKEN_KEY);
+      if (!raw) return '';
+      const { t, ts } = JSON.parse(raw);
+      if (Date.now() - ts > TOKEN_TTL) {
+        localStorage.removeItem(TOKEN_KEY);
+        return '';
+      }
+      return t as string;
+    } catch {
+      return '';
+    }
+  };
+
+  const clearToken = () => {
+    authToken = '';
+    localStorage.removeItem(TOKEN_KEY);
+  };
 
   const stopPolling = () => {
     if (pollTimer) clearInterval(pollTimer);
     pollTimer = null;
   };
 
-const startLogin = async () => {
-  if (!consentGiven.value) return; // на всякий случай, хотя кнопка и так задизейблена
-
-  isLoading.value = true;
-
-  try {
-    const res = await fetch(API_BASE + 'generate-auth/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ consent: consentGiven.value }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.error || 'Не удалось начать авторизацию');
-      return; // не запускаем поллинг с пустым токеном
-    }
-
-    authToken = data.auth_token;
-    isWaiting.value = true;
-
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.location.href = data.telegram_link;
-    } else {
-      window.open(data.telegram_link, 'width=600,height=700');
-    }
-
+  const startPolling = () => {
+    stopPolling();
     pollTimer = setInterval(pollStatus, 2000);
-  } finally {
-    isLoading.value = false;
-  }
-};
+    pollStatus(); // сразу, не ждём 2 секунды
+  };
 
-const pollStatus = async () => {
-  if (!authToken) {
-    stopPolling();
-    return;
-  }
-  const res = await fetch(API_BASE + `auth-status/${authToken}/`);
-  const data = await res.json();
+  const startLogin = async () => {
+    if (!consentGiven.value) return;
+    isLoading.value = true;
+    try {
+      const res = await fetch(API_BASE + 'generate-auth/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ consent: consentGiven.value }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Не удалось начать авторизацию');
+        return;
+      }
 
-  if (data.status === 'confirmed') {
-    stopPolling();
-    authService.setTokens(data.access, data.refresh, data.user);
-    router.push('/user-profile');
-  } else if (data.status === 'error') {
-    stopPolling();
-    alert(data.error);
-  }
-};
+      authToken = data.auth_token;
+      saveToken(authToken);          // <-- сохраняем ДО ухода со страницы
+      isWaiting.value = true;
+      startPolling();
 
-  onBeforeUnmount(stopPolling);
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = data.telegram_link;
+      } else {
+        window.open(data.telegram_link, '_blank', 'width=600,height=700');
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const pollStatus = async () => {
+    if (!authToken) {
+      stopPolling();
+      return;
+    }
+    try {
+      const res = await fetch(API_BASE + `auth-status/${authToken}/`);
+      const data = await res.json();
+
+      if (data.status === 'confirmed') {
+        stopPolling();
+        clearToken();
+        authService.setTokens(data.access, data.refresh, data.user);
+        router.push('/user-profile');
+      } else if (data.status === 'error') {
+        stopPolling();
+        clearToken();
+        isWaiting.value = false;
+        alert(data.error);
+      }
+    } catch (e) {
+      // сеть могла моргнуть при переключении приложений — просто попробуем в следующий тик
+    }
+  };
+
+  const onVisible = () => {
+    if (document.visibilityState === 'visible' && authToken) pollStatus();
+  };
+
+  onMounted(() => {
+    document.addEventListener('visibilitychange', onVisible);
+    window.addEventListener('pageshow', onVisible); // возврат из bfcache
+
+    const saved = loadToken();
+    if (saved) {            // вернулись после ухода в Telegram
+      authToken = saved;
+      isWaiting.value = true;
+      startPolling();
+    }
+  });
+
+  onBeforeUnmount(() => {
+    stopPolling();
+    document.removeEventListener('visibilitychange', onVisible);
+    window.removeEventListener('pageshow', onVisible);
+  });
 </script>
 
 <template>
