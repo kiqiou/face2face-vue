@@ -22,7 +22,6 @@ export class Product {
   media: ProductMedia[] = [];
   inStock: boolean = true;
   createdAt: string = '';
-  costPrice: number | null = null;
   netAmount: number | null = null;
   netAmountUnit: NetAmountUnit | '' = '';
   ingredients: string = '';
@@ -37,6 +36,7 @@ export class Product {
   conformityDocumentNumber: string = '';
   conformityDocumentValidUntil: string | null = null;
   salePrice: number | null = null;
+  costPrice: number | null = null;
   effectivePrice: number = 0;
   isOnSale: boolean = false;
 

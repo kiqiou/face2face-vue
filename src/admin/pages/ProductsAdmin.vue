@@ -86,7 +86,7 @@
       form.batchNumber = '';
       form.conformityDocumentNumber = '';
       form.conformityDocumentValidUntil = '';
-      form.costPrice = null as number | null,
+      form.costPrice = null;
       form.salePrice = null;
       newFiles.value = [];
       existingMedia.value = [];
