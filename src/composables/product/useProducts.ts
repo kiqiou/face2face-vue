@@ -12,7 +12,11 @@ interface ProductFilters {
   purpose?: number | number[];
   collection?: number | number[];
   inStock?: boolean;
+  onSale?: boolean;
   ordering?: 'price_amount' | '-price_amount';
+  search?: string;
+  page?: number;
+  pageSize?: number;
 }
 
 interface ProductInput {
@@ -110,6 +114,7 @@ function appendFilterValue(
 export function useProducts() {
   const products = ref<Product[]>([]);
   const loading = ref(false);
+  const totalCount = ref(0);
   const error = ref<string | null>(null);
 
   const load = async (filters: ProductFilters = {}, withAuth: boolean = false) => {
@@ -121,14 +126,20 @@ export function useProducts() {
       appendFilterValue(params, 'skin_type', filters.skinType);
       appendFilterValue(params, 'purpose', filters.purpose);
       appendFilterValue(params, 'collection', filters.collection);
+      if (filters.onSale) params.set('on_sale', 'true');
       if (filters.inStock !== undefined) params.set('in_stock', String(filters.inStock));
       if (filters.ordering) params.set('ordering', filters.ordering);
+      if (filters.search?.trim()) params.set('search', filters.search.trim());
+      params.set('page', String(filters.page ?? 1));
+      if (filters.pageSize) params.set('page_size', String(filters.pageSize));
 
-      const query = params.toString() ? `?${params.toString()}` : '';
-      const data = withAuth ? 
-        await authFetchJson(API_BASE + 'get_products/' + query) 
-        : await apiGet(API_BASE + 'get_products/' + query) 
-      products.value = data.map(mapProduct);
+      const query = `?${params.toString()}`;
+      const data = withAuth
+        ? await authFetchJson(API_BASE + 'get_products/' + query)
+        : await apiGet(API_BASE + 'get_products/' + query);
+
+      products.value = data.results.map(mapProduct);
+      totalCount.value = data.count;
     } catch (err: any) {
       error.value = err.message;
     } finally {
@@ -174,5 +185,5 @@ export function useProducts() {
     }
   };
 
-  return { products, loading, error, load, add, update, remove };
+  return { products, totalCount, loading, error, load, add, update, remove };
 }

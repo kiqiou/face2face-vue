@@ -11,10 +11,12 @@
   import { useProductsCartStore } from '../../stores/productsCart.js';
   import { Product } from '../../models/product.js';
   import PromoCarousel from '../components/PromoCarousel.vue';
+  import AppPagination from '../components/AppPagination.vue';
 
   const router = useRouter();
 
-  const { products, loading, error, load } = useProducts();
+  const { products, totalCount, loading, error, load } = useProducts();
+  const { products: promoProducts, load: loadPromo } = useProducts();
   const { manufacturers, load: loadManufacturers } = useManufacturers();
   const { purposes, load: loadPurposes } = usePurposes();
   const { collections, load: loadCollections } = useCollections();
@@ -29,7 +31,24 @@
   const ordering = ref<'price_amount' | '-price_amount' | ''>('');
   const onlyInStock = ref(false);
 
-  // сворачиваемые секции фильтров — тип кожи открыт по умолчанию, остальное свёрнуто
+  const search = ref('');
+  const page = ref(1);
+  const PAGE_SIZE = 12;
+
+  const fetchProducts = () => {
+    load({
+      manufacturer: selectedManufacturers.value.length ? selectedManufacturers.value : undefined,
+      purpose: selectedPurposes.value.length ? selectedPurposes.value : undefined,
+      collection: selectedCollections.value.length ? selectedCollections.value : undefined,
+      skinType: selectedSkinTypes.value.length ? selectedSkinTypes.value : undefined,
+      ordering: ordering.value || undefined,
+      inStock: onlyInStock.value ? true : undefined,
+      search: search.value || undefined,
+      page: page.value,
+      pageSize: PAGE_SIZE,
+    });
+  };
+
   const openSections = ref({
     skinType: true,
     manufacturer: false,
@@ -42,23 +61,42 @@
   };
 
   const applyFilters = () => {
-    load({
-      manufacturer: selectedManufacturers.value.length
-        ? selectedManufacturers.value
-        : undefined,
-      purpose: selectedPurposes.value.length
-        ? selectedPurposes.value
-        : undefined,
-      collection: selectedCollections.value.length
-        ? selectedCollections.value
-        : undefined,
-      skinType: selectedSkinTypes.value.length
-        ? selectedSkinTypes.value
-        : undefined,
-      ordering: ordering.value || undefined,
-      inStock: onlyInStock.value ? true : undefined,
-    });
+    page.value = 1;
+    fetchProducts();
   };
+
+  let searchTimer: ReturnType<typeof setTimeout>;
+
+  const onSearchInput = () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 350);
+  };
+
+  const goToPage = (p: number) => {
+    if (p < 1 || p > totalPages.value || p === page.value) return;
+    page.value = p;
+    fetchProducts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
+
+  const visiblePages = computed<(number | '…')[]>(() => {
+    const total = totalPages.value;
+    const cur = page.value;
+    const pages: (number | '…')[] = [];
+    const add = (n: number | '…') => pages.push(n);
+
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || Math.abs(i - cur) <= 1) {
+        add(i);
+      } else if (pages[pages.length - 1] !== '…') {
+        add('…');
+      }
+    }
+    return pages;
+  });
+
 
   const resetFilters = () => {
     selectedManufacturers.value = [];
@@ -67,7 +105,9 @@
     selectedSkinTypes.value = [];
     ordering.value = '';
     onlyInStock.value = false;
-    load();
+    search.value = '';
+    page.value = 1;
+    fetchProducts();
   };
 
   const addToCart = (product: Product) => {
@@ -91,12 +131,10 @@
       (onlyInStock.value ? 1 : 0)
   );
 
-  const promoProducts = computed(() =>
-    products.value.filter((p) => p.isOnSale)
-  );
-
   onMounted(() => {
-    load();
+    fetchProducts();
+    loadPromo({ onSale: true, pageSize: 10 });
+    loadPromo();
     loadManufacturers();
     loadPurposes();
     loadCollections();
@@ -289,10 +327,17 @@
           <!-- Catalog -->
           <section class="flex-1">
             <!-- Панель сортировки над товарами, справа -->
-            <div class="mb-6 flex items-center justify-between">
-              <span class="text-sm text-ink-muted"
-                >{{ products.length }} товаров</span
-              >
+            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div class="flex-1 max-w-md">
+                  <input
+                    v-model="search"
+                    @input="onSearchInput"
+                    type="search"
+                    placeholder="Поиск по названию, описанию, производителю"
+                    class="w-full border border-line bg-paper px-3 py-2 text-sm text-ink focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
+                  />
+                  <span class="mt-2 block text-sm text-ink-muted">{{ totalCount }} товаров</span>
+                </div>
 
               <div class="flex flex-col gap-2 justify-center">
                 <p>Сортировать по цене:</p>
@@ -338,6 +383,7 @@
                 />
               </div>
             </div>
+            <AppPagination :page="page" :total-pages="totalPages" @change="goToPage" />
           </section>
         </div>
       </div>

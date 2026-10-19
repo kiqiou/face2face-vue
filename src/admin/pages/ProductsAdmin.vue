@@ -9,8 +9,24 @@
   import HeaderAdmin from '../../admin/components/HeaderAdmin.vue';
   import { ProductMedia } from '../../models/productMedia.js';
   import { useRoute, useRouter } from 'vue-router';
+  import AppPagination from '../../client/components/AppPagination.vue';
 
-  const { products, loading, error, load, add, update, remove } = useProducts();
+  const search = ref('');
+  const page = ref(1);
+  const PAGE_SIZE = 12;
+
+  const filters = reactive({
+    manufacturer: 0,
+    skinType: 0,
+    purpose: 0,
+    collection: 0,
+    inStock: '' as '' | 'true' | 'false', 
+    onSale: false,
+    ordering: '' as '' | 'price_amount' | '-price_amount',
+  });
+
+
+  const { products, totalCount, loading, error, load, add, update, remove } = useProducts();
   const { manufacturers, load: loadManufacturers } = useManufacturers();
   const { skinTypes, load: loadSkinTypes } = useSkinTypes();
   const { purposes, load: loadPurposes } = usePurposes();
@@ -22,6 +38,59 @@
   const editingProduct = ref<Product | null>(null);
   const submitting = ref(false);
   const formError = ref<string | null>(null);
+
+  const fetchProducts = () =>
+    load(
+      {
+        manufacturer: filters.manufacturer || undefined,
+        skinType: filters.skinType || undefined,
+        purpose: filters.purpose || undefined,
+        collection: filters.collection || undefined,
+        inStock: filters.inStock === '' ? undefined : filters.inStock === 'true',
+        onSale: filters.onSale || undefined,
+        ordering: filters.ordering || undefined,
+        search: search.value || undefined,
+        page: page.value,
+        pageSize: PAGE_SIZE,
+      },
+      true // withAuth, чтобы пришёл ProductAdminSerializer
+    );
+
+  const applyFilters = () => {
+    page.value = 1;
+    fetchProducts();
+  };
+
+  let searchTimer: ReturnType<typeof setTimeout>;
+  const onSearchInput = () => {
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(applyFilters, 350);
+  };
+
+  const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
+
+  const goToPage = (p: number) => {
+    page.value = p;
+    fetchProducts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const activeFiltersCount = computed(
+    () =>
+      (search.value ? 1 : 0) +
+      [filters.manufacturer, filters.skinType, filters.purpose, filters.collection].filter(Boolean).length +
+      (filters.inStock !== '' ? 1 : 0) +
+      (filters.onSale ? 1 : 0)
+  );
+
+  const resetFilters = () => {
+    Object.assign(filters, {
+      manufacturer: 0, skinType: 0, purpose: 0, collection: 0,
+      inStock: '', onSale: false, ordering: '',
+    });
+    search.value = '';
+    applyFilters();
+  };
 
   const form = reactive({
     name: '',
@@ -172,6 +241,7 @@
         } else {
           await add(payload);
         }
+        await fetchProducts();
         closeModal();
       } catch (err: any) {
         formError.value = err.message ?? 'Не удалось сохранить товар';
@@ -183,6 +253,8 @@
   const handleRemove = async (id: number) => {
     if (!confirm('Удалить товар?')) return;
     await remove(id);
+    if (products.value.length === 0 && page.value > 1) page.value--;
+    await fetchProducts();
   };
 
   const goToProduct = (id: number) => {
@@ -190,7 +262,7 @@
   };
 
   onMounted(() => {
-    load({}, true);
+    fetchProducts();
     loadManufacturers();
     loadSkinTypes();
     loadPurposes();
@@ -215,6 +287,71 @@
         >
           + Добавить товар
         </button>
+      </div>
+
+      <div class="mb-6 space-y-3 border border-line bg-white p-4">
+        <input
+          v-model="search"
+          @input="onSearchInput"
+          type="search"
+          placeholder="Поиск: название, описание, производитель, № партии, № документа"
+          class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+        />
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <select v-model.number="filters.manufacturer" @change="applyFilters"
+            class="border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none">
+            <option :value="0">Все производители</option>
+            <option v-for="m in manufacturers" :key="m.id" :value="m.id">{{ m.name }}</option>
+          </select>
+
+          <select v-model.number="filters.skinType" @change="applyFilters"
+            class="border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none">
+            <option :value="0">Любой тип кожи</option>
+            <option v-for="s in skinTypes" :key="s.id" :value="s.id">{{ s.name }}</option>
+          </select>
+
+          <select v-model.number="filters.purpose" @change="applyFilters"
+            class="border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none">
+            <option :value="0">Любое назначение</option>
+            <option v-for="p in purposes" :key="p.id" :value="p.id">{{ p.name }}</option>
+          </select>
+
+          <select v-model.number="filters.collection" @change="applyFilters"
+            class="border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none">
+            <option :value="0">Любая подборка</option>
+            <option v-for="c in collections" :key="c.id" :value="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <select v-model="filters.inStock" @change="applyFilters"
+            class="border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none">
+            <option value="">Наличие: все</option>
+            <option value="true">В наличии</option>
+            <option value="false">Нет в наличии</option>
+          </select>
+
+          <select v-model="filters.ordering" @change="applyFilters"
+            class="border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none">
+            <option value="">Сортировка: новые</option>
+            <option value="price_amount">Сначала дешевле</option>
+            <option value="-price_amount">Сначала дороже</option>
+          </select>
+
+          <label class="flex items-center gap-2 text-sm">
+            <input type="checkbox" v-model="filters.onSale" @change="applyFilters"
+              class="h-4 w-4 border-line text-moss" />
+            Только акционные
+          </label>
+
+          <div class="ml-auto flex items-center gap-4 text-[11px] uppercase tracking-[0.15em]">
+            <span class="text-ink-muted">Найдено: {{ totalCount }} · Фильтров: {{ activeFiltersCount }}</span>
+            <button @click="resetFilters" class="text-clay underline underline-offset-4 hover:text-ink">
+              Сбросить
+            </button>
+          </div>
+        </div>
       </div>
 
       <p v-if="loading" class="text-sm text-ink-muted">Загрузка...</p>
@@ -282,11 +419,11 @@
         </div>
       </div>
 
-      <p
-        v-if="!loading && products.length === 0"
-        class="mt-10 text-center text-sm italic text-ink-muted"
-      >
-        Товаров пока нет.
+      <AppPagination :page="page" :total-pages="totalPages" @change="goToPage" />
+
+      <p v-if="!loading && products.length === 0"
+        class="mt-10 text-center text-sm italic text-ink-muted">
+        {{ activeFiltersCount ? 'Ничего не найдено.' : 'Товаров пока нет.' }}
       </p>
     </div>
 
@@ -296,48 +433,22 @@
       class="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm sm:items-center sm:px-4"
       @click.self="closeModal"
     >
-      <div
-        class="max-h-[90vh] w-full max-w-lg overflow-y-auto bg-white p-6 shadow-xl"
-      >
+      <div class="max-h-[90vh] w-full max-w-lg overflow-y-auto bg-white p-6 shadow-xl lg:max-w-5xl lg:p-8">
         <h2 class="mb-6 font-display text-xl font-medium text-ink">
           {{ editingProduct ? 'Редактировать товар' : 'Новый товар' }}
         </h2>
 
-        <form @submit.prevent="handleSubmit" class="space-y-4">
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-              >Название</label
-            >
-            <input
-              v-model="form.name"
-              required
-              class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-            />
-          </div>
-
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-              >Описание</label
-            >
-            <textarea
-              v-model="form.description"
-              rows="3"
-              class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-            ></textarea>
-          </div>
-
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div>
+        <form @submit.prevent="handleSubmit">
+          <div class="grid grid-cols-1 gap-x-10 gap-y-4 lg:grid-cols-2">
+              <!-- ЛЕВАЯ КОЛОНКА: основное -->
+              <div class="space-y-4">
+                          <div>
               <label
                 class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-                >Цена</label
+                >Название</label
               >
               <input
-                v-model.number="form.priceAmount"
-                type="number"
-                step="0.01"
+                v-model="form.name"
                 required
                 class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
               />
@@ -346,164 +457,196 @@
             <div>
               <label
                 class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                >Описание</label
               >
-                Акционная цена
-                <span class="normal-case text-ink-muted/60"
-                  >(необязательно)</span
+              <textarea
+                v-model="form.description"
+                rows="3"
+                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+              ></textarea>
+            </div>
+              <!-- Цены: вместо grid sm:grid-cols-3 и отдельного блока «Валюта» -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label
+                    class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                    >Цена</label
+                  >
+                  <input
+                    v-model.number="form.priceAmount"
+                    type="number"
+                    step="0.01"
+                    required
+                    class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                  >
+                    Акционная цена
+                    <span class="normal-case text-ink-muted/60"
+                      >(необязательно)</span
+                    >
+                  </label>
+                  <input
+                    v-model.number="form.salePrice"
+                    type="number"
+                    step="0.01"
+                    placeholder="меньше обычной цены"
+                    class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+                    :class="{
+                      'border-clay':
+                        form.salePrice !== null &&
+                        form.salePrice >= form.priceAmount,
+                    }"
+                  />
+                  <p
+                    v-if="
+                      form.salePrice !== null && form.salePrice >= form.priceAmount
+                    "
+                    class="mt-1 text-[11px] text-clay"
+                  >
+                    Должна быть меньше обычной цены
+                  </p>
+                </div>
+
+                <div>
+                  <label
+                    class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                    >Себестоимость</label
+                  >
+                  <input
+                    v-model.number="form.costPrice"
+                    type="number"
+                    step="0.01"
+                    required
+                    class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label
+                  class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                  >Валюта</label
                 >
-              </label>
-              <input
-                v-model.number="form.salePrice"
-                type="number"
-                step="0.01"
-                placeholder="меньше обычной цены"
-                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-                :class="{
-                  'border-clay':
-                    form.salePrice !== null &&
-                    form.salePrice >= form.priceAmount,
-                }"
-              />
-              <p
-                v-if="
-                  form.salePrice !== null && form.salePrice >= form.priceAmount
-                "
-                class="mt-1 text-[11px] text-clay"
-              >
-                Должна быть меньше обычной цены
-              </p>
+                <select
+                  v-model="form.priceCurrency"
+                  class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
+                >
+                  <option value="BYN">BYN</option>
+                  <option value="USD">USD</option>
+                </select>
+        
+              </div>
+
+              <div>
+                <label
+                  class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                >
+                  Производитель
+                </label>
+
+                <select
+                  v-model="form.manufacturerId"
+                  class="w-full border border-line bg-white px-3 py-2 text-sm text-ink focus:border-moss focus:outline-none"
+                >
+                  <option :value="null" disabled hidden>
+                    Выберите производителя
+                  </option>
+                  <option v-for="m in manufacturers" :key="m.id" :value="m.id">
+                    {{ m.name }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                  >Тип кожи</label
+                >
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    v-for="st in skinTypes"
+                    :key="st.id"
+                    class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
+                    :class="
+                      form.skinTypeIds.includes(st.id)
+                        ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark'
+                        : 'border-line text-ink-muted'
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      :value="st.id"
+                      v-model="form.skinTypeIds"
+                      class="hidden"
+                    />
+                    {{ st.name }}
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                  >Назначение</label
+                >
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    v-for="p in purposes"
+                    :key="p.id"
+                    class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
+                    :class="
+                      form.purposeIds.includes(p.id)
+                        ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark'
+                        : 'border-line text-ink-muted'
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      :value="p.id"
+                      v-model="form.purposeIds"
+                      class="hidden"
+                    />
+                    {{ p.name }}
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label
+                  class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
+                  >Подборки</label
+                >
+                <div class="flex flex-wrap gap-2">
+                  <label
+                    v-for="c in collections"
+                    :key="c.id"
+                    class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
+                    :class="
+                      form.collectionIds.includes(c.id)
+                        ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark'
+                        : 'border-line text-ink-muted'
+                    "
+                  >
+                    <input
+                      type="checkbox"
+                      :value="c.id"
+                      v-model="form.collectionIds"
+                      class="hidden"
+                    />
+                    {{ c.name }}
+                  </label>
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label
-                class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-                >Себестоимость</label
-              >
-              <input
-                v-model.number="form.costPrice"
-                type="number"
-                step="0.01"
-                required
-                class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-              >Валюта</label
-            >
-            <select
-              v-model="form.priceCurrency"
-              class="w-full border border-line bg-white px-3 py-2 text-sm focus:border-moss focus:outline-none"
-            >
-              <option value="BYN">BYN</option>
-              <option value="USD">USD</option>
-            </select>
-          </div>
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-            >
-              Производитель
-            </label>
-
-            <select
-              v-model="form.manufacturerId"
-              class="w-full border border-line bg-white px-3 py-2 text-sm text-ink focus:border-moss focus:outline-none"
-            >
-              <option :value="null" disabled hidden>
-                Выберите производителя
-              </option>
-              <option v-for="m in manufacturers" :key="m.id" :value="m.id">
-                {{ m.name }}
-              </option>
-            </select>
-          </div>
-
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-              >Тип кожи</label
-            >
-            <div class="flex flex-wrap gap-2">
-              <label
-                v-for="st in skinTypes"
-                :key="st.id"
-                class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
-                :class="
-                  form.skinTypeIds.includes(st.id)
-                    ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark'
-                    : 'border-line text-ink-muted'
-                "
-              >
-                <input
-                  type="checkbox"
-                  :value="st.id"
-                  v-model="form.skinTypeIds"
-                  class="hidden"
-                />
-                {{ st.name }}
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-              >Назначение</label
-            >
-            <div class="flex flex-wrap gap-2">
-              <label
-                v-for="p in purposes"
-                :key="p.id"
-                class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
-                :class="
-                  form.purposeIds.includes(p.id)
-                    ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark'
-                    : 'border-line text-ink-muted'
-                "
-              >
-                <input
-                  type="checkbox"
-                  :value="p.id"
-                  v-model="form.purposeIds"
-                  class="hidden"
-                />
-                {{ p.name }}
-              </label>
-            </div>
-          </div>
-
-          <div>
-            <label
-              class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
-              >Подборки</label
-            >
-            <div class="flex flex-wrap gap-2">
-              <label
-                v-for="c in collections"
-                :key="c.id"
-                class="cursor-pointer select-none border px-3 py-1 text-xs uppercase tracking-wide transition-colors"
-                :class="
-                  form.collectionIds.includes(c.id)
-                    ? 'border-moss bg-moss/10 bg-green-200 text-moss-dark'
-                    : 'border-line text-ink-muted'
-                "
-              >
-                <input
-                  type="checkbox"
-                  :value="c.id"
-                  v-model="form.collectionIds"
-                  class="hidden"
-                />
-                {{ c.name }}
-              </label>
-            </div>
-          </div>
-
-          <div>
+            <!-- ПРАВАЯ КОЛОНКА: медиа и характеристики -->
+            <div class="space-y-4">
+              <div>
             <label
               class="mb-1 block text-[11px] uppercase tracking-[0.15em] text-ink-muted"
               >Фото / видео</label
@@ -755,7 +898,10 @@
             />
             <label for="in-stock" class="text-sm text-ink">В наличии</label>
           </div>
+            </div>
+          </div>
 
+          <!-- Ошибка и кнопки на всю ширину под обеими колонками -->
           <p v-if="formError" class="text-sm text-clay">{{ formError }}</p>
 
           <div
