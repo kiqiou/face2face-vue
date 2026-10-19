@@ -4,6 +4,9 @@ import { Product } from '../models/product.js';
 import { useToast } from 'vue-toastification';
 import { authService } from '../utils/auth.js';
 import router from '../router/index.js'; 
+import { mapProduct } from '../utils/mapProduct.js';
+import { apiGet } from '../utils/apiGet.js';
+import { API_BASE } from '../composables/product/productBaseApi.js';
 
 interface CartItem {
   product: Product;
@@ -25,6 +28,7 @@ const loadItems = (): CartItem[] => {
 
 export const useProductsCartStore = defineStore('productsCart', () => {
   const items = ref<CartItem[]>(loadItems());
+  const syncing = ref(false);
 
   watch(
     items,
@@ -41,6 +45,43 @@ export const useProductsCartStore = defineStore('productsCart', () => {
   const reload = () => {
     items.value = loadItems();
   };
+
+  const syncWithServer = async () => {
+  if (items.value.length === 0) return;
+  syncing.value = true;
+
+  try {
+    const results = await Promise.all(
+      items.value.map(async (item) => {
+        try {
+          const data = await apiGet(`${API_BASE}get_product/${item.product.id}/`);
+          return { id: item.product.id, fresh: mapProduct(data) };
+        } catch {
+          return { id: item.product.id, fresh: null }; 
+        }
+      })
+    );
+
+    const removedNames: string[] = [];
+
+    items.value = items.value
+      .map((item) => {
+        const result = results.find((r) => r.id === item.product.id);
+        if (!result?.fresh) {
+          removedNames.push(item.product.name);
+          return null;
+        }
+        return { ...item, product: result.fresh };
+      })
+      .filter((item): item is CartItem => item !== null);
+
+    if (removedNames.length > 0) {
+      toast.warning(`Товар "${removedNames.join(', ')}" больше недоступен и был удалён из корзины`);
+    }
+  } finally {
+    syncing.value = false;
+  }
+};
 
   const products = computed(() => items.value.map((i) => i.product));
 

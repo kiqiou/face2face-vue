@@ -4,75 +4,24 @@
   import router from '../../router/index.js';
   import { authService } from '../../utils/auth.js';
   import { ORDER_STATUS_LABELS, OrderStatus } from '../../models/order.js';
-import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
-import { Product } from '../../models/product.js';
-import { useProductsCartStore } from '../../stores/productsCart.js';
-import { useToast } from 'vue-toastification';
+  import { useGetUserOrders } from '../../composables/order/useGetUserOrder.js';
+  import { Product } from '../../models/product.js';
+  import { useProductsCartStore } from '../../stores/productsCart.js';
+  import { useToast } from 'vue-toastification';
+  import { useUpdateUserName } from '../../composables/user/useUpdateUsername.js';
 
-  // --- логика записей (закомментировано, не удалено) ---
-  // import ProcedureCard from '../components/ProcedureCard.vue';
-  // import { useCancelBooking } from '../../composables/bookings/useCancelBooking.js';
-  // import { useToast } from 'vue-toastification';
-  // import { useUserBookings } from '../../composables/bookings/useUserBookings.js';
-  //
-  // const { bookings, load } = useUserBookings();
-  // const { success, error, cancel } = useCancelBooking();
-  // const toast = useToast();
-  //
-  // const futureBookings = computed(() => {
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0);
-  //
-  //   return bookings.value
-  //     .filter((booking) => new Date(booking.date) >= today)
-  //     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  // });
-  //
-  // const formatDate = (date: Date) => {
-  //   return date.toLocaleDateString('ru-RU', {
-  //     weekday: 'short',
-  //     day: 'numeric',
-  //     month: 'short',
-  //     year: 'numeric',
-  //   });
-  // };
-  //
-  // const daysUntil = (date: Date) => {
-  //   const today = new Date();
-  //   today.setHours(0, 0, 0, 0);
-  //   const bookingDate = new Date(date);
-  //   bookingDate.setHours(0, 0, 0, 0);
-  //
-  //   const diffTime = bookingDate.getTime() - today.getTime();
-  //   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  //
-  //   if (diffDays === 0) return 'Сегодня';
-  //   if (diffDays === 1) return 'Завтра';
-  //   return `через ${diffDays} дн.`;
-  // };
-  //
-  // const cancelBooking = async (id: number) => {
-  //   await cancel(id);
-  //
-  //   if (success.value) {
-  //     await load();
-  //     toast.success('Запись отменена');
-  //   } else {
-  //     toast.error(`Не удалось отменить запись: ${error.value}`);
-  //   }
-  // };
-  // --- конец логики записей ---
-
+  const { updateName, loading: nameLoading, error: nameError } = useUpdateUserName();
   const { orders, loading: ordersLoading, loadAll: loadOrders } = useGetUserOrders();
   const productsCartStore = useProductsCartStore();
   const toast = useToast();
     
   onMounted(() => {
-    // load(); // загрузка записей — закомментировано вместе с блоком выше
     loadOrders();
   });
 
-  const user = authService.getUser();
+  const user = ref(authService.getUser());
+  const isEditingName = ref(false);
+  const nameInput = ref(user.value?.username || '');
 
   const coverImage = (product: Product) => product.media[0]?.url || product.imageUrl || '';
 
@@ -81,6 +30,24 @@ import { useToast } from 'vue-toastification';
     router.replace('/').catch(() => {
       window.location.href = '/';
     });
+  };
+
+  const startEditName = () => {
+    nameInput.value = user.value?.username || '';
+    nameError.value = null;
+    isEditingName.value = true;
+  };
+
+  const saveName = async () => {
+    const trimmed = nameInput.value.trim();
+    if (!trimmed) return;
+
+    const updatedUser = await updateName(trimmed);
+    if (updatedUser) {
+      user.value = updatedUser;
+      isEditingName.value = false;
+      toast.success('Имя обновлено');
+    }
   };
 
   const orderTotal = (order: (typeof orders.value)[number]) =>
@@ -154,9 +121,41 @@ import { useToast } from 'vue-toastification';
       </div>
 
       <div class="text-center">
-        <h1 class="text-3xl font-black text-slate-800">
-          {{ user?.username || 'Профиль' }}
-        </h1>
+        <div v-if="!isEditingName" class="flex items-center justify-center gap-2">
+          <h1 class="text-3xl font-black text-slate-800">
+            {{ user?.username || 'Профиль' }}
+          </h1>
+          <button @click="startEditName" class="text-[#E5A663] hover:opacity-70" aria-label="Редактировать имя">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          </button>
+        </div>
+
+        <div v-else class="flex flex-col items-center gap-2">
+          <input
+            v-model="nameInput"
+            type="text"
+            class="text-center text-2xl font-black text-slate-800 border-b-2 border-[#E5A663] outline-none bg-transparent px-2"
+            maxlength="150"
+            @keyup.enter="saveName"
+          />
+          <span v-if="nameError" class="text-sm text-red-500">{{ nameError }}</span>
+          <div class="flex gap-3 mt-1">
+            <button
+              @click="saveName"
+              :disabled="nameLoading"
+              class="text-sm font-semibold text-[#E5A663] hover:underline disabled:opacity-50"
+            >
+              {{ nameLoading ? 'Сохранение...' : 'Сохранить' }}
+            </button>
+            <button @click="isEditingName = false" class="text-sm font-semibold text-black/40 hover:underline">
+              Отмена
+            </button>
+          </div>
+        </div>
+
         <p class="text-black/50 mt-1">{{ user?.phone || 'Телефон не указан' }}</p>
       </div>
 

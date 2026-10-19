@@ -8,7 +8,7 @@ withDefaults(
   }>(),
   {
     title: 'Скидка на первый заказ',
-    subtitle: 'Используйте промокод при оформлении — подробности в корзине',
+    subtitle: 'Используйте промокод при оформлении — FIRSTORDER — и получите скидку 10% на первый заказ.',
     ctaText: 'В каталог',
     ctaLink: '/products',
   }
@@ -23,11 +23,5 @@ withDefaults(
       <h3 class="font-display text-2xl text-ink">{{ title }}</h3>
       <p class="mt-1 text-sm text-ink-muted">{{ subtitle }}</p>
     </div>
-    <!-- <router-link
-      :to="ctaLink"
-      class="shrink-0 bg-moss px-6 py-2.5 text-sm font-medium uppercase tracking-wide text-black/70 transition hover:bg-moss-dark"
-    >
-      {{ ctaText }}
-    </router-link> -->
   </div>
 </template>

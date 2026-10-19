@@ -46,15 +46,20 @@
               :key="link.name"
               class="text-3xl font-semibold"
             >
-              <RouterLink
-                @click="isOpen = false"
-                :to="link.link"
-                class="text-black/80 hover:text-black/60 transition duration-300"
-              >
+              <RouterLink @click="isOpen = false" :to="link.link" class="text-black/80 hover:text-black/60 transition duration-300">
                 {{ link.name }}
               </RouterLink>
             </li>
           </ul>
+
+          <a
+            :href="BOOKING_URL"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block mt-6 text-center px-4 py-3 rounded-full bg-black/10 text-black/90 text-lg font-semibold"
+          >
+            Запись на процедуры →
+          </a>
         </nav>
 
         <div
@@ -110,6 +115,15 @@
         </ul>
       </nav>
 
+      <a
+        :href="BOOKING_URL"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="shrink-0 px-4 py-2 rounded-full bg-gradient-to-br from-[#E5A663] to-[#FAEE9E] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+      >
+        Запись на процедуры
+      </a>
+
       <div class="dub_headr text-sm lg:text-base text-right text-gray-700">
         <p class="leading-tight">
           <span class="font-semibold"> Face2face.cosmetology </span>
@@ -142,6 +156,7 @@
   import { authService } from '../../utils/auth.js';
 
   const isOpen = ref(false);
+  const BOOKING_URL = 'https://dikidi.net/ru/profile/face2facecosmetology_639161';
 
   const baseLinks = ref([
     { id: '1', name: 'Главная', link: '/' },
@@ -179,8 +194,7 @@
       if (user.value.is_staff) {
         return [...baseLinks.value, adminLink, profileLink, productsCartLink];
       }
-
-      return [...baseLinks.value, profileLink, productsCartLink ];
+      return [...baseLinks.value, profileLink, productsCartLink];
     }
 
     return [

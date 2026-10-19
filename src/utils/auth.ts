@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { User } from '../models/user.js';
 
 class AuthService {
   private ACCESS_TOKEN = 'access_token';
@@ -25,6 +26,11 @@ class AuthService {
     localStorage.setItem(this.REFRESH_TOKEN, refresh);
     localStorage.setItem(this.USER, JSON.stringify(user));
 
+    this.currentUser.value = user;
+  }
+
+  updateUser(user: User) {
+    localStorage.setItem(this.USER, JSON.stringify(user));
     this.currentUser.value = user;
   }
 
