@@ -143,6 +143,7 @@ export const useProductsCartStore = defineStore('productsCart', () => {
     decrement,
     removeProduct,
     clear,
-    reload
+    reload,
+    syncWithServer
   };
 });

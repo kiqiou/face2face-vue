@@ -23,6 +23,7 @@
   onMounted(() => {
     loadMyDiscount();
     cart.reload();
+    cart.syncWithServer();
   });
 
   // Имя и телефон берутся из аккаунта и при оформлении не редактируются
