@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { onMounted, ref, computed } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useProducts } from '../../composables/product/useProducts.js';
   import { useManufacturers } from '../../composables/product/manufacturer/useManufacturers.js';
   import { usePurposes } from '../../composables/product/purposes/usePurposes.js';
@@ -13,6 +13,7 @@
   import PromoCarousel from '../components/PromoCarousel.vue';
   import AppPagination from '../components/AppPagination.vue';
 
+  const route = useRoute();
   const router = useRouter();
 
   const { products, totalCount, loading, error, load } = useProducts();
@@ -36,6 +37,7 @@
   const PAGE_SIZE = 12;
 
   const fetchProducts = () => {
+    syncUrl();
     load({
       manufacturer: selectedManufacturers.value.length ? selectedManufacturers.value : undefined,
       purpose: selectedPurposes.value.length ? selectedPurposes.value : undefined,
@@ -72,31 +74,16 @@
     searchTimer = setTimeout(applyFilters, 350);
   };
 
+  const catalogEl = ref<HTMLElement | null>(null);
+
   const goToPage = (p: number) => {
     if (p < 1 || p > totalPages.value || p === page.value) return;
     page.value = p;
     fetchProducts();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    catalogEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
-
-  const visiblePages = computed<(number | '…')[]>(() => {
-    const total = totalPages.value;
-    const cur = page.value;
-    const pages: (number | '…')[] = [];
-    const add = (n: number | '…') => pages.push(n);
-
-    for (let i = 1; i <= total; i++) {
-      if (i === 1 || i === total || Math.abs(i - cur) <= 1) {
-        add(i);
-      } else if (pages[pages.length - 1] !== '…') {
-        add('…');
-      }
-    }
-    return pages;
-  });
-
 
   const resetFilters = () => {
     selectedManufacturers.value = [];
@@ -131,10 +118,36 @@
       (onlyInStock.value ? 1 : 0)
   );
 
+  const numList = (v: unknown): number[] =>
+    (Array.isArray(v) ? v : v ? [v] : []).map(Number).filter((n) => n > 0);
+
+  // читаем состояние из URL (сразу после объявления всех ref-ов)
+  const q = route.query;
+  selectedManufacturers.value = numList(q.manufacturer);
+  selectedPurposes.value = numList(q.purpose);
+  selectedCollections.value = numList(q.collection);
+  selectedSkinTypes.value = numList(q.skin_type);
+  ordering.value = q.ordering === 'price_amount' || q.ordering === '-price_amount' ? q.ordering : '';
+  onlyInStock.value = q.in_stock === 'true';
+  search.value = typeof q.search === 'string' ? q.search : '';
+  page.value = Math.max(1, Number(q.page) || 1);
+
+  const syncUrl = () => {
+    const query: Record<string, string | string[]> = {};
+    if (selectedManufacturers.value.length) query.manufacturer = selectedManufacturers.value.map(String);
+    if (selectedPurposes.value.length) query.purpose = selectedPurposes.value.map(String);
+    if (selectedCollections.value.length) query.collection = selectedCollections.value.map(String);
+    if (selectedSkinTypes.value.length) query.skin_type = selectedSkinTypes.value.map(String);
+    if (ordering.value) query.ordering = ordering.value;
+    if (onlyInStock.value) query.in_stock = 'true';
+    if (search.value) query.search = search.value;
+    if (page.value > 1) query.page = String(page.value);
+    router.replace({ query });
+  };
+
   onMounted(() => {
     fetchProducts();
     loadPromo({ onSale: true, pageSize: 10 });
-    loadPromo();
     loadManufacturers();
     loadPurposes();
     loadCollections();
@@ -325,7 +338,7 @@
           </aside>
 
           <!-- Catalog -->
-          <section class="flex-1">
+          <section ref="catalogEl" class="flex-1 scroll-mt-6">
             <!-- Панель сортировки над товарами, справа -->
             <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div class="flex-1 max-w-md">

@@ -102,16 +102,16 @@ const specRows = computed(() => {
   return rows;
 });
 
+const goBack = () => {
+  // пришли из каталога: возвращаемся по истории, URL с ?page=… и позиция прокрутки сохранятся
+  if (window.history.state?.back) router.back();
+  // зашли по прямой ссылке: истории нет, ведём в каталог
+  else router.push(props.backRoute);
+};
+
 // сбрасываем индекс, когда загрузился другой товар
 watch(product, () => {
   activeIndex.value = 0;
-});
-
-onMounted(() => {
-  const id = Number(route.params.id);
-  if (!Number.isNaN(id)) {
-    load(id);
-  }
 });
 
 watch(() => props.id, (newId) => {
@@ -129,7 +129,7 @@ watch(product, () => {
   <div class="min-h-screen bg-paper font-body text-ink">
     <div class="mx-auto max-w-5xl px-4 py-10 lg:py-16">
       <button
-        @click="router.push(props.backRoute)"
+        @click="goBack"
         class="mb-8 inline-flex items-center gap-2 text-xs uppercase tracking-widest text-ink-muted transition-colors hover:text-moss"
       >
         <span aria-hidden="true">←</span> Назад к каталогу

@@ -74,10 +74,13 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior() {
-    return {
-      top: 0,
-    };
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      // даём каталогу время загрузиться, иначе страница ещё короткая
+      return new Promise((resolve) => setTimeout(() => resolve(savedPosition), 400));
+    }
+    if (to.path === from.path) return false; // меняется только query: не прокручивать
+    return { top: 0 };
   },
 });
 
