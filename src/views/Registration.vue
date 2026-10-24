@@ -8,12 +8,13 @@
   const router = useRouter();
   const API_BASE = BASE_API + 'api/users/';
   const TOKEN_KEY = 'tg_auth_token';
-  const TOKEN_TTL = 10 * 60 * 1000; // 10 минут, подстройте под срок жизни токена на бэке
+  const TOKEN_TTL = 5 * 60 * 1000; 
 
   const isLoading = ref(false);
   const isWaiting = ref(false);
   const consentGiven = ref(false);
   let pollTimer: ReturnType<typeof setInterval> | null = null;
+  let expireTimer: ReturnType<typeof setTimeout> | null = null;
   let authToken = '';
 
   const saveToken = (t: string) =>
@@ -41,13 +42,19 @@
 
   const stopPolling = () => {
     if (pollTimer) clearInterval(pollTimer);
+    if (expireTimer) clearTimeout(expireTimer);
     pollTimer = null;
+    expireTimer = null;
   };
 
   const startPolling = () => {
     stopPolling();
     pollTimer = setInterval(pollStatus, 2000);
-    pollStatus(); // сразу, не ждём 2 секунды
+    expireTimer = setTimeout(() => {
+      cancelLogin();
+      alert('Время ожидания истекло, попробуйте ещё раз');
+    }, TOKEN_TTL);
+    pollStatus();
   };
 
   const startLogin = async () => {
@@ -81,6 +88,12 @@
     }
   };
 
+  const cancelLogin = () => {
+    stopPolling();
+    clearToken();
+    isWaiting.value = false;
+  };
+
   const pollStatus = async () => {
     if (!authToken) {
       stopPolling();
@@ -100,11 +113,14 @@
         clearToken();
         isWaiting.value = false;
         alert(data.error);
-      }
+      }  else if (data.status === 'expired') {
+        cancelLogin();
+        alert('Время ожидания истекло, попробуйте ещё раз');
+      } 
     } catch (e) {
       // сеть могла моргнуть при переключении приложений — просто попробуем в следующий тик
     }
-  };
+  }
 
   const onVisible = () => {
     if (document.visibilityState === 'visible' && authToken) pollStatus();
@@ -115,7 +131,7 @@
     window.addEventListener('pageshow', onVisible); // возврат из bfcache
 
     const saved = loadToken();
-    if (saved) {            // вернулись после ухода в Telegram
+    if (saved) {            
       authToken = saved;
       isWaiting.value = true;
       startPolling();
@@ -152,14 +168,19 @@
 
         <!-- Инструкция ВО ВРЕМЯ ожидания ответа от Telegram -->
         <div v-if="isWaiting" class="flex flex-col items-center gap-3 text-center">
-          <!-- Пульсирующая иконка ожидания -->
           <div class="w-8 h-8 rounded-full border-2 border-t-transparent border-[#E5A663] animate-spin"></div>
-          <p class="text-sm text-gray-700 font-medium">
-            Ждем подтверждения в Telegram...
-          </p>
+          <p class="text-sm text-gray-700 font-medium">Ждем подтверждения в Telegram...</p>
           <p class="text-xs text-gray-500 leading-relaxed">
             Перейдите в открывшееся окно мессенджера, нажмите кнопку <strong>«Поделиться номером телефона»</strong>, а затем сразу возвращайтесь на эту страницу.
           </p>
+
+          <button
+            type="button"
+            class="text-sm text-stone-500 underline hover:text-stone-700"
+            @click="cancelLogin"
+          >
+            Отменить
+          </button>
         </div>
 
         <label class="flex items-start gap-2 text-sm text-gray-600">
