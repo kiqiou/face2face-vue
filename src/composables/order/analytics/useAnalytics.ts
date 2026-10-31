@@ -43,7 +43,7 @@ interface AnalyticsData {
 interface AnalyticsFilters {
   dateFrom?: string;
   dateTo?: string;
-  excludeCancelled?: boolean;
+  completedOnly?: boolean;
 }
 
 export function useAnalytics() {
@@ -58,8 +58,8 @@ export function useAnalytics() {
       const params = new URLSearchParams();
       if (filters.dateFrom) params.set('date_from', filters.dateFrom);
       if (filters.dateTo) params.set('date_to', filters.dateTo);
-      if (filters.excludeCancelled !== undefined) {
-        params.set('exclude_cancelled', String(filters.excludeCancelled));
+      if (filters.completedOnly !== undefined) {
+        params.set('completed_only', String(filters.completedOnly));
       }
       const query = params.toString() ? `?${params.toString()}` : '';
       

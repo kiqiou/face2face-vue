@@ -8,21 +8,21 @@ const { data, loading, error, load } = useAnalytics();
 const filters = reactive({
   dateFrom: '',
   dateTo: '',
-  excludeCancelled: true,
+  completedOnly: true,
 });
 
 const applyFilters = () => {
   load({
     dateFrom: filters.dateFrom || undefined,
     dateTo: filters.dateTo || undefined,
-    excludeCancelled: filters.excludeCancelled,
+    completedOnly: filters.completedOnly,
   });
 };
 
 const resetFilters = () => {
   filters.dateFrom = '';
   filters.dateTo = '';
-  filters.excludeCancelled = true;
+  filters.completedOnly = true;
   load();
 };
 
@@ -74,7 +74,7 @@ onMounted(() => {
           />
         </div>
         <label class="flex items-center gap-2 pb-2 text-sm text-ink">
-          <input type="checkbox" v-model="filters.excludeCancelled" class="h-4 w-4 border-line text-moss" />
+          <input type="checkbox" v-model="filters.completedOnly" class="h-4 w-4 border-line text-moss" />
           Не учитывать отменённые
         </label>
         <div class="flex gap-2">
