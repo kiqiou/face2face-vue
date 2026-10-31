@@ -59,7 +59,7 @@ const handleStatusChange = async (event: Event) => {
   try {
     order.value = await updateStatus(order.value.id, newStatus);
   } catch {
-    order.value.status = prevStatus; // откат селекта при ошибке
+    order.value.status = prevStatus;
   } finally {
     statusSaving.value = false;
   }

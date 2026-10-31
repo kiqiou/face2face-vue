@@ -12,6 +12,7 @@ export class User {
   ) {
     this.id = id;
     this.username = username;
+    this.phone = phone;
     this.is_staff = is_staff;
   }
 }
