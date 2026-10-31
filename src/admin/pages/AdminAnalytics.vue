@@ -23,7 +23,7 @@ const resetFilters = () => {
   filters.dateFrom = '';
   filters.dateTo = '';
   filters.completedOnly = true;
-  load();
+  applyFilters();
 };
 
 const formatMoney = (value: number) =>
@@ -75,7 +75,7 @@ onMounted(() => {
         </div>
         <label class="flex items-center gap-2 pb-2 text-sm text-ink">
           <input type="checkbox" v-model="filters.completedOnly" class="h-4 w-4 border-line text-moss" />
-          Не учитывать отменённые
+          Только завершённые заказы
         </label>
         <div class="flex gap-2">
           <button
