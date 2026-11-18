@@ -106,7 +106,7 @@
           <li
             v-for="link in visibleLinks"
             :key="link.name"
-            class="nav-link font-sans text-[15px] lg:text-[17px] font-medium"
+            class="nav-link font-sans text-[15px] lg:text-[20px] font-medium"
           >
             <RouterLink :to="link.link">
               {{ link.name }}
@@ -167,12 +167,6 @@
     id: '5',
     name: 'Личный кабинет',
     link: '/user-profile',
-  };
-
-  const proceduresCartLink = {
-    id: '8',
-    name: 'Добавленные услуги',
-    link: '/user-procedures-cart',
   };
 
   const productsCartLink = {
