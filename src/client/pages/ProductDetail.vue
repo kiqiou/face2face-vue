@@ -312,25 +312,33 @@ watch(product, () => {
           </div>
         </div>
 
-        <!-- таблица характеристик — на всю ширину контейнера -->
-        <div v-if="specRows.length" class="mt-12 border-t border-line pt-10">
-          <h3 class="mb-4 text-[11px] uppercase tracking-[0.15em] text-ink-muted">Характеристики</h3>
-          <table class="w-full border-collapse text-sm">
-            <tbody>
+        <div
+          v-if="specRows.length"
+          class="mt-8 border-t border-line pt-6 sm:mt-12 sm:pt-10"
+        >
+          <h3
+            class="mb-4 text-[11px] uppercase tracking-[0.15em] text-ink-muted sm:mb-5"
+          >
+            Характеристики
+          </h3>
+
+          <table class="block w-full border-collapse text-sm sm:table">
+            <tbody class="block sm:table-row-group">
               <tr
                 v-for="row in specRows"
                 :key="row.label"
-                class="border-t border-line align-top first:border-t-0"
+                class="mb-3 block rounded-lg border border-line px-4 py-3 last:mb-0 sm:mb-0 sm:table-row sm:rounded-none sm:border-0 sm:border-t sm:px-0 sm:py-0"
                 :class="row.highlight ? 'bg-clay/5' : ''"
               >
                 <td
-                  class="w-full py-3 pr-4 align-top text-xs uppercase tracking-[0.1em] sm:w-1/4"
+                  class="block w-full pb-1 text-[10px] font-medium uppercase tracking-[0.1em] sm:table-cell sm:w-1/4 sm:py-3 sm:pr-4 sm:pb-3 sm:text-xs"
                   :class="row.highlight ? 'text-clay' : 'text-ink-muted'"
                 >
                   {{ row.label }}
                 </td>
+
                 <td
-                  class="py-3 leading-relaxed"
+                  class="block min-w-0 break-words text-sm leading-relaxed [overflow-wrap:anywhere] sm:table-cell sm:py-3"
                   :class="row.highlight ? 'text-ink/80' : 'text-ink/90'"
                 >
                   {{ row.value }}
@@ -339,6 +347,7 @@ watch(product, () => {
             </tbody>
           </table>
         </div>
+
       </div>
     </div>
   </div>

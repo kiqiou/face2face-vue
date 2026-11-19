@@ -381,7 +381,7 @@
 
             <div
               v-if="hasProducts"
-              class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3"
+              class="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-x-2 sm:gap-y-6 sm:grid-cols-2 lg:grid-cols-3"
             >
               <div
                 v-for="product in products"
