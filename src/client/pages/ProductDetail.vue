@@ -132,7 +132,7 @@ watch(product, () => {
         @click="goBack"
         class="mb-8 inline-flex items-center gap-2 text-xs uppercase tracking-widest text-ink-muted transition-colors hover:text-moss"
       >
-        <span aria-hidden="true">←</span> Назад к каталогу
+        <span aria-hidden="true">←</span> Назад
       </button>
 
       <p v-if="loading" class="py-20 text-center text-sm text-ink-muted">Загрузка...</p>

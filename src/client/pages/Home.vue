@@ -67,10 +67,13 @@
       <TextSection />
     </div>
   </div>
+
+  <SkinQuizPrompt />
 </template>
 
 <script setup lang="ts">
 import TextSection from '../components/home/TextSection.vue';
+import SkinQuizPrompt from '../components/SkinQuizPrompt.vue';
 
 const scrollToBottom = () => {
   const offset = 200; 

@@ -113,6 +113,10 @@
       error.value = 'Не удалось создать заказ';
     }
   };
+  
+  const goToProduct = (id: number) => {
+    router.push(`/products/${id}`);
+  };
 </script>
 
 <template>
@@ -124,7 +128,7 @@
 
       <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
         <div v-for="item in cart.items" :key="item.product.id" class="flex flex-col gap-2">
-          <ProductCard :show-button="false" :product="item.product" />
+          <ProductCard :show-button="false" :product="item.product" @open-details="goToProduct(item.product.id)" />
 
           <div class="flex items-center justify-between px-2">
             <div class="flex items-center gap-3">

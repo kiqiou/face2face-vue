@@ -9,6 +9,7 @@
   import { useProductsCartStore } from '../../stores/productsCart.js';
   import { useToast } from 'vue-toastification';
   import { useUpdateUserName } from '../../composables/user/useUpdateUsername.js';
+  import SkinTypeCard from '../components/SkinTypeCard.vue';
 
   const { updateName, loading: nameLoading, error: nameError } = useUpdateUserName();
   const { orders, loading: ordersLoading, loadAll: loadOrders } = useGetUserOrders();
@@ -159,8 +160,10 @@
         <p class="text-black/50 mt-1">{{ user?.phone || 'Телефон не указан' }}</p>
       </div>
 
-      <GradientButton button-name="Выйти из аккаунта" @click="logout()" />
+            <GradientButton button-name="Выйти из аккаунта" @click="logout()" />
     </div>
+
+    <SkinTypeCard />
 
     <div class="w-full max-w-3xl mx-auto mt-16">
       <div class="flex items-center gap-3 mb-6">

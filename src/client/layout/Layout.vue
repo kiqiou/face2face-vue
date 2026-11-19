@@ -61,13 +61,23 @@
   import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
   import Footer from '../components/Footer.vue';
   import Header from '../components/Header.vue';
-  import router from '../../router/index.js';
+  import { useRoute, useRouter } from 'vue-router';
   import { useProductsCartStore } from '../../stores/productsCart.js';
 
   const cartStore = useProductsCartStore();
 
+  const route = useRoute();
+  const router = useRouter();
+
+  const cartVisibleOnPage = computed(
+    () => route.path === '/' || route.path === '/products'
+  );
+
+  const showCartButton = computed(
+    () => cartVisibleOnPage.value && cartStore.items.length > 0
+  );
+
   const showScrollToTopButton = ref(false);
-  const showCartButton = computed(() => cartStore.items.length > 0);
 
   const handleScroll = () => {
     showScrollToTopButton.value = window.scrollY > 300;
