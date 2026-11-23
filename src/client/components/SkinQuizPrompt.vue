@@ -22,21 +22,23 @@ const dismiss = () => {
 <template>
   <div
     v-if="prompt && !skinKey"
-    class="fixed bottom-6 left-6 z-40 w-72 rounded-2xl border border-[#E5A663]/30 bg-white p-5 shadow-xl shadow-[#E5A663]/20"
+    class="fixed bottom-6 left-6 z-40 w-72 rounded-3xl border border-line bg-cream p-5 shadow-[0_25px_60px_-25px_rgba(201,139,94,0.6)]"
   >
-    <p class="mb-1 font-semibold text-stone-800">Подберём уход для вас</p>
-    <p class="mb-4 text-sm text-stone-600">
-      Пройдите тест на тип кожи — всего
-      5 вопросов.
+    <span class="mb-3 inline-block rounded-full bg-peach px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-ink">
+      Тест
+    </span>
+    <p class="mb-1 font-semibold text-ink">Подберём уход для вас</p>
+    <p class="mb-4 text-sm text-ink-muted">
+      Пройдите тест на тип кожи — всего 5 вопросов.
     </p>
     <div class="flex items-center gap-4">
       <button
         @click="prompt = false; open = true"
-        class="rounded-full bg-[#E5A663] px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white"
+        class="rounded-full bg-caramel px-5 py-2 text-xs font-medium tracking-widest text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark"
       >
         Пройти
       </button>
-      <button @click="dismiss" class="text-xs uppercase tracking-wide text-black/40 hover:underline">
+      <button @click="dismiss" class="text-xs tracking-wide text-ink-muted transition-colors hover:text-ink">
         Не сейчас
       </button>
     </div>

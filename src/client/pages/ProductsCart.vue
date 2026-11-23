@@ -120,30 +120,39 @@
 </script>
 
 <template>
-  <div class="flex flex-col gap-6 w-full min-h-screen">
-    <div v-if="cart.items.length > 0" class="bg-white/90 rounded-3xl p-6 md:p-8 mb-2">
-      <h2 class="text-3xl font-black text-slate-800 mb-6 flex items-center gap-3">
-        Продукты в корзине
-      </h2>
+  <div class="flex min-h-screen w-full flex-col gap-6">
+    <h1 class="font-display text-2xl font-medium text-ink sm:text-3xl">Корзина</h1>
+
+    <!-- Товары -->
+    <div
+      v-if="cart.items.length > 0"
+      class="rounded-4xl border border-line bg-white/70 p-6 shadow-[0_20px_50px_-30px_rgba(201,139,94,0.55)] md:p-8"
+    >
+      <div class="mb-6 flex items-center gap-3">
+        <h2 class="font-display text-xl font-medium text-ink sm:text-2xl">Продукты в корзине</h2>
+        <span class="rounded-full bg-peach px-3 py-0.5 text-xs font-medium text-ink">
+          {{ cart.items.length }}
+        </span>
+      </div>
 
       <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
-        <div v-for="item in cart.items" :key="item.product.id" class="flex flex-col gap-2">
+        <div v-for="item in cart.items" :key="item.product.id" class="flex flex-col gap-3">
           <ProductCard :show-button="false" :product="item.product" @open-details="goToProduct(item.product.id)" />
 
-          <div class="flex items-center justify-between px-2">
-            <div class="flex items-center gap-3">
+          <div class="flex items-center justify-between px-1">
+            <div class="flex items-center gap-1 rounded-full border border-line bg-cream p-1">
               <button
                 type="button"
-                class="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 text-lg font-bold"
+                class="flex h-8 w-8 items-center justify-center rounded-full text-lg text-ink transition-colors hover:bg-peach"
                 aria-label="Уменьшить количество"
                 @click="cart.decrement(item.product.id)"
               >
                 −
               </button>
-              <span class="w-6 text-center font-semibold">{{ item.quantity }}</span>
+              <span class="w-6 text-center text-sm font-semibold text-ink">{{ item.quantity }}</span>
               <button
                 type="button"
-                class="w-8 h-8 rounded-full bg-black/5 hover:bg-black/10 text-lg font-bold"
+                class="flex h-8 w-8 items-center justify-center rounded-full text-lg text-ink transition-colors hover:bg-peach"
                 aria-label="Увеличить количество"
                 @click="cart.increment(item.product.id)"
               >
@@ -153,7 +162,7 @@
 
             <button
               type="button"
-              class="text-sm text-red-500 hover:text-red-600"
+              class="text-sm text-ink-muted underline decoration-clay/40 underline-offset-4 transition-colors hover:text-clay"
               @click="cart.removeProduct(item.product.id)"
             >
               Удалить
@@ -162,178 +171,199 @@
         </div>
       </div>
 
-      <!-- Промокод и скидка -->
-      <div class="mt-8 pt-6 border-t border-[#E5A663]/30 flex flex-col gap-3">
+      <!-- Промокод и итог -->
+      <div class="mt-8 flex flex-col gap-3 border-t border-line pt-6">
         <div
           v-if="myDiscount && myDiscount.currentDiscountPercent > 0"
-          class="text-sm text-emerald-600"
+          class="w-fit rounded-full bg-emerald-100 px-4 py-1.5 text-sm font-medium text-emerald-800"
         >
           У вас персональная скидка {{ myDiscount.currentDiscountPercent }}%
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-2 w-full sm:max-w-sm sm:ml-auto">
-           <input
-              v-model="promoInput"
-              type="text"
-              placeholder="Промокод"
-              aria-label="Промокод"
-              class="flex-1 min-w-0 rounded-xl border border-black/10 px-4 py-2.5 outline-none focus:border-[#E5A663]"
-            />
-           <button
-              type="button"
-              class="shrink-0 px-4 py-2.5 rounded-xl border border-[#E5A663] text-[#E5A663] font-semibold hover:bg-[#E5A663]/10 disabled:opacity-50"
-              :disabled="isChecking"
-              @click="applyPromo"
-            >
+        <div class="flex w-full flex-col gap-2 sm:ml-auto sm:max-w-sm sm:flex-row">
+          <input
+            v-model="promoInput"
+            type="text"
+            placeholder="Промокод"
+            aria-label="Промокод"
+            class="min-w-0 flex-1 rounded-full border border-line bg-cream px-5 py-2.5 text-ink outline-none placeholder:text-ink-muted/60 focus:border-caramel"
+          />
+          <button
+            type="button"
+            class="shrink-0 rounded-full border border-caramel/60 px-5 py-2.5 text-sm font-medium tracking-[0.05em] text-ink transition-colors hover:bg-caramel hover:text-white disabled:opacity-50"
+            :disabled="isChecking"
+            @click="applyPromo"
+          >
             {{ isChecking ? '...' : 'Применить' }}
           </button>
         </div>
 
-        <div v-if="promoResult && !promoResult.valid" class="text-sm text-red-500 text-right">
+        <div v-if="promoResult && !promoResult.valid" class="text-right text-sm text-clay">
           {{ promoResult.error }}
         </div>
-        <div v-if="promoResult?.valid" class="text-sm text-emerald-600 text-right">
+        <div v-if="promoResult?.valid" class="text-right text-sm text-emerald-700">
           Промокод применён: скидка {{ promoResult.discountPercent }}%
         </div>
 
         <div class="flex flex-col gap-1 text-right">
-          <div class="text-black/50">
-            Подытог: <span class="font-semibold text-black/80">{{ money(total) }} BYN</span>
+          <div class="text-ink-muted">
+            Подытог: <span class="font-semibold text-ink">{{ money(total) }} BYN</span>
           </div>
-          <div v-if="appliedDiscountPercent > 0" class="text-emerald-600 font-medium">
+          <div v-if="appliedDiscountPercent > 0" class="font-medium text-emerald-700">
             Скидка {{ appliedDiscountPercent }}%: −{{ money(discountAmount) }} BYN
           </div>
-          <div class="text-xl text-black/80 mt-1">
-            Итого: <span class="font-black text-[#E5A663]">{{ money(finalTotal) }}</span> BYN
+          <div class="mt-1 text-xl text-ink">
+            Итого: <span class="text-2xl font-semibold text-caramel">{{ money(finalTotal) }}</span> BYN
           </div>
         </div>
       </div>
     </div>
 
-    <div v-else-if="!success" class="flex justify-center text-black/70 text-2xl">
-      Вы еще не добавили товаров
+    <div
+      v-else-if="!success"
+      class="flex flex-col items-center gap-4 rounded-4xl border border-line bg-white/70 p-10 text-center"
+    >
+      <p class="text-xl text-ink-muted">Вы ещё не добавили товаров</p>
+      <router-link
+        to="/products"
+        class="rounded-full bg-caramel px-6 py-2.5 text-sm font-medium tracking-widest text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark"
+      >
+        Перейти к товарам →
+      </router-link>
     </div>
 
-    <!-- Форма оформления + информационный блок справа -->
-    <div v-if="cart.items.length > 0" class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6 items-start">
-      <div class="bg-white/90 rounded-3xl p-6 md:p-8">
-        <h2 class="text-2xl font-black text-slate-800 mb-6">Оформление заказа</h2>
+    <!-- Оформление + инструкции -->
+    <div v-if="cart.items.length > 0" class="grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_360px]">
+      <div class="rounded-4xl border border-line bg-white/70 p-6 shadow-[0_20px_50px_-30px_rgba(201,139,94,0.55)] md:p-8">
+        <h2 class="mb-6 font-display text-xl font-medium text-ink sm:text-2xl">Оформление заказа</h2>
 
-        <form class="flex flex-col gap-4 max-w-lg" @submit.prevent="handleSubmit">
-          <div class="flex flex-col gap-1">
-            <label for="order-name" class="text-sm font-semibold text-black/70">Имя</label>
+        <form class="flex max-w-lg flex-col gap-5" @submit.prevent="handleSubmit">
+          <div class="flex flex-col gap-1.5">
+            <label for="order-name" class="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-muted">Имя</label>
             <input
               id="order-name"
               v-model="form.name"
               type="text"
               disabled
               placeholder="Ваше имя"
-              class="rounded-xl border border-black/10 px-4 py-3 outline-none focus:border-[#E5A663]"
+              class="rounded-full border border-line bg-cream px-5 py-3 text-ink outline-none disabled:opacity-70"
             />
-            <!-- TODO: когда в профиле появится поле имени, проверить путь /profile -->
-            <span v-if="!form.name" class="text-sm text-black/50">
+            <span v-if="!form.name" class="text-sm text-ink-muted">
               Имя можно указать в
-              <router-link to="/profile" class="text-[#E5A663] underline">профиле</router-link>
+              <router-link to="/user-profile" class="text-caramel underline underline-offset-4">профиле</router-link>
             </span>
           </div>
 
-          <div class="flex flex-col gap-1">
-            <label for="order-phone" class="text-sm font-semibold text-black/70">Телефон</label>
+          <div class="flex flex-col gap-1.5">
+            <label for="order-phone" class="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-muted">Телефон</label>
             <input
               id="order-phone"
               v-model="form.phone"
               type="text"
               disabled
               placeholder="Ваш телефон"
-              class="rounded-xl border border-black/10 px-4 py-3 outline-none focus:border-[#E5A663]"
+              class="rounded-full border border-line bg-cream px-5 py-3 text-ink outline-none disabled:opacity-70"
             />
-            <span v-if="formErrors.phone" class="text-sm text-red-500">{{ formErrors.phone }}</span>
-            <span class="text-sm text-black/50">
+            <span v-if="formErrors.phone" class="text-sm text-clay">{{ formErrors.phone }}</span>
+            <span class="text-sm text-ink-muted">
               Заказ оформляется на номер вашего аккаунта, по нему мы свяжемся с вами
             </span>
           </div>
 
-          <div class="rounded-xl bg-[#E5A663]/10 px-4 py-3 text-sm text-black/70">
-            <div class="font-semibold text-black/80">Выдача заказа по договорённости</div>
+          <div class="rounded-3xl bg-peach/60 px-5 py-4 text-sm text-ink-muted">
+            <div class="font-semibold text-ink">Выдача заказа по договорённости</div>
             <div>{{ PICKUP_ADDRESS }}</div>
-            <div class="mt-1">
-              После оформления мы свяжемся с вами и согласуем время выдачи
-            </div>
-            <div class="mt-1 text-black/50">Доставки нет</div>
+            <div class="mt-1">После оформления мы свяжемся с вами и согласуем время выдачи</div>
+            <div class="mt-1 text-ink-muted/80">Доставки нет</div>
           </div>
 
           <div class="flex flex-col gap-2">
-            <span class="text-sm font-semibold text-black/70">Способ оплаты</span>
-            <div class="flex flex-wrap gap-4">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" value="cash" v-model="form.paymentMethod" />
+            <span class="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-muted">Способ оплаты</span>
+            <div class="flex flex-wrap gap-3">
+              <label
+                class="flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm text-ink transition-colors"
+                :class="form.paymentMethod === 'cash' ? 'border-caramel bg-peach' : 'border-line bg-cream hover:border-caramel/60'"
+              >
+                <input type="radio" value="cash" v-model="form.paymentMethod" class="accent-caramel" />
                 Наличными при получении
               </label>
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" value="card" v-model="form.paymentMethod" />
+              <label
+                class="flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm text-ink transition-colors"
+                :class="form.paymentMethod === 'card' ? 'border-caramel bg-peach' : 'border-line bg-cream hover:border-caramel/60'"
+              >
+                <input type="radio" value="card" v-model="form.paymentMethod" class="accent-caramel" />
                 Картой при получении
               </label>
             </div>
           </div>
 
-          <div class="flex flex-col gap-1">
-            <span class="text-sm font-semibold text-black/70">Способ подтверждения</span>
-            <div class="flex gap-4">
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" value="call" v-model="form.approvementMethod" />
+          <div class="flex flex-col gap-2">
+            <span class="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-muted">Способ подтверждения</span>
+            <div class="flex flex-wrap gap-3">
+              <label
+                class="flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm text-ink transition-colors"
+                :class="form.approvementMethod === 'call' ? 'border-caramel bg-peach' : 'border-line bg-cream hover:border-caramel/60'"
+              >
+                <input type="radio" value="call" v-model="form.approvementMethod" class="accent-caramel" />
                 Звонок
               </label>
-              <!-- TODO: уточнить канал (SMS, Viber, Telegram) и добавить его в Политику -->
-              <label class="flex items-center gap-2 cursor-pointer">
-                <input type="radio" value="message" v-model="form.approvementMethod" />
+              <label
+                class="flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm text-ink transition-colors"
+                :class="form.approvementMethod === 'message' ? 'border-caramel bg-peach' : 'border-line bg-cream hover:border-caramel/60'"
+              >
+                <input type="radio" value="message" v-model="form.approvementMethod" class="accent-caramel" />
                 Сообщение
               </label>
             </div>
           </div>
 
-          <div class="flex flex-col gap-1">
-            <label for="order-comment" class="text-sm font-semibold text-black/70">Комментарий</label>
+          <div class="flex flex-col gap-1.5">
+            <label for="order-comment" class="text-[11px] font-medium uppercase tracking-[0.15em] text-ink-muted">Комментарий</label>
             <textarea
               id="order-comment"
               v-model="form.comment"
               rows="3"
               placeholder="Комментарий к заказу (необязательно)"
-              class="rounded-xl border border-black/10 px-4 py-3 outline-none focus:border-[#E5A663] resize-none"
+              class="resize-none rounded-3xl border border-line bg-cream px-5 py-3 text-ink outline-none placeholder:text-ink-muted/60 focus:border-caramel"
             ></textarea>
           </div>
 
-          <div class="flex flex-col gap-2 text-sm text-black/60">
-            <label class="flex items-start gap-2">
-              <input type="checkbox" v-model="consentPersonalData" class="mt-1 shrink-0" />
+          <div class="flex flex-col gap-3 text-sm text-ink-muted">
+            <label class="flex items-start gap-2.5">
+              <input type="checkbox" v-model="consentPersonalData" class="mt-1 shrink-0 accent-caramel" />
               <span>
                 Даю согласие на обработку моего имени и номера телефона для выполнения заказа в
                 соответствии с
-                <router-link to="/privacy-policy" target="_blank" class="text-[#E5A663] underline">
+                <router-link to="/privacy-policy" target="_blank" class="text-caramel underline underline-offset-4">
                   Политикой обработки персональных данных
                 </router-link>
               </span>
             </label>
 
-            <label class="flex items-start gap-2">
-              <input type="checkbox" v-model="termsAccepted" class="mt-1 shrink-0" />
+            <label class="flex items-start gap-2.5">
+              <input type="checkbox" v-model="termsAccepted" class="mt-1 shrink-0 accent-caramel" />
               <span>
                 Принимаю условия
-                <router-link to="/offer" target="_blank" class="text-[#E5A663] underline">
+                <router-link to="/offer" target="_blank" class="text-caramel underline underline-offset-4">
                   публичной оферты
                 </router-link>
                 и
-                <router-link to="/return-policy" target="_blank" class="text-[#E5A663] underline">
+                <router-link to="/return-policy" target="_blank" class="text-caramel underline underline-offset-4">
                   возврата и обмена
                 </router-link>
               </span>
             </label>
           </div>
 
-          <div v-if="error" class="text-red-500 text-sm">{{ error }}</div>
+          <div v-if="error" class="text-sm text-clay">{{ error }}</div>
 
-          <GradientButton type="submit" :disabled="submitting || !calculateSubmit" button-name="Подтвердить">
-            {{ submitting ? 'Оформляем...' : `Оформить заказ на ${money(finalTotal)} BYN` }}
-          </GradientButton>
+          <button
+            type="submit"
+            :disabled="submitting"
+            class="w-full rounded-full bg-caramel px-8 py-3.5 text-sm font-medium tracking-[0.08em] text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark disabled:cursor-not-allowed disabled:opacity-60 disabled:shadow-none"
+          >
+            {{ submitting ? 'Оформляем...' : `Оформить заказ` }}
+          </button>
         </form>
       </div>
 

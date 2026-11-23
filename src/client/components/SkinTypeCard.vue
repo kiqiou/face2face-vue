@@ -11,43 +11,42 @@ const open = ref(false);
 const { skinTypes, load } = useSkinTypes();
 onMounted(load);
 
-const skinTypeId = computed(() =>
-  skinKey.value ? skinTypes.value.find((s) => s.name === TYPE_NAMES[skinKey.value!])?.id : undefined
-);
+const showProducts = () => router.push({ path: '/products', hash: '#for-you' });
 
-const showProducts = () => {
-  router.push({
-    path: '/products',
-    query: skinTypeId.value ? { skin_type: String(skinTypeId.value) } : {},
-  });
-};
 </script>
 
 <template>
-  <div class="w-full max-w-3xl mx-auto mt-12 rounded-2xl border border-[#E5A663]/20 bg-white/90 p-6">
-    <p class="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#E5A663]">Тип кожи</p>
+  <div class="w-full rounded-4xl border border-line bg-white/70 p-6 shadow-[0_20px_50px_-30px_rgba(201,139,94,0.55)]">
+    <span class="mb-3 inline-block rounded-full bg-peach px-3 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-ink">
+      Тип кожи
+    </span>
 
     <template v-if="skinKey">
-      <h3 class="text-2xl font-black text-slate-800">{{ TYPE_NAMES[skinKey] }}</h3>
-      <p class="mt-1 text-sm text-black/60">{{ TYPE_INFO[skinKey].text }}</p>
-      <div class="mt-4 flex flex-wrap items-center gap-4">
+      <h3 class="font-display text-2xl font-medium text-ink">{{ TYPE_NAMES[skinKey] }}</h3>
+      <p class="mt-2 text-sm leading-relaxed text-ink-muted">{{ TYPE_INFO[skinKey].text }}</p>
+      <div class="mt-5 flex flex-row items-center gap-3">
         <button
-            @click="showProducts"
-            class="rounded-full bg-[#E5A663] px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white"
-            >
-            Подборка для меня
-            </button>
-        <button @click="open = true" class="text-sm font-semibold text-[#E5A663] hover:underline">
+          @click="showProducts"
+          class="rounded-full bg-caramel px-2 py-2.5 text-xs font-medium tracking-widest text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark"
+        >
+          Подборка для меня →
+        </button>
+        <button
+          @click="open = true"
+          class="text-sm text-ink-muted underline decoration-caramel/50 underline-offset-4 transition-colors hover:text-caramel"
+        >
           Пройти тест заново
         </button>
       </div>
     </template>
 
     <template v-else>
-      <p class="mb-3 text-sm text-black/60">Пройдите тест из 5 вопросов, и мы подберём уход.</p>
+      <p class="mb-4 text-sm leading-relaxed text-ink-muted">
+        Пройдите тест из 5 вопросов, и мы подберём уход.
+      </p>
       <button
         @click="open = true"
-        class="rounded-full bg-[#E5A663] px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white"
+        class="rounded-full bg-caramel px-5 py-2.5 text-xs font-medium tracking-widest text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark"
       >
         Пройти тест
       </button>

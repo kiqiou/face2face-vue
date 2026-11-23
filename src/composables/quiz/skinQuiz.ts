@@ -3,6 +3,29 @@ import { QUIZ_API_BASE } from './quizApiBase.js';
 import { authFetch } from '../../utils/authFetch.js';
 
 export type TypeKey = 'oily' | 'dry' | 'combo' | 'normal' | 'sensitive';
+export type ConcernKey = 'redness' | 'acne' | 'dehydration' | 'aging' | 'pigmentation' | 'postacne';
+
+// названия должны совпадать с ProductPurpose в базе
+export const CONCERN_NAMES: Record<ConcernKey, string> = {
+  redness: 'Покраснения и розацеа',
+  acne: 'Акне',
+  dehydration: 'Обезвоженная кожа',
+  aging: 'Возрастной уход',
+  pigmentation: 'Пигментация',
+  postacne: 'Постакне',
+};
+
+export const CONCERN_QUESTION = {
+  text: 'Что вас беспокоит сейчас? Можно выбрать несколько.',
+  options: [
+    { label: 'Покраснения, раздражение', key: 'redness' },
+    { label: 'Высыпания, воспаления', key: 'acne' },
+    { label: 'Следы после высыпаний', key: 'postacne' },
+    { label: 'Шелушение, стянутость', key: 'dehydration' },
+    { label: 'Пигментные пятна, неровный тон', key: 'pigmentation' },
+    { label: 'Морщины, снижение тонуса', key: 'aging' },
+  ] as { label: string; key: ConcernKey }[],
+};
 
 // названия должны совпадать с SkinType в базе
 export const TYPE_NAMES: Record<TypeKey, string> = {
@@ -65,6 +88,13 @@ export const QUESTIONS: Q[] = [
   ]},
 ];
 
+export function calcConcerns(answers: number[], picked: ConcernKey[]): ConcernKey[] {
+  const set = new Set<ConcernKey>(picked);
+  if (answers[3] === 0) set.add('redness');       // «часто краснеет, чешется»
+  if (answers[4] === 0) set.add('dehydration');   // «часто шелушится»
+  return [...set];
+}
+
 export function calcResult(answers: number[]): TypeKey {
   const t: Record<TypeKey, number> = { oily: 0, dry: 0, combo: 0, normal: 0, sensitive: 0 };
   answers.forEach((a, qi) => {
@@ -77,26 +107,35 @@ export function calcResult(answers: number[]): TypeKey {
 }
 
 const LS = 'skinQuizType';
-export const skinKey = ref<TypeKey | null>((localStorage.getItem(LS) as TypeKey) || null);
+const LS_C = 'skinQuizConcerns';
 
-export function setSkinKey(key: TypeKey) {
+export const skinKey = ref<TypeKey | null>((localStorage.getItem(LS) as TypeKey) || null);
+export const skinConcerns = ref<ConcernKey[]>(JSON.parse(localStorage.getItem(LS_C) || '[]'));
+
+export function setSkinProfile(key: TypeKey, concerns: ConcernKey[]) {
   skinKey.value = key;
+  skinConcerns.value = concerns;
   localStorage.setItem(LS, key);
+  localStorage.setItem(LS_C, JSON.stringify(concerns));
 }
 
 export function clearSkinProfile() {
   skinKey.value = null;
+  skinConcerns.value = [];
   localStorage.removeItem(LS);
+  localStorage.removeItem(LS_C);
 }
 
-export async function saveSkinProfile(key: TypeKey, id?: number) {
-  setSkinKey(key);
+export async function saveSkinProfile(
+  key: TypeKey, concerns: ConcernKey[], id?: number, concernIds: number[] = []
+) {
+  setSkinProfile(key, concerns);
   if (!id) return;
   try {
-    await authFetch(QUIZ_API_BASE + 'my_skin_type/', {   // подстрой под свою сигнатуру authFetch
+    await authFetch(QUIZ_API_BASE + 'my_skin_type/', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ skin_type: id }),
+      body: JSON.stringify({ skin_type: id, concerns: concernIds }),
     });
   } catch { /* гость: остаётся только localStorage */ }
 }

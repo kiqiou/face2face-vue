@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@config "../tailwind.config.js";
 
 /* В Tailwind v4 используем стандартный CSS синтаксис для базовых стилей */
 @layer base {

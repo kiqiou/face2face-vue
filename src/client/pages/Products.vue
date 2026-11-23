@@ -7,11 +7,11 @@
   import { useCollections } from '../../composables/product/collection/useCollections.js';
   import { useSkinTypes } from '../../composables/product/skinTypes/useSkinTypes.js';
   import ProductCard from '../components/ProductCard.vue';
-  import PromoBanner from '../components/PromoBanner.vue';
   import { useProductsCartStore } from '../../stores/productsCart.js';
   import { Product } from '../../models/product.js';
   import PromoCarousel from '../components/PromoCarousel.vue';
   import AppPagination from '../components/AppPagination.vue';
+  import PersonalPicks from '../components/PersonalPicks.vue';
 
   const route = useRoute();
   const router = useRouter();
@@ -109,6 +109,30 @@
     router.push(`/products/${id}`);
   };
 
+  const sortedSkinTypes = computed(() =>
+    [...skinTypes.value].sort((a, b) =>
+      a.name.localeCompare(b.name, 'ru')
+    )
+  );
+
+  const sortedManufacturers = computed(() =>
+    [...manufacturers.value].sort((a, b) =>
+      a.name.localeCompare(b.name, 'ru')
+    )
+  );
+
+  const sortedPurposes = computed(() =>
+    [...purposes.value].sort((a, b) =>
+      a.name.localeCompare(b.name, 'ru')
+    )
+  );
+
+  const sortedCollections = computed(() =>
+    [...collections.value].sort((a, b) =>
+      a.name.localeCompare(b.name, 'ru')
+    )
+  );
+
   const activeFiltersCount = computed(
     () =>
       selectedManufacturers.value.length +
@@ -157,7 +181,7 @@
 
 <template>
   <section class="mb-12 min-w-0 max-w-full">
-    <div class="min-h-screen bg-paper font-body text-ink">
+    <div class="min-h-screen font-body text-ink">
       <div class="mx-auto max-w-7xl px-4 py-10 lg:py-14">
         <p class="mb-3 text-xs uppercase tracking-[0.2em] text-ink-muted">
           Каталог
@@ -168,8 +192,11 @@
           Товары
         </h1>
 
-        <!-- Баннер -->
-        <PromoBanner class="mb-10" />
+        <img
+          class="mb-10 w-full rounded-2xl"
+          src="/images/promoBanner.png"
+          alt="Скидка 10% на первый заказ"
+        />
 
         <PromoCarousel
           :products="promoProducts"
@@ -179,10 +206,14 @@
 
         <div class="mb-10 border-b border-line"></div>
 
+        <PersonalPicks />
+
+        <div class="mb-10 border-b border-line"></div>
+
         <div class="flex flex-col gap-10 lg:flex-row lg:gap-14">
           <!-- Filters -->
           <aside
-            class="flex-shrink-0 space-y-0 divide-y divide-line lg:sticky lg:top-8 lg:w-64 lg:self-start"
+            class="shrink-0 space-y-0 divide-y divide-line lg:sticky lg:top-8 lg:w-64 lg:self-start"
           >
             <!-- Тип кожи — первый, открыт по умолчанию -->
             <div class="pb-6">
@@ -200,7 +231,7 @@
               </button>
               <div v-show="openSections.skinType" class="space-y-1.5">
                 <label
-                  v-for="st in skinTypes"
+                  v-for="st in sortedSkinTypes"
                   :key="st.id"
                   class="flex items-center gap-2 text-sm text-ink"
                 >
@@ -231,7 +262,7 @@
               </button>
               <div v-show="openSections.manufacturer" class="space-y-1.5">
                 <label
-                  v-for="m in manufacturers"
+                  v-for="m in sortedManufacturers"
                   :key="m.id"
                   class="flex items-center gap-2 text-sm text-ink"
                 >
@@ -262,7 +293,7 @@
               </button>
               <div v-show="openSections.purpose" class="space-y-1.5">
                 <label
-                  v-for="p in purposes"
+                  v-for="p in sortedPurposes"
                   :key="p.id"
                   class="flex items-center gap-2 text-sm text-ink"
                 >
@@ -293,7 +324,7 @@
               </button>
               <div v-show="openSections.collection" class="space-y-1.5">
                 <label
-                  v-for="c in collections"
+                  v-for="c in sortedCollections"
                   :key="c.id"
                   class="flex items-center gap-2 text-sm text-ink"
                 >
@@ -347,7 +378,7 @@
                     @input="onSearchInput"
                     type="search"
                     placeholder="Поиск по названию, описанию, производителю"
-                    class="w-full border border-line bg-paper px-3 py-2 text-sm text-ink focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
+                    class="w-full rounded-xl border border-line bg-paper px-3 py-2 text-sm text-ink focus:border-moss focus:outline-none focus:ring-2 focus:ring-moss/30"
                   />
                   <span class="mt-2 block text-sm text-ink-muted">{{ totalCount }} товаров</span>
                 </div>
@@ -380,9 +411,9 @@
             </p>
 
             <div
-              v-if="hasProducts"
-              class="grid grid-cols-2 gap-x-6 gap-y-10 sm:gap-x-2 sm:gap-y-6 sm:grid-cols-2 lg:grid-cols-3"
-            >
+                v-if="hasProducts"
+                class="grid grid-cols-2 gap-x-3 gap-y-4 sm:gap-x-4 sm:gap-y-6 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-8"
+              >
               <div
                 v-for="product in products"
                 :key="product.id"

@@ -4,7 +4,7 @@
   >
     <!-- Изображение -->
     <div
-      class="relative aspect-[4/5] cursor-pointer overflow-hidden bg-petal-soft/40"
+      class="relative aspect-4/5 cursor-pointer overflow-hidden bg-petal-soft/40"
       @click="$emit('open-details', product)"
     >
       <img
@@ -24,7 +24,7 @@
 
       <!-- Затемнение при наведении -->
       <div
-        class="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/15 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        class="pointer-events-none absolute inset-0 bg-linear-to-t from-ink/15 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
 
       <!-- Статус наличия -->
@@ -33,14 +33,14 @@
         class="absolute inset-0 flex items-center justify-center bg-paper/60 backdrop-blur-[2px]"
       >
         <span
-          class="rounded-full border border-clay/30 bg-white/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.1em] text-clay sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.15em]"
+          class="rounded-full border border-clay/30 bg-white/90 px-2.5 py-1 text-[9px] font-medium uppercase tracking-widest text-clay sm:px-4 sm:py-1.5 sm:text-[11px] sm:tracking-[0.15em]"
         >
           Нет в наличии
         </span>
       </div>
       <span
         v-else
-        class="absolute right-2 top-2 flex items-center gap-1.5 rounded-full bg-white/90 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.1em] text-moss shadow-sm backdrop-blur-sm sm:right-3.5 sm:top-3.5 sm:px-2.5"
+        class="absolute right-2 top-2 flex items-center gap-1.5 rounded-full bg-white/90 px-2 py-1 text-[10px] font-medium uppercase tracking-widest text-moss shadow-sm backdrop-blur-sm sm:right-3.5 sm:top-3.5 sm:px-2.5"
       >
         <span class="h-1.5 w-1.5 rounded-full bg-moss" aria-hidden="true" />
         <span class="hidden sm:inline">В наличии</span>
@@ -62,13 +62,13 @@
     <!-- Контент -->
     <div class="flex min-w-0 flex-1 flex-col p-2.5 sm:p-4">
       <p
-        class="mb-1 truncate text-[10px] font-medium uppercase tracking-[0.1em] text-ink-muted sm:mb-1.5 sm:text-[10.5px] sm:tracking-[0.14em]"
+        class="mb-1 truncate text-[10px] font-medium uppercase tracking-widest text-ink-muted sm:mb-1.5 sm:text-[10.5px] sm:tracking-[0.14em]"
       >
         {{ product.manufacturer?.name }}
       </p>
 
       <h3
-        class="mb-2 line-clamp-2 min-h-[2.6em] cursor-pointer break-words font-display text-[13px] font-medium leading-snug text-ink transition-colors hover:text-moss sm:mb-3 sm:min-h-[2.7em] sm:text-[15px]"
+        class="mb-2 line-clamp-2 min-h-[2.6em] cursor-pointer wrap-break-word font-display text-[13px] font-medium leading-snug text-ink transition-colors hover:text-moss sm:mb-3 sm:min-h-[2.7em] sm:text-[15px]"
         @click="$emit('open-details', product)"
       >
         {{ product.name }}
