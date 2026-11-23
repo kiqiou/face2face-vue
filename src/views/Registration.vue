@@ -145,59 +145,165 @@
   });
 </script>
 
+```vue
 <template>
-  <div class="flex flex-col p-8 items-center w-full min-h-screen gap-10">
-    <div class="flex justify-center animate-fade-in-up bg-gradient-to-br from-[#E5A663]/80 to-[#FAEE9E] p-[2px] rounded-[32px] w-full max-w-sm">
-      <p class="text-[40px] text-[#5D4037]">Face2face</p>
+  <div class="flex min-h-screen w-full flex-col items-center gap-8 px-4 py-10 sm:py-14">
+    <!-- Заголовок -->
+    <div class="w-full max-w-xl text-center">
+      <p class="mb-3 text-xs uppercase tracking-[0.2em] text-ink-muted">
+        FACE2FACE COSMETOLOGY
+      </p>
+      <h1 class="font-display text-3xl font-medium text-ink sm:text-4xl">
+        Регистрация / вход
+      </h1>
+      <p class="mt-3 text-sm leading-relaxed text-ink-muted">
+        Войдите через Telegram, чтобы оформлять заказы и управлять своим профилем
+      </p>
     </div>
 
-    <div class="animate-fade-in-up bg-gradient-to-br from-[#E5A663] to-[#FAEE9E] p-[2px] rounded-[32px] w-full max-w-sm">
-      <div class="bg-white/90 rounded-[30px] p-8 flex flex-col items-center gap-6">
-        <h1 class="text-2xl text-[#5D4037]">Регистрация/вход</h1>
-
-        <!-- Инструкция ДО начала авторизации -->
-        <div v-if="!isWaiting" class="text-xs text-stone-600 bg-stone-50 border border-stone-200/60 p-4 rounded-2xl w-full space-y-2">
-          <p class="font-semibold text-stone-700">Как пройти регистрацию:</p>
-          <ol class="list-decimal list-inside space-y-1.5 pl-1">
-            <li>Нажмите кнопку <span class="font-medium text-[#E5A663]">«Войти через Telegram»</span></li>
-            <li>В открывшемся боте нажмите <span class="font-medium">«Запустить» (Start)</span></li>
-            <li>Нажмите появившуюся кнопку <span class="font-medium">«Поделиться номером телефона»</span></li>
-            <li>После этого вернитесь на сайт — вход выполнится автоматически</li>
-          </ol>
+    <!-- Карточка авторизации -->
+    <div
+      class="w-full max-w-xl rounded-[2rem] border border-line bg-white/70 p-6 shadow-[0_20px_50px_-30px_rgba(201,139,94,0.55)] sm:p-9"
+    >
+      <!-- Иконка -->
+      <div class="mb-6 flex justify-center">
+        <div class="flex h-16 w-16 items-center justify-center rounded-full bg-peach text-3xl text-caramel">
+          <span>♡</span>
         </div>
-
-        <!-- Инструкция ВО ВРЕМЯ ожидания ответа от Telegram -->
-        <div v-if="isWaiting" class="flex flex-col items-center gap-3 text-center">
-          <div class="w-8 h-8 rounded-full border-2 border-t-transparent border-[#E5A663] animate-spin"></div>
-          <p class="text-sm text-gray-700 font-medium">Ждем подтверждения в Telegram...</p>
-          <p class="text-xs text-gray-500 leading-relaxed">
-            Перейдите в открывшееся окно мессенджера, нажмите кнопку <strong>«Поделиться номером телефона»</strong>, а затем сразу возвращайтесь на эту страницу.
-          </p>
-
-          <button
-            type="button"
-            class="text-sm text-stone-500 underline hover:text-stone-700"
-            @click="cancelLogin"
-          >
-            Отменить
-          </button>
-        </div>
-
-        <label class="flex items-start gap-2 text-sm text-gray-600">
-          <input type="checkbox" v-model="consentGiven" class="mt-1" />
-          <span>
-            Я даю согласие ИП Песлякова А.А. на обработку моего имени и номера телефона для оформления заказа и связи со мной, в соответствии с
-            <router-link to="/privacy-policy" target="_blank" class="underline text-[#E5A663]">Политикой в отношении обработки персональных данных.</router-link>
-          </span>
-        </label>
-
-        <GradientButton
-          v-if="!isWaiting"
-          :buttonName="isLoading ? 'Загрузка...' : 'Войти через Telegram'"
-          :disabled="isLoading || !consentGiven"
-          @click="startLogin"
-        />
       </div>
+
+      <h2 class="mb-2 text-center font-display text-xl font-medium text-ink sm:text-2xl">
+        {{ isWaiting ? 'Подтвердите вход' : 'Добро пожаловать!' }}
+      </h2>
+
+      <p class="mb-7 text-center text-sm text-ink-muted">
+        {{
+          isWaiting
+            ? 'Остался всего один шаг для завершения авторизации'
+            : 'Для входа используйте свой аккаунт Telegram'
+        }}
+      </p>
+
+      <!-- Инструкция до авторизации -->
+      <div
+        v-if="!isWaiting"
+        class="mb-7 rounded-3xl bg-peach/50 p-5"
+      >
+        <p class="mb-4 text-sm font-semibold text-ink">
+          Как войти на сайт?
+        </p>
+
+        <ol class="space-y-3 text-sm leading-relaxed text-ink-muted">
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-caramel">1</span>
+            <span>
+              Нажмите кнопку
+              <strong class="font-medium text-ink">«Войти через Telegram»</strong>.
+            </span>
+          </li>
+
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-caramel">2</span>
+            <span>
+              В открывшемся боте нажмите
+              <strong class="font-medium text-ink">«Запустить» (Start)</strong>.
+            </span>
+          </li>
+
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-caramel">3</span>
+            <span>
+              Нажмите
+              <strong class="font-medium text-ink">«Поделиться номером телефона»</strong>.
+            </span>
+          </li>
+
+          <li class="flex gap-3">
+            <span class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-semibold text-caramel">4</span>
+            <span>
+              Вернитесь на сайт — вход выполнится автоматически.
+            </span>
+          </li>
+        </ol>
+      </div>
+
+      <!-- Ожидание подтверждения -->
+      <div
+        v-if="isWaiting"
+        class="mb-7 flex flex-col items-center gap-4 rounded-3xl bg-peach/50 px-5 py-8 text-center"
+      >
+        <div class="flex h-14 w-14 items-center justify-center rounded-full bg-white">
+          <div
+            class="h-7 w-7 animate-spin rounded-full border-[3px] border-caramel/20 border-t-caramel"
+          ></div>
+        </div>
+
+        <div>
+          <p class="font-medium text-ink">
+            Ждём подтверждения в Telegram...
+          </p>
+          <p class="mt-2 text-sm leading-relaxed text-ink-muted">
+            Перейдите в открывшееся окно Telegram, нажмите кнопку
+            «Поделиться номером телефона», а затем вернитесь на эту страницу.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="text-sm text-ink-muted underline decoration-caramel/50 underline-offset-4 transition-colors hover:text-caramel"
+          @click="cancelLogin"
+        >
+          Отменить авторизацию
+        </button>
+      </div>
+
+      <!-- Согласие -->
+      <label
+        v-if="!isWaiting"
+        class="mb-6 flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-ink-muted"
+      >
+        <input
+          type="checkbox"
+          v-model="consentGiven"
+          class="mt-1 h-4 w-4 shrink-0 accent-caramel"
+        />
+        <span>
+          Я даю согласие ИП Песлякова А.А. на обработку моего имени и номера телефона
+          для оформления заказа и связи со мной в соответствии с
+          <router-link
+            to="/privacy-policy"
+            target="_blank"
+            class="text-caramel underline decoration-caramel/40 underline-offset-4 hover:text-ink"
+          >
+            Политикой обработки персональных данных
+          </router-link>.
+        </span>
+      </label>
+
+      <!-- Кнопка авторизации -->
+      <button
+        v-if="!isWaiting"
+        type="button"
+        :disabled="isLoading || !consentGiven"
+        @click="startLogin"
+        class="w-full rounded-full bg-caramel px-6 py-3.5 text-sm font-medium tracking-[0.08em] text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+      >
+        {{ isLoading ? 'Подключение...' : 'Войти через Telegram →' }}
+      </button>
+
+      <p
+        v-if="!isWaiting"
+        class="mt-5 text-center text-xs leading-relaxed text-ink-muted"
+      >
+        Ваш номер телефона используется только для авторизации,
+        оформления заказов и связи с вами.
+      </p>
     </div>
+
+    <!-- Дополнительная информация -->
+    <p class="text-center text-xs text-ink-muted">
+      FACE2FACE COSMETOLOGY · Красота начинается с заботы о себе
+    </p>
   </div>
 </template>
+```
