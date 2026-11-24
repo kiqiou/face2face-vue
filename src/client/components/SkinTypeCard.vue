@@ -29,7 +29,7 @@ const showProducts = () => router.push({ path: '/products', hash: '#for-you' });
           @click="showProducts"
           class="rounded-full bg-caramel px-2 py-2.5 text-xs font-medium tracking-widest text-white shadow-[0_10px_25px_-10px_rgba(176,111,67,0.8)] transition-colors hover:bg-caramel-dark"
         >
-          Подборка для меня →
+          Подборка для меня
         </button>
         <button
           @click="open = true"

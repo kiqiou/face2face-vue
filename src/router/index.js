@@ -84,4 +84,19 @@ export const router = createRouter({
   },
 });
 
+let isFirstLoad = true;
+
+router.afterEach((to, from) => {
+  if (isFirstLoad) {
+    isFirstLoad = false;
+    return;
+  }
+
+  if (typeof window.ym === 'function') {
+    window.ym(114652229, 'hit', to.fullPath, {
+      referer: `${window.location.origin}${from.fullPath}`,
+    });
+  }
+});
+
 export default router;
