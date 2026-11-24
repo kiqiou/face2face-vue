@@ -17,7 +17,7 @@
   const { submitting, error, success, submit } = useCreateOrder();
   const { myDiscount, promoResult, isChecking, loadMyDiscount, checkPromoCode } = usePromo();
 
-  const user = authService.getUser();
+  const user = authService.currentUser;
   const toast = useToast();
 
   onMounted(() => {
@@ -28,8 +28,8 @@
 
   // Имя и телефон берутся из аккаунта и при оформлении не редактируются
   const form = reactive({
-    name: user?.username ?? '',
-    phone: user?.phone ?? '',
+    name: user?.value.username ?? '',
+    phone: user?.value.phone ?? '',
     paymentMethod: 'cash' as 'cash' | 'card',
     approvementMethod: 'call' as 'call' | 'message',
     comment: '',
@@ -91,7 +91,7 @@
 
     try {
       const order = await submit({
-        user: user,
+        user: user.value,
         paymentMethod: form.paymentMethod,
         approvementMethod: form.approvementMethod,
         comment: form.comment.trim(),

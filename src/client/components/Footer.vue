@@ -17,6 +17,9 @@
               >Кальварийская, 21, 157</span
             >
           </p>
+          <p class="text-xs text-black/60 leading-relaxed">
+            Выдача заказов осуществляется только самовывозом по предварительной договорённости (доставка временно недоступна).
+          </p>
         </div>
 
       <div class="space-y-4 text-center sm:text-left">

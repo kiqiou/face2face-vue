@@ -19,8 +19,14 @@ class AuthService {
   }
 
   getUser(): any {
-    const user = localStorage.getItem(this.USER);
-    return user ? JSON.parse(user) : null;
+    const raw = localStorage.getItem(this.USER);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch {
+      localStorage.removeItem(this.USER);
+      return null;
+    }
   }
 
   setTokens(access: string, refresh: string, user: any) {
